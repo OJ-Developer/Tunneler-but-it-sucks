@@ -1,0 +1,116 @@
+local ContentProvider = game:GetService("ContentProvider")
+local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Camera = require(script.Parent.Camera)
+local Event = require(ReplicatedStorage.Modules.Classes.Event)
+local Object = require(ReplicatedStorage.Modules.Classes.Object)
+local LinkedData = require(script.Parent.LinkedData)
+local GameSettings = require(ReplicatedStorage.Modules.GameSettings)
+
+local updateCharAnchored = ReplicatedStorage.Events.UpdateCharAnchored
+
+local Level = {}
+
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local rootPart = char:WaitForChild("HumanoidRootPart")
+
+local levelModule
+local levelThread
+
+function Level.Init()
+    Level.LevelLoadStarted = Event.new()
+    Level.LevelLoaded = Event.new()
+end
+
+function Level.Start()
+    Level.LoadLevel(GameSettings.startLevel)
+end
+
+function Level.LoadLevel(levelName: string)
+    local level = ReplicatedStorage.Levels:FindFirstChild(levelName)	
+	if level then
+		for _, element in workspace.Map.Elements:GetChildren() do
+			if LinkedData.Get(element) then
+				LinkedData.Get(element, "ElementModule"):Cleanup()
+			end
+		end
+		
+		for _, object in workspace.Map.Objects:GetChildren() do
+			if LinkedData.Get(object) then
+				LinkedData.Get(object, "ObjectClass"):Cleanup()
+			end
+		end
+
+		if levelThread ~= nil then
+			task.cancel(levelThread)
+			if levelModule.Cleanup then
+				levelModule.Cleanup()
+			end
+		end
+		
+		local wasLevelMenu = workspace.Map.LevelSettings.MenuLevel.Value
+		
+		rootPart.Anchored = true
+	
+		Level.LevelLoadStarted:Fire(levelName, wasLevelMenu)
+
+		level = level:Clone()
+		level.Parent = workspace
+		local oldMap = workspace.Map
+		level.Name = "Map"
+		level:SetAttribute("LevelName", levelName)
+		oldMap:Destroy()
+
+        ContentProvider:PreloadAsync({level})
+
+		Level.LevelLoaded:Fire(levelName, wasLevelMenu)
+		
+		local levelSettings = workspace.Map.LevelSettings
+		updateCharAnchored:FireServer(levelSettings.MenuLevel.Value)
+		rootPart.Anchored = levelSettings.MenuLevel.Value
+		if levelSettings.SkyMode.Value == "Day" then
+			Lighting.TimeOfDay = 14.5
+			Lighting.Brightness = 2
+		elseif levelSettings.SkyMode.Value == "Night" then
+			Lighting.TimeOfDay = 0
+			Lighting.Brightness = 0
+		end
+		
+		if levelSettings.MenuLevel.Value then
+			--disableCrosshairEvent:Fire()
+			Camera.Stop()
+		else
+			--enableCrosshairEvent:Fire()
+			local newPos = workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0)
+			char:PivotTo(workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0))
+			workspace.CurrentCamera.CFrame = newPos
+			Camera.Start()			
+		end
+		for _, element in pairs(level.Elements:GetChildren()) do
+			local module = script.Elements:FindFirstChild(element.Name)
+			if module and module:IsA("ModuleScript") then
+				local requiredElement = require(module).new(element)
+				if not requiredElement then continue end
+				LinkedData.Set(element, "ElementModule", requiredElement)
+			else
+				warn('Unknown testing element: "'..element.Name..'"')
+			end
+		end
+		
+		for _, object in pairs(level.Objects:GetChildren()) do
+			Object.giveFunctionality(object)
+		end
+		
+		local levelModuleScript = script.Levels:FindFirstChild(levelName)
+		if levelModuleScript then
+			levelModule = require(levelModuleScript)
+			levelThread = task.defer(levelModule.Start, player, player.PlayerScripts)
+		end
+	else
+		warn('Unknown level: "'..levelName..'"')
+	end
+end
+
+return Level
