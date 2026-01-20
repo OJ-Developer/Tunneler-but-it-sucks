@@ -82,10 +82,10 @@ function Level.LoadLevel(levelName: string)
 		end
 		
 		if levelSettings.MenuLevel.Value then
-			--disableCrosshairEvent:Fire()
+			disableCrosshairEvent:Fire()
 			Camera.Stop()
 		else
-			--enableCrosshairEvent:Fire()
+			enableCrosshairEvent:Fire()
 			local newPos = workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0)
 			char:PivotTo(workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0))
 			workspace.CurrentCamera.CFrame = newPos

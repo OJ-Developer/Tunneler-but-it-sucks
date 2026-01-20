@@ -26,37 +26,55 @@ function module.getPortalRaycastExcludeParts()
 	return exclude
 end
 
-local function theRestOfTheParamsStuff(params, fdiType)
-	params.FilterType = Enum.RaycastFilterType.Include
-	if fdiType == "collideable" then
-		params.FilterDescendantsInstances = module.getMapCollideableParts()
-	elseif fdiType == "interactable" then
-		params.FilterDescendantsInstances = {workspace.Map.Objects, workspace.Map.Elements}
-	elseif fdiType == "player" then
-		params.FilterDescendantsInstances = {game.Players.LocalPlayer.Character}
-	elseif fdiType == "buttonActivators" then
-		params.FilterDescendantsInstances = {InstanceUtils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
-	elseif fdiType == "objects" then
-		params.FilterDescendantsInstances = {workspace.Map.Objects}
-	elseif fdiType == "canHavePortals" then
-		params.FilterDescendantsInstances = module.getPortalableParts()
-	elseif fdiType == "portalCollision" then
-		params.FilterDescendantsInstances = module.getPortalRaycastExcludeParts()
+module.FdiPresets = {
+	Collideable = {getFdiTable = module.getMapCollideableParts},
+
+	Interactable = {getFdiTable = function()
+		return {workspace.Map.Objects, workspace.Map.Elements}
+	end},
+
+	Player = {getFdiTable = function()
+		return {workspace.Map.Objects, workspace.Map.Elements}
+	end},
+
+	FloorButtonActivators = {getFdiTable = function()
+		return {InstanceUtils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
+	end},
+
+	Objects = {getFdiTable = function()
+		return {workspace.Map.Objects}
+	end},
+
+	CanHavePortals = {getFdiTable = module.getPortalableParts},
+
+	PortalCollision = {getFdiTable = function()
+		return module.getPortalRaycastExcludeParts(), true
+	end},
+
+	Building = {getFdiTable = function()
+		return {workspace.Map.Building}
+	end}
+}
+
+local function theRestOfTheParamsStuff(params, fdiPreset)
+	local fdi, exclude = fdiPreset.getFdiTables()
+	if exclude then
 		params.FilterType = Enum.RaycastFilterType.Exclude
-	elseif fdiType == "map" then
-		params.FilterDescendantsInstances = {workspace.Map.Building}
+	else
+		params.FilterType = Enum.RaycastFilterType.Include
 	end
+	params.FilterDescendantsInstances = fdi
 end
 
-function module.raycastParams(fdiType: string)
+function module.raycastParams(fdiPreset)
 	local params = RaycastParams.new()
-	theRestOfTheParamsStuff(params, fdiType)
+	theRestOfTheParamsStuff(params, fdiPreset)
 	return params
 end
 
-function module.overlapParams(fdiType: string)
+function module.overlapParams(fdiPreset)
 	local params = OverlapParams.new()
-	theRestOfTheParamsStuff(params, fdiType)
+	theRestOfTheParamsStuff(params, fdiPreset)
 	return params
 end
 
@@ -82,13 +100,12 @@ end
 
 local maxBounce = 5
 
-function module.raycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, depth: number | nil)
+function module.raycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, depth: number?)
 	raycastParams.FilterDescendantsInstances = {unpack(raycastParams.FilterDescendantsInstances), bluePortal.Portal, redPortal.Portal}
 		
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then
-		if 
-			(raycast.Instance ~= bluePortal.Portal and raycast.Instance ~= redPortal.Portal) or 
+		if (raycast.Instance ~= bluePortal.Portal and raycast.Instance ~= redPortal.Portal) or 
 			(bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil) 
 		then return true, {Position = raycast.Position, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal} end
 		

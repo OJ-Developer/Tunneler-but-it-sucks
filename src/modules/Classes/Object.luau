@@ -78,7 +78,7 @@ function module:Pickup()
 	shared.PlayerState.HoldingObject = object
 end
 
-function module:Drop()
+function module.Drop()
     if shared.PlayerState.HoldingObject then
 		shared.PlayerState.HoldingObject.Anchored = false
 		shared.PlayerState.HoldingObject.CanCollide = true
