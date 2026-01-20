@@ -27,7 +27,7 @@ end
 
 function Level.Start()
 	task.spawn(function()
-		Level.LoadLevel(GameSettings.startLevel)
+		Level.LoadLevel(GameSettings.StartLevel)
 	end)
 end
 
@@ -92,7 +92,7 @@ function Level.LoadLevel(levelName: string)
 			Camera.Start()			
 		end
 		for _, element in pairs(level.Elements:GetChildren()) do
-			local module = script.Elements:FindFirstChild(element.Name)
+			local module = ReplicatedStorage.Modules.Level.Elements:FindFirstChild(element.Name)
 			if module and module:IsA("ModuleScript") then
 				local requiredElement = require(module).new(element)
 				if not requiredElement then continue end
@@ -106,7 +106,7 @@ function Level.LoadLevel(levelName: string)
 			Object.giveFunctionality(object)
 		end
 		
-		local levelModuleScript = script.Levels:FindFirstChild(levelName)
+		local levelModuleScript = ReplicatedStorage.Modules.Level.Levels:FindFirstChild(levelName)
 		if levelModuleScript then
 			levelModule = require(levelModuleScript)
 			levelThread = task.defer(levelModule.Start, player)
