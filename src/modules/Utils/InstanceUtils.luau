@@ -20,7 +20,7 @@ function module.getInstancesWithAttribute(haystack: {Instance}, attribute: strin
 	return instances
 end
 
-function module.getClosestPart(target: Instance, haystack: {Instance})
+function module.getClosestPart(target: BasePart, haystack: {BasePart})
 	local closest = haystack[1]
 	for _, part in pairs(haystack) do
 		if (part.Position - target.Position).Magnitude < (closest.Position - target.Position).Magnitude then

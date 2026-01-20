@@ -5,8 +5,4 @@ function module.new()
 	return setmetatable({}, module)
 end
 
-function module:Cleanup()
-
-end
-
 return module

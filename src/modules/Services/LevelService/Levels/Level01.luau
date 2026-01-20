@@ -1,3 +1,11 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local LevelService = require(script.Parent.Parent)
+local Announcer = require(ReplicatedStorage.Modules.Services.Announcer)
+local Axis = require(ReplicatedStorage.Modules.Services.Axis)
+local LinkedData = require(ReplicatedStorage.Modules.Services.LinkedData)
+
+
 local module = {}
 
 local connections: {RBXScriptConnection} = {}
@@ -6,25 +14,12 @@ function module.Start(player: Player)
 	
 	-- SETUP
 
-	local rs = game:GetService("ReplicatedStorage")
-
-	local events = rs:WaitForChild("Events")
-	local loadLevelEvent = events:WaitForChild("Levels"):WaitForChild("LoadLevel")
-
-	local axis = require(player.PlayerScripts.Services.Axis)
-	local announcer = require(script.Parent.Parent.Parent.Parent.Services.Announcer)
-
-	local tweenService = game:GetService("TweenService")
-
 	local activationDetectors = workspace.Map.CustomFunctionality.ActivationDetectors
 	local portalGunStandSpinButton = activationDetectors:WaitForChild("PortalGunStandSpinButton")
-
-	local player = game.Players.LocalPlayer
 
 
 	-- MUSIC
 
-	local events = game:GetService("ReplicatedStorage"):WaitForChild("Events")
 	local playSongEvent = events:WaitForChild("Audio"):WaitForChild("PlaySong")
 	playSongEvent:Fire("0")
 
@@ -42,16 +37,16 @@ function module.Start(player: Player)
 	local function spinPortalGunStand(val)
 		if val then
 			if portalGunCurrentlyAt == 1 then
-				local tween = tweenService:Create(portalGunStand.Value.Stand.Gun, TweenInfo.new(5, Enum.EasingStyle.Linear), {CFrame = portalGunStand.Value.Stand.Pos2.WorldCFrame})
+				local tween = TweenService:Create(portalGunStand.Value.Stand.Gun, TweenInfo.new(5, Enum.EasingStyle.Linear), {CFrame = portalGunStand.Value.Stand.Pos2.WorldCFrame})
 				tween:Play()
-				wait(5)
+				task.wait(5)
 				portalPlacer2.Activated.Value = true
 				portalPlacer1.Activated.Value = false
 				portalGunCurrentlyAt = 2
 			elseif portalGunCurrentlyAt == 2 then
-				local tween = tweenService:Create(portalGunStand.Value.Stand.Gun, TweenInfo.new(5, Enum.EasingStyle.Linear), {CFrame = portalGunStand.Value.Stand.Pos1.WorldCFrame})
+				local tween = TweenService:Create(portalGunStand.Value.Stand.Gun, TweenInfo.new(5, Enum.EasingStyle.Linear), {CFrame = portalGunStand.Value.Stand.Pos1.WorldCFrame})
 				tween:Play()
-				wait(5)
+				task.wait(5)
 				portalPlacer2.Activated.Value = false
 				portalPlacer1.Activated.Value = true
 				portalGunCurrentlyAt = 1
@@ -69,10 +64,10 @@ function module.Start(player: Player)
 	table.insert(connections, activationDetectors:WaitForChild("Room1EntranceHitbox").Value.Activated.Changed:Connect(function(val)
 		if val then
 			task.spawn(function()
-				announcer.playVoiceline("wtl1")
+				Announcer.playVoiceline("wtl1")
 			end)
 			task.spawn(function()
-				axis.PlayPath(path)
+				Axis.PlayPath(path)
 			end)
 		end
 	end))
@@ -80,10 +75,10 @@ function module.Start(player: Player)
 	table.insert(connections, activationDetectors:WaitForChild("Room2EntranceHitbox").Value.Activated.Changed:Connect(function(val)
 		if val then
 			task.spawn(function()
-				axis.PlayVoiceline("AnotherTestDone")
+				Axis.PlayVoiceline("AnotherTestDone")
 			end)
 			task.spawn(function()
-				axis.PlayPath(path, path.C)
+				Axis.PlayPath(path, path.C)
 			end)
 		end
 	end))
@@ -93,20 +88,20 @@ function module.Start(player: Player)
 	table.insert(connections, activationDetectors:WaitForChild("Room3EntranceHitbox").Value.Activated.Changed:Connect(function(val)
 		if val then
 			task.spawn(function()
-				events.Game.StandingButtonClick:Fire(portalGunStandSpinButton.Value.Button)
-				axis.PlayPath(path, path.F)
+				LinkedData.Get(portalGunStandSpinButton.Value, "ElementClass"):Press()
+				Axis.PlayPath(path, path.F)
 			end)
 			ethmdIntroThread = task.spawn(function()
 				task.wait(5)
-				axis.PlayVoiceline("EclipseHoleMakingDevice")
-				axis.PlayVoiceline("DeviceSafety")
+				Axis.PlayVoiceline("EclipseHoleMakingDevice")
+				Axis.PlayVoiceline("DeviceSafety")
 			end)
 		end
 	end))
 
 	local ruleVoicelineThread = nil
 
-	table.insert(connections, player.PlayerScripts.Portal.HasGun.Changed:Connect(function(val)
+	table.insert(connections, shared.PlayerState.HasGun.Changed:Connect(function(val)
 		if val then
 			playSongEvent:Fire("Small-Length_Experiment")
 			
@@ -114,25 +109,25 @@ function module.Start(player: Player)
 				task.cancel(ethmdIntroThread)
 			end
 			task.spawn(function()
-				axis.PlayPath(path, path.H)
+				Axis.PlayPath(path, path.H)
 			end)
 			ruleVoicelineThread = task.spawn(function()
-				axis.PlayVoiceline("SafetyGuildlines")
-				axis.PlayVoiceline("Rule1")
-				axis.PlayVoiceline("Rule2")
-				axis.PlayVoiceline("Rule3")
-				axis.PlayVoiceline("Rule4")
-				axis.PlayVoiceline("Rule5")
-				axis.PlayVoiceline("Rule6")
-				axis.PlayVoiceline("Rule7")
-				axis.PlayVoiceline("Rule8")
-				axis.PlayVoiceline("Rule9")
-				axis.PlayVoiceline("Rule10")
-				axis.PlayVoiceline("Rule10Extra")
-				axis.PlayVoiceline("Rule11Wait")
-				axis.PlayVoiceline("Sorry")
+				Axis.PlayVoiceline("SafetyGuildlines")
+				Axis.PlayVoiceline("Rule1")
+				Axis.PlayVoiceline("Rule2")
+				Axis.PlayVoiceline("Rule3")
+				Axis.PlayVoiceline("Rule4")
+				Axis.PlayVoiceline("Rule5")
+				Axis.PlayVoiceline("Rule6")
+				Axis.PlayVoiceline("Rule7")
+				Axis.PlayVoiceline("Rule8")
+				Axis.PlayVoiceline("Rule9")
+				Axis.PlayVoiceline("Rule10")
+				Axis.PlayVoiceline("Rule10Extra")
+				Axis.PlayVoiceline("Rule11Wait")
+				Axis.PlayVoiceline("Sorry")
 				task.wait(60)
-				axis.PlayVoiceline("Rule11")
+				Axis.PlayVoiceline("Rule11")
 			end)
 		end
 	end))
@@ -140,7 +135,7 @@ function module.Start(player: Player)
 	table.insert(connections, activationDetectors:WaitForChild("Room4EntranceHitbox").Value.Activated.Changed:Connect(function(val)
 		if val then
 			task.spawn(function()
-				axis.PlayPath(path, path.J)
+				Axis.PlayPath(path, path.J)
 			end)
 		end
 	end))
@@ -152,7 +147,7 @@ function module.Start(player: Player)
 					task.cancel(ruleVoicelineThread)
 				end
 				
-				loadLevelEvent:Fire("Level02")
+				LevelService.LoadLevel("Level02")
 			end)
 		end
 	end))

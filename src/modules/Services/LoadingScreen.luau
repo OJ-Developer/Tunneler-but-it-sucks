@@ -12,10 +12,6 @@ local player = game.Players.LocalPlayer
 local playerGui = player.PlayerGui
 local loadingUi = playerGui.LoadingLevel
 
-local bluePortalBottom = loadingUi.BluePortalBottom
-local bluePortalTop = loadingUi.BluePortalTop
-local redPortalBottom = loadingUi.RedPortalBottom
-local redPortalTop = loadingUi.RedPortalTop
 local john1 = loadingUi.John.John1
 local john2 = loadingUi.John.John2
 
@@ -23,7 +19,6 @@ local john2 = loadingUi.John.John2
 
 -- variables
 
-local initialized = false
 local running = false
 
 

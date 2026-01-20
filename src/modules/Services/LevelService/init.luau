@@ -1,8 +1,9 @@
 local ContentProvider = game:GetService("ContentProvider")
 local Lighting = game:GetService("Lighting")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Camera = require(script.Parent.Camera)
+local Camera = require(script.Parent.CameraService)
 local Event = require(ReplicatedStorage.Modules.Classes.Event)
 local Object = require(ReplicatedStorage.Modules.Classes.Object)
 local LinkedData = require(script.Parent.LinkedData)
@@ -12,7 +13,7 @@ local updateCharAnchored = ReplicatedStorage.Events.UpdateCharAnchored
 
 local Level = {}
 
-local player = game.Players.LocalPlayer
+local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local rootPart = char:WaitForChild("HumanoidRootPart")
 
@@ -25,7 +26,9 @@ function Level.Init()
 end
 
 function Level.Start()
-    Level.LoadLevel(GameSettings.startLevel)
+	task.spawn(function()
+		Level.LoadLevel(GameSettings.startLevel)
+	end)
 end
 
 function Level.LoadLevel(levelName: string)
@@ -33,7 +36,7 @@ function Level.LoadLevel(levelName: string)
 	if level then
 		for _, element in workspace.Map.Elements:GetChildren() do
 			if LinkedData.Get(element) then
-				LinkedData.Get(element, "ElementModule"):Cleanup()
+				LinkedData.Get(element, "ElementClass"):Cleanup()
 			end
 		end
 		
@@ -93,7 +96,7 @@ function Level.LoadLevel(levelName: string)
 			if module and module:IsA("ModuleScript") then
 				local requiredElement = require(module).new(element)
 				if not requiredElement then continue end
-				LinkedData.Set(element, "ElementModule", requiredElement)
+				LinkedData.Set(element, "ElementClass", requiredElement)
 			else
 				warn('Unknown testing element: "'..element.Name..'"')
 			end
@@ -106,7 +109,7 @@ function Level.LoadLevel(levelName: string)
 		local levelModuleScript = script.Levels:FindFirstChild(levelName)
 		if levelModuleScript then
 			levelModule = require(levelModuleScript)
-			levelThread = task.defer(levelModule.Start, player, player.PlayerScripts)
+			levelThread = task.defer(levelModule.Start, player)
 		end
 	else
 		warn('Unknown level: "'..levelName..'"')

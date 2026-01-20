@@ -1,10 +1,9 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Object = require(ReplicatedStorage.Modules.Classes.Object)
+
 local module = {}
 module.__index = module
-
-local tweenService = game:GetService("TweenService")
-
-local playerScripts = game.Players.LocalPlayer.PlayerScripts
-local object = require(playerScripts.Classes.Object)
 
 function module.new(cubeDropper)
 	local doorPart1 = cubeDropper.DoorPart1
@@ -18,8 +17,10 @@ function module.new(cubeDropper)
 	local autoDropCube = cubeDropper.Configuration.AutoDropCube
 	local dropObjectType = cubeDropper.Configuration.DropObjectType
 
-	local currentCube = cubeDropper.CurrentCube
-	local nextCube = cubeDropper.NextCube
+	local currentCube: Object.ObjectType
+	local nextCube: Object.ObjectType
+	local currentCubeValue: ObjectValue = cubeDropper.CurrentCube
+	local nextCubeValue: ObjectValue = cubeDropper.NextCube
 
 	local cubeSpawnPos = tube.CubeSpawnPos
 	local part1ClosedRot = tube.Part1ClosedRot
@@ -32,50 +33,49 @@ function module.new(cubeDropper)
 	local connection2
 	
 	local function dropCube()
-		currentCube.Value = nextCube.Value
-		
+		currentCube = nextCube
+		currentCubeValue.Value = currentCube.Instance
+
 		if autoDropCube.Value then
 			if connection2 then
 				connection2:Disconnect()
 			end
-			connection2 = currentCube.value.AttributeChanged:Connect(function(attributeName)
-				if attributeName == "Fizzled" then
-					if currentCube.Value:GetAttribute("Fizzled") then
-						task.wait(3)
-						dropCube()
-					end
-				end
+			connection2 = currentCube.OnFizzle:Connect(function()
+				task.wait(3)
+				dropCube()
 			end)
 		end
 
-		tweenService:Create(doorPart1, TweenInfo.new(0.5), {Rotation = part1OpenedRot.WorldRotation}):Play()
-		tweenService:Create(doorPart2, TweenInfo.new(0.5), {Rotation = part2OpenedRot.WorldRotation}):Play()
+		TweenService:Create(doorPart1, TweenInfo.new(0.5), {Rotation = part1OpenedRot.WorldRotation}):Play()
+		TweenService:Create(doorPart2, TweenInfo.new(0.5), {Rotation = part2OpenedRot.WorldRotation}):Play()
 		doorPart1.CanCollide = false
 		doorPart2.CanCollide = false
 
 		task.wait(1)
 
-		tweenService:Create(doorPart1, TweenInfo.new(0.5), {Rotation = part1ClosedRot.WorldRotation}):Play()
-		tweenService:Create(doorPart2, TweenInfo.new(0.5), {Rotation = part2ClosedRot.WorldRotation}):Play()
+		TweenService:Create(doorPart1, TweenInfo.new(0.5), {Rotation = part1ClosedRot.WorldRotation}):Play()
+		TweenService:Create(doorPart2, TweenInfo.new(0.5), {Rotation = part2ClosedRot.WorldRotation}):Play()
 		doorPart1.CanCollide = true
 		doorPart2.CanCollide = true
 
 		task.spawn(function()
 			task.wait(1)
-			cubeDropper.NextCube.Value = object.spawn(dropObjectType.Value, cubeSpawnPos.WorldCFrame)
+			nextCube = Object.new(dropObjectType.Value, cubeSpawnPos.WorldCFrame)
+			nextCubeValue.Value = nextCube.Instance
 			dropping = false
 		end)
 	end
 
-	cubeDropper.NextCube.Value = object.spawn(dropObjectType.Value, cubeSpawnPos.WorldCFrame)
+	nextCube = Object.new(dropObjectType.Value, cubeSpawnPos.WorldCFrame)
+	nextCubeValue.Value = nextCube.Instance
 
 	local connection1 = activator.Value.Activated.Changed:Connect(function(val)
 		if val and not dropping then
 			task.spawn(function()
 				dropping = true
 				
-				if currentCube.Value then
-					object.fizzle(currentCube.Value)
+				if currentCube then
+					currentCube:Fizzle()
 				end
 
 				dropCube()

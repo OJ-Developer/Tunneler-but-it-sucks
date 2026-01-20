@@ -1,16 +1,11 @@
 local module = {}
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local tweenService = game:GetService("TweenService")
 
-local events = game:GetService("ReplicatedStorage").Events
-local levelLoaded = events.Levels.LevelLoaded
-
-local voicelines = require(script.Voicelines)
-local subtitles = require(script.Parent.Parent.UI.Subtitles)
-
-local textures = script.Textures
-
-local currentEmotion = "Happy"
+local LevelService = require(script.Parent.LevelService)
+local AxisTextures = require(ReplicatedStorage.Modules.Data.AxisTextures)
+local Voicelines = require(ReplicatedStorage.Modules.Data.Voicelines).Axis
 
 local axis = workspace:WaitForChild("Axis")
 local showSubtitles = axis.ShowSubtitles
@@ -20,11 +15,11 @@ local muteAxis = axis.MuteAxis
 
 function module.SetEmotion(emotion, speaking)
 	if speaking == 1 then
-		axis.TextureID = textures[emotion].Speaking.Texture
+		axis.TextureID = AxisTextures[emotion].Speaking
 	elseif speaking == 2 then
-		axis.TextureID = textures[emotion].Speaking2.Texture
+		axis.TextureID = AxisTextures[emotion].Speaking2
 	else
-		axis.TextureID = textures[emotion].Normal.Texture
+		axis.TextureID = AxisTextures[emotion].Normal
 	end
 end
 
@@ -43,26 +38,23 @@ function module.PlayVoiceline(voiceline)
 	
 	-- subtitles
 	if showSubtitles.Value and not muteAxis.Value then
-		subtitles.newSubtitle(voicelines[voiceline].Subtitle, "Axis", Color3.new(0, 0.737255, 0), sound.TimeLength*1.2)
+		subtitles.newSubtitle(Voicelines[voiceline].Subtitle, "Axis", Color3.new(0, 0.737255, 0), sound.TimeLength*1.2)
 	end
 	
 	-- update axis textures
 	while sound.Playing do
-		module.SetEmotion(voicelines[voiceline].Emotion, 1)
-		wait(0.2)
-		module.SetEmotion(voicelines[voiceline].Emotion, 2)
-		wait(0.2)
+		module.SetEmotion(Voicelines[voiceline].Emotion, 1)
+		task.wait(0.2)
+		module.SetEmotion(Voicelines[voiceline].Emotion, 2)
+		task.wait(0.2)
 	end
 	
-	module.SetEmotion(voicelines[voiceline].Emotion, 0)
+	module.SetEmotion(Voicelines[voiceline].Emotion, 0)
 end
 
 
 
 -- movement
-
-local currentPathPos
-local currentPath
 
 function module.PlayPath(path, startFrom)
 	-- axis start pos
@@ -102,8 +94,6 @@ function module.PlayPath(path, startFrom)
 		
 		-- stops moving if necessary
 		if pos:GetAttribute("Hold") and not (pos == startFrom) then
-			currentPathPos = pos
-			currentPath = path
 			break
 		end
 	end
@@ -117,7 +107,7 @@ function module.scare()
 	end)
 end
 
-levelLoaded.Event:Connect(function()
+LevelService.LevelLoaded:Connect(function()
 	axis.CurrentState.Speaking.Value = false
 	axis.CurrentState.SpeakingTextureEnabled.Value = false
 end)

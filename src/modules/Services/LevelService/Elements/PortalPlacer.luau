@@ -2,10 +2,6 @@ local module = {}
 module.__index = module
 
 function module.new(portalPlacer)
-	local rs = game:GetService("ReplicatedStorage")
-	local events = rs.Events
-	local placePortal = events.Portal.PlacePortal
-
 	local portalPlacePlace = portalPlacer.PortalPlacePlace
 
 	local activator = portalPlacer.Configuration.Activator

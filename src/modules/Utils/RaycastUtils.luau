@@ -1,21 +1,18 @@
+local InstanceUtils = require(script.Parent.InstanceUtils)
+local VectorUtils = require(script.Parent.VectorUtils)
+
+
 local module = {}
-
-local rs = game:GetService("ReplicatedStorage")
-
-local playerScripts = game.Players.LocalPlayer.PlayerScripts
-local instanceUtils = require(playerScripts.Utils.InstanceUtils)
-local tableUtils = require(playerScripts.Utils.TableUtils)
-local vectorUtils = require(playerScripts.Utils.VectorUtils)
 
 local bluePortal = workspace:WaitForChild("BluePortal")
 local redPortal = workspace:WaitForChild("RedPortal")
 
 function module.getMapCollideableParts()
-	return instanceUtils.getInstancesWithProperty(workspace.Map:GetDescendants(), "BasePart", "CanCollide", true)
+	return InstanceUtils.getInstancesWithProperty(workspace.Map:GetDescendants(), "BasePart", "CanCollide", true)
 end
 
 function module.getPortalableParts()
-	return instanceUtils.getInstancesWithAttribute(workspace.Map.Building:GetDescendants(), "CanHavePortals", true)
+	return InstanceUtils.getInstancesWithAttribute(workspace.Map.Building:GetDescendants(), "CanHavePortals", true)
 end
 
 function module.getPortalRaycastExcludeParts()
@@ -29,7 +26,7 @@ function module.getPortalRaycastExcludeParts()
 	return exclude
 end
 
-local function theRestOfTheParamsStuff(params: RaycastParams | OverlapParams, fdiType: string)
+local function theRestOfTheParamsStuff(params, fdiType)
 	params.FilterType = Enum.RaycastFilterType.Include
 	if fdiType == "collideable" then
 		params.FilterDescendantsInstances = module.getMapCollideableParts()
@@ -38,7 +35,7 @@ local function theRestOfTheParamsStuff(params: RaycastParams | OverlapParams, fd
 	elseif fdiType == "player" then
 		params.FilterDescendantsInstances = {game.Players.LocalPlayer.Character}
 	elseif fdiType == "buttonActivators" then
-		params.FilterDescendantsInstances = {instanceUtils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
+		params.FilterDescendantsInstances = {InstanceUtils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
 	elseif fdiType == "objects" then
 		params.FilterDescendantsInstances = {workspace.Map.Objects}
 	elseif fdiType == "canHavePortals" then
@@ -64,7 +61,7 @@ function module.overlapParams(fdiType: string)
 end
 
 function module.raycastThroughPortalLegacy(origin: Vector3, direction: Vector3, raycastParams: RaycastParams)
-	raycastParams.FilterDescendantsInstances = {raycastParams.FilterDescendantsInstances, bluePortal.Portal, redPortal.Portal}
+	raycastParams.FilterDescendantsInstances = {unpack(raycastParams.FilterDescendantsInstances), bluePortal.Portal, redPortal.Portal}
 
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then
@@ -75,7 +72,7 @@ function module.raycastThroughPortalLegacy(origin: Vector3, direction: Vector3, 
 		local entryPortal: Part = raycast.Instance
 		local exitPortal: Part = (entryPortal == bluePortal.Portal) and redPortal.Portal or bluePortal.Portal
 		
-		return vectorUtils.projectThroughPortal(direction + origin, entryPortal.CFrame, exitPortal.CFrame)
+		return VectorUtils.projectThroughPortal(direction + origin, entryPortal.CFrame, exitPortal.CFrame)
 		
 		--[[local offset = entryPortal.CFrame:PointToObjectSpace(origin + direction)
 		return exitPortal.CFrame:PointToWorldSpace(Vector3.new(-offset.X, offset.Y, -offset.Z))]]
@@ -86,7 +83,7 @@ end
 local maxBounce = 5
 
 function module.raycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, depth: number | nil)
-	raycastParams.FilterDescendantsInstances = {raycastParams.FilterDescendantsInstances, bluePortal.Portal, redPortal.Portal}
+	raycastParams.FilterDescendantsInstances = {unpack(raycastParams.FilterDescendantsInstances), bluePortal.Portal, redPortal.Portal}
 		
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then
@@ -98,13 +95,13 @@ function module.raycastThroughPortal(origin: Vector3, direction: Vector3, raycas
 		local entryPortal = raycast.Instance
 		local exitPortal = (entryPortal == bluePortal.Portal) and redPortal.Portal or bluePortal.Portal
 		
-		local projectedTarget = vectorUtils.projectThroughPortal(origin+direction, entryPortal.CFrame, exitPortal.CFrame, true)
+		local projectedTarget = VectorUtils.projectThroughPortal(origin+direction, entryPortal.CFrame, exitPortal.CFrame)
 		
 		if depth and depth >= maxBounce then
 			return true, {Position = projectedTarget, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal}
 		end
 		
-		local projectedOrigin = vectorUtils.projectThroughPortal(raycast.Position, entryPortal.CFrame, exitPortal.CFrame, true)
+		local projectedOrigin = VectorUtils.projectThroughPortal(raycast.Position, entryPortal.CFrame, exitPortal.CFrame)
 		local difference = projectedTarget - projectedOrigin
 		
 		return module.raycastThroughPortal(projectedOrigin, difference, raycastParams, depth and depth+1 or 2)

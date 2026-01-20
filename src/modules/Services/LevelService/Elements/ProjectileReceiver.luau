@@ -1,5 +1,3 @@
-local events = game:GetService("ReplicatedStorage").Events
-
 local module = {}
 module.__index = module
 

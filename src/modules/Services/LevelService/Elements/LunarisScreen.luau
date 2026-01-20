@@ -18,10 +18,10 @@ function module.new(ui)
 
 	local t = task.spawn(function()
 		while true do
-			img1.Position = UDim2.fromScale(0)
+			img1.Position = UDim2.fromScale(0, 0)
 			img2.Position = UDim2.fromScale(0,-1)
 			tween:Create(img1, TweenInfo.new(speed,Enum.EasingStyle.Linear), {Position = UDim2.fromScale(0,1)}):Play()
-			tween:Create(img2, TweenInfo.new(speed,Enum.EasingStyle.Linear), {Position = UDim2.fromScale(0)}):Play()
+			tween:Create(img2, TweenInfo.new(speed,Enum.EasingStyle.Linear), {Position = UDim2.fromScale(0,0)}):Play()
 			task.wait(speed)
 		end
 	end)

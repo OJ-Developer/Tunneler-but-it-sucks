@@ -1,11 +1,7 @@
-local rs = game:GetService("ReplicatedStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local events = rs.Events
-local placePortal = events.Portal.PlacePortal
-
-local playerScripts = game.Players.LocalPlayer.PlayerScripts
-local object = require(playerScripts.Classes.Object)
-local raycastUtils = require(playerScripts.Utils.RaycastUtils)
+local Object = require(ReplicatedStorage.Modules.Classes.Object)
+local LinkedData = require(ReplicatedStorage.Modules.Services.LinkedData)
 
 local module = {}
 module.__index = module
@@ -53,8 +49,10 @@ function module.new(fizzler)
 
 				for _, part in pairs(partsInFizzler) do
 					if part.Parent == workspace.Map.Objects then
-						object.drop()
-						object.fizzle(part)
+						if shared.PlayerState.HoldingObject then
+							Object.Drop()
+						end
+						LinkedData.Get(part, "ObjectClass"):Fizzle()
 					end
 					if part.Parent == game.Players.LocalPlayer.Character then
 						if workspace.BluePortal.Fizzleable.Value then

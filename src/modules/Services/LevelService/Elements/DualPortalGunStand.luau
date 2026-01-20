@@ -1,10 +1,7 @@
-local rs = game:GetService("ReplicatedStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local player = game.Players.LocalPlayer
-
-local playerScripts = player.PlayerScripts
-local raycastUtils = require(playerScripts.Utils.RaycastUtils)
-
+local RaycastUtils = require(ReplicatedStorage.Modules.Utils.RaycastUtils)
+	
 local module = {}
 module.__index = module
 
@@ -14,11 +11,11 @@ local gun = portalGunStand.Stand.Gun
 	
 	local t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitbox, raycastUtils.overlapParams("player"))
+			local partsInHitbox = workspace:GetPartsInPart(hitbox, RaycastUtils.overlapParams("player"))
 			
 			if #partsInHitbox > 0 then
-				player.PlayerScripts.Portal.GunUpgraded.Value = true
-				player.PlayerScripts.Portal.HasGun.Value = true
+				shared.PlayerState.GunUpgraded = true
+				shared.PlayerState.HasGun = true
 				gun.Transparency = 1
 				return
 			end

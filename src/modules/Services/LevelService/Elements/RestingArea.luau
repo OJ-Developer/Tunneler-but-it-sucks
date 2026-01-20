@@ -1,4 +1,4 @@
-local tweenService = game:GetService("TweenService")
+local TweenService = game:GetService("TweenService")
 
 local module = {}
 module.__index = module
@@ -13,7 +13,7 @@ function module.new(restingArea)
 	
 	local t = task.spawn(function()
 		repeat task.wait() until activator.Value.Activated.Value
-		local tween = tweenService:Create(thingIdkWhatToCall, TweenInfo.new(5), {Position = upPos.WorldPosition})
+		local tween = TweenService:Create(thingIdkWhatToCall, TweenInfo.new(5), {Position = upPos.WorldPosition})
 		tween:Play()
 	end)
 	

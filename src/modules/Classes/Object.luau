@@ -4,9 +4,14 @@ module.__index = module
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local objects = ReplicatedStorage:WaitForChild("Objects")
 
+local Event = require(script.Parent.Event)
 local linkedData = require(script.Parent.Parent.Services.LinkedData)
 
-local holdingObject = ReplicatedStorage.Data.HoldingObject
+export type ObjectType = typeof(module) & {
+	Instance: Part,
+	Fizzled: boolean,
+	OnFizzle: typeof(Event)
+}
 
 function module.new(objectName: string, cframe: CFrame, ...)
 	local newObject = objects[objectName]:Clone()
@@ -23,7 +28,7 @@ function module.giveFunctionality(object: Part, ...)
 		linkedData.Set(object, "ObjectClass", objectTable)
 	end
 
-	return setmetatable({Instance = object, Fizzled = false}, module)
+	return setmetatable({Instance = object, Fizzled = false, OnFizzle = Event.new()}, module)
 end
 
 function module:Fizzle()
@@ -70,16 +75,16 @@ function module:Pickup()
 	local object = self.Instance
     object.Anchored = true
 	object.CanCollide = false
-	holdingObject.Value = object
+	shared.PlayerState.HoldingObject = object
 end
 
 function module:Drop()
-    if holdingObject.Value then
-		holdingObject.Value.Anchored = false
-		holdingObject.Value.CanCollide = true
-		holdingObject.Value.AssemblyLinearVelocity = Vector3.zero
-		holdingObject.Value.AssemblyAngularVelocity = Vector3.zero
-		holdingObject.Value = nil
+    if shared.PlayerState.HoldingObject then
+		shared.PlayerState.HoldingObject.Anchored = false
+		shared.PlayerState.HoldingObject.CanCollide = true
+		shared.PlayerState.HoldingObject.AssemblyLinearVelocity = Vector3.zero
+		shared.PlayerState.HoldingObject.AssemblyAngularVelocity = Vector3.zero
+		shared.PlayerState.HoldingObject = nil
 	else
 		warn("tried to drop object with no object beind held")
 	end

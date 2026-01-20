@@ -7,14 +7,27 @@ for _, moduleScript in serviceModules:GetChildren() do
     local module = require(moduleScript)
     
     if module.Init then
-        module.Init()
+        local s, e = pcall(function()
+            module.Init()
+        end)
+
+        if not s then
+            warn(`Module {moduleScript.Name} experienced error "{e}" while initializing`)
+            continue
+        end
     end
 
-    table.insert(services, module)
+    services[moduleScript.Name] = module
 end
 
-for _, service in services do
+for name, service in services do
     if service.Start then
-		service.Start()
+        local s, e = pcall(function()
+            service.Start()
+        end)
+
+		if not s then
+            warn(`Module {name} experienced error "{e}" while starting`)
+        end
 	end
 end
