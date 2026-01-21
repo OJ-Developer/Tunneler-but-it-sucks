@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local tweenService = game:GetService("TweenService")
 
-local LevelService = require(script.Parent.LevelService)
+local AudioService = require(script.Parent.AudioService)
 local AxisTextures = require(ReplicatedStorage.Modules.Data.AxisTextures)
 local Voicelines = require(ReplicatedStorage.Modules.Data.Voicelines).Axis
 
@@ -13,6 +13,8 @@ local axis = workspace:WaitForChild("Axis")
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local head = char:WaitForChild("Head")
+
+local playingSound: Sound
 
 --Voicline stuff
 
@@ -26,7 +28,7 @@ end
 
 function module.SetEmotion(emotion, speaking)
 	if speaking == 1 then
-		axis.TextureID = AxisTextures[emotion].Speaking
+		axis.TextureID = AxisTextures[emotion].Speaking1
 	elseif speaking == 2 then
 		axis.TextureID = AxisTextures[emotion].Speaking2
 	else
@@ -36,16 +38,12 @@ end
 
 function module.PlayVoiceline(voiceline)
 	-- stop other sounds
-	for _, sound in pairs(script.VoicelineSounds:GetChildren()) do
-		sound:Stop()
+	if playingSound and playingSound.Parent then
+		playingSound:Stop()
 	end
 	
 	-- play sound
-	local sound = script.VoicelineSounds[voiceline]
-	if shared.Settings.MuteAxis then
-		sound.Volume = 0
-	end
-	sound:Play()
+	playingSound = AudioService.PlaySoundEffect({Id = Voicelines[voiceline].SoundId}, shared.Settings.MuteAxis and 0 or 2)
 	
 	-- subtitles
 	if shared.Settings.ShowSubtitles and not shared.Settings.MuteAxis then
@@ -53,7 +51,7 @@ function module.PlayVoiceline(voiceline)
 	end
 	
 	-- update axis textures
-	while sound.Playing do
+	while playingSound.Playing do
 		module.SetEmotion(Voicelines[voiceline].Emotion, 1)
 		task.wait(0.2)
 		module.SetEmotion(Voicelines[voiceline].Emotion, 2)

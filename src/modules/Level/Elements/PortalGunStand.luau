@@ -14,7 +14,8 @@ function module.new(portalGunStand)
 			local partsInHitbox = workspace:GetPartsInPart(hitbox, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.Player))
 
 			if #partsInHitbox > 0 then
-				shared.PlayerState.HasGun.Value = true
+				shared.PlayerState.HasGun = true
+				shared.PlayerState.GunChanged:Fire(true, false)
 				gun.Transparency = 1
 				return
 			end

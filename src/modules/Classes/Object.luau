@@ -22,13 +22,17 @@ function module.new(objectName: string, cframe: CFrame, ...)
 end
 
 function module.giveFunctionality(object: Part, ...)
+	local newObject = setmetatable({Instance = object, Fizzled = false, OnFizzle = Event.new()}, module)
+
 	local objectModule = script:FindFirstChild(object.Name)
 	if objectModule and objectModule:IsA("ModuleScript") then
 		local objectTable = require(objectModule).new(object, ...)
-		linkedData.Set(object, "ObjectClass", objectTable)
+		linkedData.Set(object, "SpecificObjectClass", objectTable)
 	end
 
-	return setmetatable({Instance = object, Fizzled = false, OnFizzle = Event.new()}, module)
+	linkedData.Set(object, "ObjectClass", newObject)
+
+	return newObject
 end
 
 function module:Fizzle()
@@ -37,8 +41,8 @@ function module:Fizzle()
 
     task.spawn(function()
 		if linkedData.Get(object) then
-			if linkedData.Get(object, "ObjectClass") and linkedData.Get(object, "ObjectClass").Cleanup then
-				linkedData.Get(object, "ObjectClass"):Cleanup()
+			if linkedData.Get(object, "SpecificObjectClass") and linkedData.Get(object, "SpecificObjectClass").Cleanup then
+				linkedData.Get(object, "SpecificObjectClass"):Cleanup()
 			end
 			
 			linkedData.Clear(object)

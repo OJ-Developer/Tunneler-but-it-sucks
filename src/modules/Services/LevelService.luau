@@ -39,20 +39,26 @@ function Level.Start()
 			end
 		end
 	end)
+
+	player.PlayerGui.test.TextBox.FocusLost:Connect(function(e)
+		if e then
+			Level.LoadLevel(player.PlayerGui.test.TextBox.Text)
+		end
+	end)
 end
 
 function Level.LoadLevel(levelName: string)
     local level = ReplicatedStorage.Levels:FindFirstChild(levelName)
 	if level then
 		for _, element in workspace.Map.Elements:GetChildren() do
-			if LinkedData.Get(element) then
+			if LinkedData.Get(element) and LinkedData.Get(element, "ElementClass").Cleanup then
 				LinkedData.Get(element, "ElementClass"):Cleanup()
 			end
 		end
 		
 		for _, object in workspace.Map.Objects:GetChildren() do
-			if LinkedData.Get(object) then
-				LinkedData.Get(object, "ObjectClass"):Cleanup()
+			if LinkedData.Get(object, "SpecificObjectClass") and LinkedData.Get(object, "SpecificObjectClass").Cleanup then
+				LinkedData.Get(object, "SpecificObjectClass"):Cleanup()
 			end
 		end
 

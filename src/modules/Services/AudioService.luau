@@ -37,15 +37,15 @@ function AudioService.Start()
     end)]]
 end
 
-function AudioService.SoundInstanceFromSoundData(SoundEffectData, Volume: number, ParentObject: Instance?)
+function AudioService.SoundInstanceFromSoundData(SoundEffectData, Volume: number?, ParentObject: Instance?)
     local sound = Instance.new("Sound")
     sound.SoundId = SoundEffectData.Id
-    sound.Volume = SoundEffectData.VolumeMultiplier and SoundEffectData.VolumeMultiplier * Volume or Volume
+    sound.Volume = Volume and (SoundEffectData.VolumeMultiplier and SoundEffectData.VolumeMultiplier * Volume or Volume) or (SoundEffectData.VolumeMultiplier or 1)
     sound.Parent = ParentObject or SoundEffectsFolder
     return sound
 end
 
-function AudioService.PlaySoundEffect(SoundEffectData, Volume: number, ParentObject: Instance?)
+function AudioService.PlaySoundEffect(SoundEffectData, Volume: number?, ParentObject: Instance?)
     local sound = AudioService.SoundInstanceFromSoundData(SoundEffectData, Volume, ParentObject)
     sound:Play()
     task.spawn(function()
@@ -55,14 +55,11 @@ function AudioService.PlaySoundEffect(SoundEffectData, Volume: number, ParentObj
     return sound
 end
 
-function AudioService.PlaySoundEffectAndWait(SoundEffectData, Volume: number, ParentObject: Instance?)
+function AudioService.PlaySoundEffectAndWait(SoundEffectData, Volume: number?, ParentObject: Instance?)
     local sound = AudioService.SoundInstanceFromSoundData(SoundEffectData, Volume, ParentObject)
     sound:Play()
-    print("playing")
     sound.Ended:Wait()
-    print("done")
     sound:Destroy()
-    return sound
 end
 
 function AudioService.PlaySong(songData)

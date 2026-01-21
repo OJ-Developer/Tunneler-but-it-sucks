@@ -48,7 +48,7 @@ function InteractionService.Start()
                     local pos = PortalService.RaycastThroughPortalLegacy(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Collideable))
                     pos -= camera.CFrame.LookVector * VectorUtils.average(shared.PlayerState.HoldingObject.Size) / 2
                 
-                    rotationOffset -= script.Parent.Parent.Portal.HasGun.Value and math.pi*0.5*dTime or rotationOffset
+                    rotationOffset -= shared.PlayerState.HasGun and math.pi*0.5*dTime or rotationOffset
                     local playerRotationRy = rootPart.Orientation.Y
                     rotation = CFrame.Angles(0, math.rad(playerRotationRy+180)+rotationOffset, 0)
                     shared.PlayerState.HoldingObject.CFrame = CFrame.new(pos) * rotation

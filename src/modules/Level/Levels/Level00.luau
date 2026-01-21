@@ -32,8 +32,7 @@ function module.Start(player: Player)
 	char.HumanoidRootPart.CFrame = workspace.Map.SpawnLocation.CFrame + Vector3.new(0, 3, 0)
 	char.HumanoidRootPart.Anchored = true
 	ScreenEffects.setScreenColourOverlay(0)
-	script.CutsceneSound:Play()
-	task.wait(script.CutsceneSound.TimeLength)
+	AudioService.PlaySoundEffectAndWait(Sounds.SoundEffects.PlaceHolder)
 	CameraService.Stop()
 	cam.CFrame = cutscenePoints.A.WorldCFrame
 	ScreenEffects.FadeScreenColourOverlay(1, 0.5)

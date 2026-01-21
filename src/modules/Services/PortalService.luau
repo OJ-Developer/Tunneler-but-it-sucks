@@ -42,7 +42,7 @@ export type Portal = Model & {
     Fizzleable: BoolValue,
     OnPart: ObjectValue,
     Hitbox: Model,
-    PortalVisibilityHitbox: UnionOperation,
+    VisibilityHitbox: UnionOperation,
     ViewportFrameMask: MeshPart,
     PortalBehingThing: MeshPart,
     BehindPortalHitbox: Part,
@@ -84,6 +84,8 @@ function PortalService.Init()
     folder.Name = "Static"
     folder = Instance.new("Folder", redViewport)
     folder.Name = "NonStatic"
+
+    shared.PlayerState.GunChanged = Event.new()
 end
 
 function PortalService.Start()
@@ -174,7 +176,7 @@ function PortalService.Start()
                 
                 
                 -- get parts in portal zones
-                local params = RaycastUtils.overlapParams("objects")
+                local params = RaycastUtils.overlapParams(RaycastUtils.FdiPresets.Objects)
                 params.FilterDescendantsInstances = {params.FilterDescendantsInstances, char}
                 
                 inBluePortal = workspace:GetPartsInPart(bluePortal.PortalZone, params)
@@ -413,7 +415,7 @@ function PortalService.PlacePortal(portal: Portal, redPortal: boolean, onPart: P
 end
 
 local function firePortal(portal: Portal, redPortal: boolean)
-	local tween = TweenService:Create(portalGunOffset.Value, TweenInfo.new(gunSpinTime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Value = portalGunOffset.Value * CFrame.Angles(0, 0, redPortal and -gunSpinAmount or gunSpinAmount)})
+	local tween = TweenService:Create(portalGunOffset, TweenInfo.new(gunSpinTime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Value = portalGunOffset.Value * CFrame.Angles(0, 0, redPortal and -gunSpinAmount or gunSpinAmount)})
 	tween:Play()
 	
 	local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.PortalCollision))
@@ -431,13 +433,13 @@ local function firePortal(portal: Portal, redPortal: boolean)
 	end
 end
 
-ReplicatedStorage.Inputs.FireBlue:Connect(function()
+ReplicatedStorage.Inputs.FireBlue.Pressed:Connect(function()
 	if shared.PlayerState.HasGun then	
 		firePortal(workspace.BluePortal, false)
 	end
 end)
 
-ReplicatedStorage.Inputs.FireRed:Connect(function()
+ReplicatedStorage.Inputs.FireRed.Pressed:Connect(function()
 	if shared.PlayerState.HasGun and shared.PlayerState.GunUpgraded then
 		firePortal(workspace.RedPortal, true)
 	end
@@ -448,7 +450,8 @@ end)
 -- OTHER FUNCTIONS
 
 function PortalService.RaycastThroughPortalLegacy(origin: Vector3, direction: Vector3, raycastParams: RaycastParams)
-	raycastParams.FilterDescendantsInstances = {unpack(raycastParams.FilterDescendantsInstances), bluePortal.Portal, redPortal.Portal}
+    raycastParams:AddToFilter(bluePortal.Portal)
+    raycastParams:AddToFilter(redPortal.Portal)
 
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then
@@ -470,7 +473,8 @@ end
 local maxBounce = 5
 
 function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, depth: number?)
-	raycastParams.FilterDescendantsInstances = {unpack(raycastParams.FilterDescendantsInstances), bluePortal.Portal, redPortal.Portal}
+	raycastParams:AddToFilter(bluePortal.Portal)
+    raycastParams:AddToFilter(redPortal.Portal)
 		
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then

@@ -1,4 +1,8 @@
+local Players = game:GetService("Players")
 local InstanceUtils = require(script.Parent.InstanceUtils)
+
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
 
 local module = {}
 
@@ -29,7 +33,7 @@ module.FdiPresets = {
 	end},
 
 	Player = {getFdiTable = function()
-		return {workspace.Map.Objects, workspace.Map.Elements}
+		return {char}
 	end},
 
 	FloorButtonActivators = {getFdiTable = function()

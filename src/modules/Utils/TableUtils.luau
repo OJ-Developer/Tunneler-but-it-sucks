@@ -26,7 +26,7 @@ end
 
 function module.merge(...: {any})
 	local newTable = {}
-	for _, t in ... do
+	for _, t in {...} do
 		for _, v in t do
 			table.insert(newTable, v)
 		end

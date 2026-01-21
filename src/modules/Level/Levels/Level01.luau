@@ -10,7 +10,7 @@ local LinkedData = require(ReplicatedStorage.Modules.Services.LinkedData)
 
 local module = {}
 
-local connections: {RBXScriptConnection} = {}
+local connections = {}
 
 function module.Start(player: Player)
 	
@@ -102,7 +102,7 @@ function module.Start(player: Player)
 
 	local ruleVoicelineThread = nil
 
-	table.insert(connections, shared.PlayerState.HasGun.Changed:Connect(function(val)
+	table.insert(connections, shared.PlayerState.GunChanged:Connect(function(val)
 		if val then
 			AudioService.PlaySong(Sounds.Music.SmallLengthExperiment)
 			

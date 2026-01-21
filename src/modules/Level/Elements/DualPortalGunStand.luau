@@ -16,6 +16,7 @@ local gun = portalGunStand.Stand.Gun
 			if #partsInHitbox > 0 then
 				shared.PlayerState.GunUpgraded = true
 				shared.PlayerState.HasGun = true
+				shared.PlayerState.GunChanged:Fire(true, true)
 				gun.Transparency = 1
 				return
 			end
