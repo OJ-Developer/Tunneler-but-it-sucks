@@ -24,10 +24,12 @@ function module.hasIndex(haystack: {any}, needle: any)
 	return false
 end
 
-function module.merge(table1: {any}, table2: {any})
-	local newTable = table.clone(table1)
-	for _, v in pairs(table2) do
-		table.insert(newTable, v)
+function module.merge(...: {any})
+	local newTable = {}
+	for _, t in ... do
+		for _, v in t do
+			table.insert(newTable, v)
+		end
 	end
 	return newTable
 end

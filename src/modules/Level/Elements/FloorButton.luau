@@ -18,7 +18,7 @@ function module.new(floorButton)
 
 	local t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitbox, RaycastUtils.overlapParams("buttonActivators"))
+			local partsInHitbox = workspace:GetPartsInPart(hitbox, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.FloorButtonActivators))
 			local newActivated = false
 			if #partsInHitbox > 0 then
 				newActivated = true

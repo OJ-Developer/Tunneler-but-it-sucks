@@ -12,7 +12,7 @@ function module.new(hitboxPart)
 	
 	local t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitboxPart, RaycastUtils.overlapParams("player"))
+			local partsInHitbox = workspace:GetPartsInPart(hitboxPart, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.Player))
 
 			activated.Value = #partsInHitbox > 0
 

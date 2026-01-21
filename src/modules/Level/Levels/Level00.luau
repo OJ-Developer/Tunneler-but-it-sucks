@@ -1,11 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
-local LevelService = require(script.Parent.Parent)
+
+local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)
 local Announcer = require(ReplicatedStorage.Modules.Services.Announcer)
+local AudioService = require(ReplicatedStorage.Modules.Services.AudioService)
 local Axis = require(ReplicatedStorage.Modules.Services.Axis)
 local CameraService = require(ReplicatedStorage.Modules.Services.CameraService)
+local LevelService = require(ReplicatedStorage.Modules.Services.LevelService)
 local ScreenEffects = require(ReplicatedStorage.Modules.Services.ScreenEffects)
-
 
 local module = {}
 
@@ -20,8 +22,7 @@ function module.Start(player: Player)
 
 	-- MUSIC
 
-	local playSongEvent = events.Audio.PlaySong
-	playSongEvent:Fire("0")
+	AudioService.PlaySong(Sounds.Music["0"])
 	
 
 

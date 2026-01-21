@@ -1,3 +1,8 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)
+local AudioService = require(ReplicatedStorage.Modules.Services.AudioService)
+
 local module = {}
 
 function module.Start(player: Player)
@@ -5,10 +10,7 @@ function module.Start(player: Player)
 
 	-- MUSIC
 
-	local rs = game:GetService("ReplicatedStorage")
-	local events = rs:WaitForChild("Events")
-	local playSongEvent = events:WaitForChild("Audio"):WaitForChild("PlaySong")
-	playSongEvent:Fire("Small-Length_Experiment")
+	AudioService.PlaySong(Sounds.Music.SmallLengthExperiment)
 	
 end
 

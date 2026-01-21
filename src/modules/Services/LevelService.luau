@@ -2,16 +2,20 @@ local ContentProvider = game:GetService("ContentProvider")
 local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local Camera = require(script.Parent.CameraService)
 local Event = require(ReplicatedStorage.Modules.Classes.Event)
 local Object = require(ReplicatedStorage.Modules.Classes.Object)
 local LinkedData = require(script.Parent.LinkedData)
-local GameSettings = require(ReplicatedStorage.Modules.GameSettings)
+local Settings = require(ReplicatedStorage.Modules.Settings)
 
 local updateCharAnchored = ReplicatedStorage.Events.UpdateCharAnchored
 
-local Level = {}
+local Level = {
+	LevelLoadStarted = Event.new(),
+	LevelLoaded = Event.new(),
+}
 
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
@@ -20,19 +24,25 @@ local rootPart = char:WaitForChild("HumanoidRootPart")
 local levelModule
 local levelThread
 
-function Level.Init()
-    Level.LevelLoadStarted = Event.new()
-    Level.LevelLoaded = Event.new()
-end
-
 function Level.Start()
 	task.spawn(function()
-		Level.LoadLevel(GameSettings.StartLevel)
+		Level.LoadLevel(Settings.StartLevel)
+	end)
+	RunService.PreRender:Connect(function()
+		if rootPart.Position.Y <= -100 then
+			Level.LoadLevel(shared.GameState.CurrentLevel)
+		end
+
+		for _, v in workspace.Map.Objects:GetChildren() do
+			if v.Position.Y <= -100 then
+				LinkedData.Get(v, "ObjectClass"):Fizzle()
+			end
+		end
 	end)
 end
 
 function Level.LoadLevel(levelName: string)
-    local level = ReplicatedStorage.Levels:FindFirstChild(levelName)	
+    local level = ReplicatedStorage.Levels:FindFirstChild(levelName)
 	if level then
 		for _, element in workspace.Map.Elements:GetChildren() do
 			if LinkedData.Get(element) then
@@ -63,7 +73,7 @@ function Level.LoadLevel(levelName: string)
 		level.Parent = workspace
 		local oldMap = workspace.Map
 		level.Name = "Map"
-		level:SetAttribute("LevelName", levelName)
+		shared.GameState.CurrentLevel = levelName
 		oldMap:Destroy()
 
         ContentProvider:PreloadAsync({level})
@@ -82,10 +92,10 @@ function Level.LoadLevel(levelName: string)
 		end
 		
 		if levelSettings.MenuLevel.Value then
-			disableCrosshairEvent:Fire()
+			--disableCrosshairEvent:Fire()
 			Camera.Stop()
 		else
-			enableCrosshairEvent:Fire()
+			--enableCrosshairEvent:Fire()
 			local newPos = workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0)
 			char:PivotTo(workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0))
 			workspace.CurrentCamera.CFrame = newPos

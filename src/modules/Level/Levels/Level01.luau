@@ -1,10 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
-local LevelService = require(script.Parent.Parent)
-local Announcer = require(ReplicatedStorage.Modules.Services.Announcer)
-local Axis = require(ReplicatedStorage.Modules.Services.Axis)
-local LinkedData = require(ReplicatedStorage.Modules.Services.LinkedData)
 
+local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)
+local Announcer = require(ReplicatedStorage.Modules.Services.Announcer)
+local AudioService = require(ReplicatedStorage.Modules.Services.AudioService)
+local Axis = require(ReplicatedStorage.Modules.Services.Axis)
+local LevelService = require(ReplicatedStorage.Modules.Services.LevelService)
+local LinkedData = require(ReplicatedStorage.Modules.Services.LinkedData)
 
 local module = {}
 
@@ -20,8 +22,7 @@ function module.Start(player: Player)
 
 	-- MUSIC
 
-	local playSongEvent = events:WaitForChild("Audio"):WaitForChild("PlaySong")
-	playSongEvent:Fire("0")
+	AudioService.PlaySong(Sounds.Music["0"])
 
 
 
@@ -103,7 +104,7 @@ function module.Start(player: Player)
 
 	table.insert(connections, shared.PlayerState.HasGun.Changed:Connect(function(val)
 		if val then
-			playSongEvent:Fire("Small-Length_Experiment")
+			AudioService.PlaySong(Sounds.Music.SmallLengthExperiment)
 			
 			if ethmdIntroThread then
 				task.cancel(ethmdIntroThread)

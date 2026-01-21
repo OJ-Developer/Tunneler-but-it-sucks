@@ -1,34 +1,44 @@
 return {
     Announcer = {
         wtl0 = {
-            Subtitle = "Welcome to level 0."
+            Subtitle = "Welcome to level 0.",
+			SoundId = "rbxassetid://82267025125991"
         },
         wtl1 = {
-            Subtitle = "Welcome to the level 1."
+            Subtitle = "Welcome to the level 1.",
+			SoundId = "rbxassetid://128678424923500"
         },
         wtl2 = {
-            Subtitle = "Welcome level 2."
+            Subtitle = "Welcome level 2.",
+			SoundId = "rbxassetid://97668775746699"
         },
         wtl3 = {
-            Subtitle = "Welcome level to 3."
+            Subtitle = "Welcome level to 3.",
+			SoundId = "rbxassetid://90853945788803"
         },
         wtl4 = {
-            Subtitle = "4. Level 4. Welcome to level. "
+            Subtitle = "4. Level 4. Welcome to level. ",
+			SoundId = "rbxassetid://128272391150530"
         },
         wtl5 = {
-            Subtitle = "Welcome to level 5."
+            Subtitle = "Welcome to level 5.",
+			SoundId = "rbxassetid://94427408652499"
         },
         wtl6 = {
-            Subtitle = "Welcome to level 6."
+            Subtitle = "Welcome to level 6.",
+			SoundId = "rbxassetid://132013043854463"
         },
         wtl7 = {
-            Subtitle = "7"
+            Subtitle = "7",
+			SoundId = "rbxassetid://86679589670601"
         },
         wtl8 = {
-            Subtitle = ".8 level ot emocloW"
+            Subtitle = ".8 level ot emocloW",
+			SoundId = "rbxassetid://79810803814951"
         },
         wtl9 = {
-            Subtitle = "Welcome to 9."
+            Subtitle = "Welcome to 9.",
+			SoundId = "rbxassetid://82107490169139"
         }
     },
 

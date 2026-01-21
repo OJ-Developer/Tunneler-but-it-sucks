@@ -1,33 +1,42 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+shared.PlayerState = {}
+shared.GameState = {}
+shared.Settings = {}
+
 local serviceModules = ReplicatedStorage.Modules.Services
 local services = {}
 
+task.wait(1)
+
 for _, moduleScript in serviceModules:GetChildren() do
-    local module = require(moduleScript)
-    
-    if module.Init then
-        local s, e = pcall(function()
+    print(`Loading module: "{moduleScript.Name}"`)
+
+    local s, e = pcall(function()
+        local module = require(moduleScript)    
+        if module.Init then
+            print(`Initializing module: "{moduleScript.Name}"`)
             module.Init()
-        end)
-
-        if not s then
-            warn(`Module {moduleScript.Name} experienced error "{e}" while initializing`)
-            continue
+            print(`Successfully initialized module: "{moduleScript.Name}"`)
         end
-    end
+        services[moduleScript.Name] = module
+    end)
 
-    services[moduleScript.Name] = module
+    if not s then
+        warn(`Module {moduleScript.Name} experienced error "{e}" while initializing`)
+    end
 end
 
 for name, service in services do
-    if service.Start then
-        local s, e = pcall(function()
+    local s, e = pcall(function()
+        if service.Start then
+            print(`Starting module: "{name}"`)
             service.Start()
-        end)
-
-		if not s then
-            warn(`Module {name} experienced error "{e}" while starting`)
+            print(`Successfully started module: "{name}"`)
         end
-	end
+    end)
+
+    if not s then
+        warn(`Module {name} experienced error "{e}"`)
+    end
 end

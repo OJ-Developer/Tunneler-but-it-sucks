@@ -1,7 +1,5 @@
 -- services
 
-local rs = game:GetService("ReplicatedStorage")
-rs.Events.GameLoaded.Event:Wait()
 local tweenService = game:GetService("TweenService")
 
 

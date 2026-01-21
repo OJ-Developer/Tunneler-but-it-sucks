@@ -1,3 +1,8 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)
+local AudioService = require(ReplicatedStorage.Modules.Services.AudioService)
+
 local module = {}
 
 function module.Start()
@@ -12,9 +17,7 @@ function module.Start()
 	local camera = workspace.CurrentCamera
 	camera.CFrame = workspace.Map.Other.Camera.CFrame
 
-	local events = game:GetService("ReplicatedStorage").Events
-	local playSongEvent = events.Audio.PlaySong
-	playSongEvent:Fire("Tunneler_but_it_sucks")
+	AudioService.PlaySong(Sounds.Music.TunnelerButItSucks)
 end
 
 function module.Cleanup()

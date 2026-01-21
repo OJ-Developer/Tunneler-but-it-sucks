@@ -1,3 +1,5 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local PortalService = require(ReplicatedStorage.Modules.Services.PortalService)
 local module = {}
 module.__index = module
 
@@ -15,7 +17,7 @@ function module.new(portalPlacer)
 		while task.wait() do
 			if activator.Value.Activated.Value ~= prevActivated then
 				if activator.Value.Activated.Value then
-					placePortal:Fire(portal, portalPlacer.Configuration.Portal.Value == "Red", onPart.Value, true, portalPlacePlace.WorldCFrame)
+					PortalService.PlacePortal(portal, portalPlacer.Configuration.Portal.Value == "Red", onPart.Value, true, portalPlacePlace.WorldCFrame)
 				end
 			end
 

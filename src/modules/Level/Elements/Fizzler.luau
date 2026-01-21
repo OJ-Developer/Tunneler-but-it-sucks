@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Object = require(ReplicatedStorage.Modules.Classes.Object)
 local LinkedData = require(ReplicatedStorage.Modules.Services.LinkedData)
+local PortalService = require(ReplicatedStorage.Modules.Services.PortalService)
 
 local module = {}
 module.__index = module
@@ -56,10 +57,10 @@ function module.new(fizzler)
 					end
 					if part.Parent == game.Players.LocalPlayer.Character then
 						if workspace.BluePortal.Fizzleable.Value then
-							placePortal:Fire(workspace.BluePortal, false, nil, true, CFrame.new(Vector3.new(0,-20,20)))
+							PortalService.PlacePortal(workspace.BluePortal, false, nil, true, CFrame.new(Vector3.new(0,-20,20)))
 						end
 						if workspace.RedPortal.Fizzleable.Value then
-							placePortal:Fire(workspace.RedPortal, true, nil, true, CFrame.new(Vector3.new(0,-20,20)))
+							PortalService.PlacePortal(workspace.RedPortal, true, nil, true, CFrame.new(Vector3.new(0,-20,20)))
 						end
 					end
 				end

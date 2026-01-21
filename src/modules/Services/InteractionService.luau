@@ -3,7 +3,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Object = require(ReplicatedStorage.Modules.Classes.Object)
+local Settings = require(ReplicatedStorage.Modules.Settings)
 local LinkedData = require(script.Parent.LinkedData)
+local PortalService = require(script.Parent.PortalService)
 local RaycastUtils = require(ReplicatedStorage.Modules.Utils.RaycastUtils)
 local VectorUtils = require(ReplicatedStorage.Modules.Utils.VectorUtils)
 
@@ -20,7 +22,7 @@ function InteractionService.Start()
     -- pressing e
     ReplicatedStorage.Inputs.Interact.Pressed:Connect(function()
         if shared.PlayerState.HoldingObject == nil then
-            local success, raycast = RaycastUtils.raycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * script.Parent.Configuration.MaxGrabDist.Value, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Interactable))
+            local success, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectMaxGrabDist, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Interactable))
             if success then
                 if raycast.Instance:IsA("BasePart") then
                     if raycast.Instance.Anchored == false then
@@ -43,7 +45,7 @@ function InteractionService.Start()
             if shared.PlayerState.HoldingObject then
                 if shared.PlayerState.HoldingObject:IsA("BasePart") then
                     --local success, raycast = raycastUtils.raycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * script.Parent.Configuration.HoldDist.Value, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Collideable))
-                    local pos = RaycastUtils.raycastThroughPortalLegacy(mouse.UnitRay.Origin, mouse.UnitRay.Direction * script.Parent.Configuration.HoldDist.Value, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Collideable))
+                    local pos = PortalService.RaycastThroughPortalLegacy(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Collideable))
                     pos -= camera.CFrame.LookVector * VectorUtils.average(shared.PlayerState.HoldingObject.Size) / 2
                 
                     rotationOffset -= script.Parent.Parent.Portal.HasGun.Value and math.pi*0.5*dTime or rotationOffset

@@ -97,7 +97,7 @@ function Camera.setPlayerLocalTransparency(transparency: number)
 	end
 end
 
-function Camera.setCameraRotation(newRotation, rotationInDegrees: boolean)
+function Camera.setCameraRotation(newRotation, rotationInDegrees: boolean?)
 	local rotationType = typeof(newRotation)
 	if rotationType == "Vector2" then
 		rotation = newRotation

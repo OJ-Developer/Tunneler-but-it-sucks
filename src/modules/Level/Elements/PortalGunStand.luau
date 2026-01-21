@@ -11,7 +11,7 @@ function module.new(portalGunStand)
 
 	local t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitbox, RaycastUtils.overlapParams("player"))
+			local partsInHitbox = workspace:GetPartsInPart(hitbox, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.Player))
 
 			if #partsInHitbox > 0 then
 				shared.PlayerState.HasGun.Value = true

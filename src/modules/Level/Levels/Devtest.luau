@@ -1,17 +1,19 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local AudioService = require(ReplicatedStorage.Modules.Services.AudioService)
+
 local module = {}
 
 function module.Start()
 	
 	-- SETP
-	local rs = game:GetService("ReplicatedStorage")
-	local events = rs:WaitForChild("Events")
+
 
 
 
 	-- MUSIC
 
-	local stopSong = events:WaitForChild("Audio"):WaitForChild("StopSong")
-	stopSong:Fire()
+	AudioService.StopSongs()
 end
 
 function module.Cleanup()

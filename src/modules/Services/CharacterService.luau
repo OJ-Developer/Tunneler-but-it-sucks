@@ -25,6 +25,8 @@ local crouchHipHeight = normalHipHeight - crouchDist
 local CharacterService = {}
 
 function CharacterService.Init()
+    head.CanCollide = true
+
     kilometers = ReplicatedStorage.Other.Characters.Kilometers:Clone()
     kilometers.Parent = workspace
     kilometers.LocalTransparencyModifier = 1
@@ -43,7 +45,7 @@ function CharacterService.Start()
         if inputState then
             crouching = true
         else
-            repeat task.wait() until workspace:Blockcast(CFrame.new(char.HumanoidRootPart.Position), char.HumanoidRootPart.Size, Vector3.new(0,crouchDist,0), RaycastUtils.raycastParams("map")) == nil
+            repeat task.wait() until workspace:Blockcast(CFrame.new(char.HumanoidRootPart.Position), char.HumanoidRootPart.Size, Vector3.new(0,crouchDist,0), RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Building)) == nil
             crouching = false
         end
         
