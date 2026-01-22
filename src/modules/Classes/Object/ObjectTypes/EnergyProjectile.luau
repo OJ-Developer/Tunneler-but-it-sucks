@@ -64,7 +64,6 @@ function energyProjectile.new(projectile, startDir)
 end
 
 function energyProjectile:Cleanup()
-	print("cleaning up energy projectile")
 	if self.renderStepConnection then
 		self.renderStepConnection:Disconnect()
 	end

@@ -18,7 +18,7 @@ function module.new(sender)
 
 	local thread
 	local mainConnection = activator.Changed:Connect(function(val)
-		if val and (not (projectile.Instance and projectile.Instance.Parent)) and (not finished) then
+		if val and (not (projectile and projectile.Instance and projectile.Instance.Parent)) and (not finished) then
 			thread = task.spawn(function()
 				TweenService:Create(sender, TweenInfo.new(2, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {Rotation = Vector3.new(sender.Rotation.X, sender.Rotation.Y, 1800)}):Play()
 				task.wait(2)

@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
-local Workspace = game:GetService("Workspace")
 
 local Axis = require(script.Parent.Axis)
 local Event = require(ReplicatedStorage.Modules.Classes.Event)
@@ -76,15 +75,6 @@ function PortalService.Init()
     blueViewport.Parent.Adornee = bluePortal.Portal
     redViewport.Parent.Adornee = redPortal.Portal
 
-    local folder = Instance.new("Folder", blueViewport)
-    folder.Name = "Static"
-    folder = Instance.new("Folder", blueViewport)
-    folder.Name = "NonStatic"
-    folder = Instance.new("Folder", redViewport)
-    folder.Name = "Static"
-    folder = Instance.new("Folder", redViewport)
-    folder.Name = "NonStatic"
-
     shared.PlayerState.GunChanged = Event.new()
 end
 
@@ -129,22 +119,26 @@ function PortalService.Start()
                 local mainViewport = renderBluePortal and blueViewport or redViewport
                 local mainCamera = renderBluePortal and blueViewportCamera or redViewportCamera
 
-                mainViewport.NonStatic:ClearAllChildren()
-
-                local vpfMask = otherPortal.Parent.ViewportFrameMask:Clone()
-                vpfMask.Parent = mainViewport.NonStatic
-                vpfMask.Transparency = 0
-
                 if bluePortal.OnPart.Value and redPortal.OnPart.Value then
+                    mainViewport.Visible = true
+
+                    mainViewport:ClearAllChildren()
+
+                    local vpfMask = otherPortal.Parent.ViewportFrameMask:Clone()
+                    vpfMask.Parent = mainViewport
+                    vpfMask.Transparency = 0
+
                     mainCamera.CFrame = mainPortal.CFrame
 
-                    local partsInVisibilityHitbox = workspace:GetPartsInPart(mainPortal.Parent.VisibilityHitbox, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.NonStatic))
+                    local partsInVisibilityHitbox = workspace:GetPartsInPart(otherPortal.Parent.VisibilityHitbox)
                     for _, part in partsInVisibilityHitbox do
-                        part:Clone().Parent = mainViewport.NonStatic
+                        part:Clone().Parent = mainViewport
                     end
                 else
-                    mainViewport.BackgroundColor3 = renderBluePortal and Color3.new(0, 0, 1) or Color3.fromRGB(1, 0.333333, 0)
+                    mainViewport.Visible = false
                 end
+
+                renderBluePortal = not renderBluePortal
             end
 
 
@@ -335,17 +329,6 @@ function PortalService.Start()
         end
 
         teleportationThread = task.spawn(thing)
-        
-        -- update map for portal rendering
-        if shared.Settings.PortalRendering then
-            blueViewport.Static:ClearAllChildren()
-            redViewport.Static:ClearAllChildren()
-            for _, part in TableUtils.merge(workspace.Map.Building:GetDescendants(), Workspace.Map.AxisPaths:GetDescendants(), Workspace.Map.Other:GetDescendants()) do
-                if part:IsA("BasePart") and not part:IsA("Terrain") then
-                    part:Clone().Parent = redViewport.Static
-                end
-            end
-        end
     end)
 end
 
