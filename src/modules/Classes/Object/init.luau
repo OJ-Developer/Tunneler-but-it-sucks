@@ -24,7 +24,7 @@ end
 function module.giveFunctionality(object: Part, ...)
 	local newObject = setmetatable({Instance = object, Fizzled = false, OnFizzle = Event.new()}, module)
 
-	local objectModule = script:FindFirstChild(object.Name)
+	local objectModule = script.ObjectTypes:FindFirstChild(object.Name)
 	if objectModule and objectModule:IsA("ModuleScript") then
 		local objectTable = require(objectModule).new(object, ...)
 		linkedData.Set(object, "SpecificObjectClass", objectTable)

@@ -69,11 +69,11 @@ function Level.LoadLevel(levelName: string)
 			end
 		end
 		
-		local wasLevelMenu = workspace.Map.LevelSettings.MenuLevel.Value
+		local wasMenuLevel = workspace.Map.LevelSettings.MenuLevel.Value
 		
 		rootPart.Anchored = true
 	
-		Level.LevelLoadStarted:Fire(levelName, wasLevelMenu)
+		Level.LevelLoadStarted:Fire(levelName, wasMenuLevel)
 
 		level = level:Clone()
 		level.Parent = workspace
@@ -84,7 +84,7 @@ function Level.LoadLevel(levelName: string)
 
         ContentProvider:PreloadAsync({level})
 
-		Level.LevelLoaded:Fire(levelName, wasLevelMenu)
+		Level.LevelLoaded:Fire(levelName, wasMenuLevel)
 		
 		local levelSettings = workspace.Map.LevelSettings
 		updateCharAnchored:FireServer(levelSettings.MenuLevel.Value)
@@ -108,7 +108,7 @@ function Level.LoadLevel(levelName: string)
 			Camera.Start()			
 		end
 		for _, element in pairs(level.Elements:GetChildren()) do
-			local module = ReplicatedStorage.Modules.Level.Elements:FindFirstChild(element.Name)
+			local module = script.Elements:FindFirstChild(element.Name)
 			if module and module:IsA("ModuleScript") then
 				local requiredElement = require(module).new(element)
 				if not requiredElement then continue end
@@ -122,7 +122,7 @@ function Level.LoadLevel(levelName: string)
 			Object.giveFunctionality(object)
 		end
 		
-		local levelModuleScript = ReplicatedStorage.Modules.Level.Levels:FindFirstChild(levelName)
+		local levelModuleScript = script.Levels:FindFirstChild(levelName)
 		if levelModuleScript then
 			levelModule = require(levelModuleScript)
 			levelThread = task.defer(levelModule.Start, player)
