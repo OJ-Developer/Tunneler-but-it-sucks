@@ -3,7 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
-local RaycastUtils = require(ReplicatedStorage.Modules.Utils.RaycastUtils)
+local World = require(ReplicatedStorage.Modules.Libraries.World)
 
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
@@ -45,7 +45,7 @@ function CharacterService.Start()
         if inputState then
             crouching = true
         else
-            repeat task.wait() until workspace:Blockcast(CFrame.new(char.HumanoidRootPart.Position), char.HumanoidRootPart.Size, Vector3.new(0,crouchDist,0), RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Building)) == nil
+            repeat task.wait() until workspace:Blockcast(CFrame.new(char.HumanoidRootPart.Position), char.HumanoidRootPart.Size, Vector3.new(0,crouchDist,0), World.raycastParams(World.FdiPresets.Building)) == nil
             crouching = false
         end
         

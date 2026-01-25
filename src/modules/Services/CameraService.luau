@@ -10,7 +10,7 @@ local runService = game:GetService("RunService")
 
 -- modules
 
-local VectorUtils = require(ReplicatedStorage.Modules.Utils.VectorUtils)
+local Utils = require(ReplicatedStorage.Modules.Libraries.Utils)
 
 
 -- references
@@ -109,13 +109,13 @@ function Camera.setCameraRotation(newRotation, rotationInDegrees: boolean?)
 	
 	
 	if rotationInDegrees then
-		rotation = VectorUtils.rad(rotation)
+		rotation = Utils.rad(rotation)
 	end
 end
 
 function Camera.getCameraRotation(inDegrees: boolean): Vector2
 	if inDegrees then
-		return VectorUtils.deg(rotation)
+		return Utils.deg(rotation)
 	else
 		return rotation
 	end

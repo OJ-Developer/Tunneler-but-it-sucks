@@ -1,8 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local runService = game:GetService("RunService")
 
-local InstanceUtils = require(ReplicatedStorage.Modules.Utils.InstanceUtils)
-local VectorUtils = require(ReplicatedStorage.Modules.Utils.VectorUtils)
+local Utils = require(ReplicatedStorage.Modules.Libraries.Utils)
 
 local energyProjectile = {}
 energyProjectile.__index = energyProjectile
@@ -41,10 +40,10 @@ function energyProjectile.new(projectile, startDir)
 				elseif part:GetAttribute("Bounce") and part.Parent == workspace.Map.Building then
 					local rParams = RaycastParams.new()
 					rParams.FilterType = Enum.RaycastFilterType.Include
-					rParams.FilterDescendantsInstances = InstanceUtils.getInstancesWithAttribute(workspace.Map.Building:GetDescendants(), "Bounce", true)
+					rParams.FilterDescendantsInstances = Utils.getInstancesWithAttribute(workspace.Map.Building:GetDescendants(), "Bounce", true)
 					local raycast = workspace:Raycast(projectile.Position, projectile.AssemblyLinearVelocity, rParams)
 					if raycast then
-						projectile.AssemblyLinearVelocity = VectorUtils.mirrorVector(projectile.AssemblyLinearVelocity, raycast.Normal)
+						projectile.AssemblyLinearVelocity = Utils.mirrorVector(projectile.AssemblyLinearVelocity, raycast.Normal)
 					end
 				else
 					if projectile:GetAttribute("InBluePortal") or projectile:GetAttribute("InRedPortal") then break end

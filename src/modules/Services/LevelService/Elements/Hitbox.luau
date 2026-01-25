@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local RaycastUtils = require(ReplicatedStorage.Modules.Utils.RaycastUtils)
+local World = require(ReplicatedStorage.Modules.Libraries.World)
 
 local module = {}
 module.__index = module
@@ -12,7 +12,7 @@ function module.new(hitboxPart)
 	
 	local t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitboxPart, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.Player))
+			local partsInHitbox = workspace:GetPartsInPart(hitboxPart, World.overlapParams(World.FdiPresets.Player))
 
 			activated.Value = #partsInHitbox > 0
 

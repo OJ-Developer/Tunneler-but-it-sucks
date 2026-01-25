@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local RaycastUtils = require(ReplicatedStorage.Modules.Utils.RaycastUtils)
+local World = require(ReplicatedStorage.Modules.Libraries.World)
 
 local module = {}
 module.__index = module
@@ -11,7 +11,7 @@ function module.new(portalGunStand)
 
 	local t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitbox, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.Player))
+			local partsInHitbox = workspace:GetPartsInPart(hitbox, World.overlapParams(World.FdiPresets.Player))
 
 			if #partsInHitbox > 0 then
 				shared.PlayerState.HasGun = true

@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local tweenService = game:GetService("TweenService")
 
-local RaycastUtils = require(ReplicatedStorage.Modules.Utils.RaycastUtils)
+local World = require(ReplicatedStorage.Modules.Libraries.World)
 
 local module = {}
 module.__index = module
@@ -18,7 +18,7 @@ function module.new(floorButton)
 
 	local t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitbox, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.FloorButtonActivators))
+			local partsInHitbox = workspace:GetPartsInPart(hitbox, World.overlapParams(World.FdiPresets.FloorButtonActivators))
 			local newActivated = false
 			if #partsInHitbox > 0 then
 				newActivated = true

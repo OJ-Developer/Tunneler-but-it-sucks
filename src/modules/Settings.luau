@@ -4,5 +4,6 @@ return {
     ObjectHoldDist = 9,
     ObjectMaxGrabDist = 9,
 
-    MakeTheModuleLoaderSHUTUP = not game:GetService("RunService"):IsStudio()
+    MakeTheModuleLoaderSHUTUP = not game:GetService("RunService"):IsStudio(),
+    SafeLoad = false
 }

@@ -5,12 +5,10 @@ local TweenService = game:GetService("TweenService")
 
 local Axis = require(script.Parent.Axis)
 local Event = require(ReplicatedStorage.Modules.Classes.Event)
+local Utils = require(ReplicatedStorage.Modules.Libraries.Utils)
+local World = require(ReplicatedStorage.Modules.Libraries.World)
 local CameraService = require(script.Parent.CameraService)
 local LevelService = require(script.Parent.LevelService)
-local InstanceUtils = require(ReplicatedStorage.Modules.Utils.InstanceUtils)
-local RaycastUtils = require(ReplicatedStorage.Modules.Utils.RaycastUtils)
-local TableUtils = require(ReplicatedStorage.Modules.Utils.TableUtils)
-local VectorUtils = require(ReplicatedStorage.Modules.Utils.VectorUtils)
 
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
@@ -170,7 +168,7 @@ function PortalService.Start()
                 
                 
                 -- get parts in portal zones
-                local params = RaycastUtils.overlapParams(RaycastUtils.FdiPresets.Objects)
+                local params = World.overlapParams(World.FdiPresets.Objects)
                 params.FilterDescendantsInstances = {params.FilterDescendantsInstances, char}
                 
                 inBluePortal = workspace:GetPartsInPart(bluePortal.PortalZone, params)
@@ -180,8 +178,8 @@ function PortalService.Start()
                 -- is player in portal zone
                 prevPlayerInPortal = playerInBluePortal or playerInRedPortal
                 
-                playerInBluePortal = TableUtils.contains(inBluePortal, InstanceUtils.getInstancesOfType(char:GetChildren(), "BasePart"))
-                playerInRedPortal = TableUtils.contains(inRedPortal, InstanceUtils.getInstancesOfType(char:GetChildren(), "BasePart"))
+                playerInBluePortal = Utils.contains(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
+                playerInRedPortal = Utils.contains(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
                 
                 objectsInBluePortal = {}
                 for _, part in pairs(inBluePortal) do
@@ -220,8 +218,8 @@ function PortalService.Start()
                 -- update collision groups of objects in portals
                 
                 local function updateObjectsCollisionGroupsForPortal(inPortal: {Part}, prevInPortal: {Part}, portalColour: string)
-                    for _, part in pairs(TableUtils.merge(inPortal, prevInPortal)) do
-                        part:SetAttribute(`In{portalColour}Portal`, TableUtils.contains(inPortal, part))
+                    for _, part in pairs(Utils.merge(inPortal, prevInPortal)) do
+                        part:SetAttribute(`In{portalColour}Portal`, Utils.contains(inPortal, part))
                         
                         local isInBluePortal = part:GetAttribute("InBluePortal")
                         local isInRedPortal = part:GetAttribute("InRedPortal")
@@ -265,8 +263,8 @@ function PortalService.Start()
                     local behindPortal = entranceCframe.LookVector:Dot(pos-entrancePortal.Position) < 0
                     
                     if behindPortal then
-                        local projectedPos = VectorUtils.projectThroughPortal(pos, entranceCframe, exitCframe)
-                        local projectedVel = VectorUtils.projectThroughPortal(vel + pos, entranceCframe, exitCframe) - projectedPos
+                        local projectedPos = Utils.projectThroughPortal(pos, entranceCframe, exitCframe)
+                        local projectedVel = Utils.projectThroughPortal(vel + pos, entranceCframe, exitCframe) - projectedPos
                         if isPlayer then
                             rootPart.CFrame = CFrame.new(projectedPos - Vector3.new(0, headHeight, 0))
                             rootPart.AssemblyLinearVelocity = projectedVel
@@ -279,7 +277,7 @@ function PortalService.Start()
                         object.CollisionGroup = newCollisionGroup
 
                         if isPlayer then
-                            local projectedCam = VectorUtils.projectRotationThroughPortal(camera.CFrame.Rotation, entranceCframe, exitCframe).Rotation
+                            local projectedCam = Utils.projectRotationThroughPortal(camera.CFrame.Rotation, entranceCframe, exitCframe).Rotation
                             CameraService.setCameraRotation(projectedCam)
                             
                             for _, part in pairs(object.Parent:GetChildren()) do
@@ -342,12 +340,12 @@ local gunSpinTime = 0.3
 local canShootAxis = true
 
 local function getPartsPortalIsOn(portal: Portal)
-	return workspace:GetPartsInPart(portal.BehindPortalHitbox, RaycastUtils.overlapParams(RaycastUtils.FdiPresets.Building))
+	return workspace:GetPartsInPart(portal.BehindPortalHitbox, World.overlapParams(World.FdiPresets.Building))
 end
 
 local function collisionGroupStuff(portal: Model, partsPortalIsOn: {Part}, prevPartsPortalIsOn: {Part}, portalColour: string)
-	for _, part: Part in pairs(TableUtils.merge(partsPortalIsOn, prevPartsPortalIsOn)) do
-		part:SetAttribute(`Behind{portalColour}Portal`, TableUtils.contains(partsPortalIsOn, part))
+	for _, part: Part in pairs(Utils.merge(partsPortalIsOn, prevPartsPortalIsOn)) do
+		part:SetAttribute(`Behind{portalColour}Portal`, Utils.contains(partsPortalIsOn, part))
 		
 		local behindBluePortal = part:GetAttribute("BehindBluePortal")
 		local behindRedPortal = part:GetAttribute("BehindRedPortal")
@@ -401,7 +399,7 @@ local function firePortal(portal: Portal, redPortal: boolean)
 	local tween = TweenService:Create(portalGunOffset, TweenInfo.new(gunSpinTime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Value = portalGunOffset.Value * CFrame.Angles(0, 0, redPortal and -gunSpinAmount or gunSpinAmount)})
 	tween:Play()
 	
-	local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.PortalCollision))
+	local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, World.raycastParams(World.FdiPresets.PortalCollision))
 	if raycast then
 		if raycast.Instance:IsA("BasePart") and raycast.Instance:GetAttribute("CanHavePortals") and not shared.PlayerState.HoldingObject then
 			PortalService.PlacePortal(portal, redPortal, raycast.Instance, false, raycast.Position, raycast.Normal)
@@ -445,7 +443,7 @@ function PortalService.RaycastThroughPortalLegacy(origin: Vector3, direction: Ve
 		local entryPortal: Part = raycast.Instance
 		local exitPortal: Part = (entryPortal == bluePortal.Portal) and redPortal.Portal or bluePortal.Portal
 		
-		return VectorUtils.projectThroughPortal(direction + origin, entryPortal.CFrame, exitPortal.CFrame)
+		return Utils.projectThroughPortal(direction + origin, entryPortal.CFrame, exitPortal.CFrame)
 		
 		--[[local offset = entryPortal.CFrame:PointToObjectSpace(origin + direction)
 		return exitPortal.CFrame:PointToWorldSpace(Vector3.new(-offset.X, offset.Y, -offset.Z))]]
@@ -468,13 +466,13 @@ function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3,
 		local entryPortal = raycast.Instance
 		local exitPortal = (entryPortal == bluePortal.Portal) and redPortal.Portal or bluePortal.Portal
 		
-		local projectedTarget = VectorUtils.projectThroughPortal(origin+direction, entryPortal.CFrame, exitPortal.CFrame)
+		local projectedTarget = Utils.projectThroughPortal(origin+direction, entryPortal.CFrame, exitPortal.CFrame)
 		
 		if depth and depth >= maxBounce then
 			return true, {Position = projectedTarget, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal}
 		end
 		
-		local projectedOrigin = VectorUtils.projectThroughPortal(raycast.Position, entryPortal.CFrame, exitPortal.CFrame)
+		local projectedOrigin = Utils.projectThroughPortal(raycast.Position, entryPortal.CFrame, exitPortal.CFrame)
 		local difference = projectedTarget - projectedOrigin
 		
 		return PortalService.RaycastThroughPortal(projectedOrigin, difference, raycastParams, depth and depth+1 or 2)

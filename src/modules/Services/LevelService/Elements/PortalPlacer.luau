@@ -1,5 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local PortalService = require(ReplicatedStorage.Modules.Services.PortalService)
+
 local module = {}
 module.__index = module
 

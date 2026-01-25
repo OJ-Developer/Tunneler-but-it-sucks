@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+
 local Object = require(ReplicatedStorage.Modules.Classes.Object)
 
 local module = {}

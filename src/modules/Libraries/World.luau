@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
-local InstanceUtils = require(script.Parent.InstanceUtils)
+
+local Utils = require(script.Parent.Utils)
 
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
@@ -7,11 +8,11 @@ local char = player.Character or player.CharacterAdded:Wait()
 local module = {}
 
 function module.getMapCollideableParts()
-	return InstanceUtils.getInstancesWithProperty(workspace.Map:GetDescendants(), "BasePart", "CanCollide", true)
+	return Utils.getInstancesWithProperty(workspace.Map:GetDescendants(), "BasePart", "CanCollide", true)
 end
 
 function module.getPortalableParts()
-	return InstanceUtils.getInstancesWithAttribute(workspace.Map.Building:GetDescendants(), "CanHavePortals", true)
+	return Utils.getInstancesWithAttribute(workspace.Map.Building:GetDescendants(), "CanHavePortals", true)
 end
 
 function module.getPortalRaycastExcludeParts()
@@ -37,7 +38,7 @@ module.FdiPresets = {
 	end},
 
 	FloorButtonActivators = {getFdiTable = function()
-		return {InstanceUtils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
+		return {Utils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
 	end},
 
 	Objects = {getFdiTable = function()

@@ -50,6 +50,7 @@ end
 function Level.LoadLevel(levelName: string)
     local level = ReplicatedStorage.Levels:FindFirstChild(levelName)
 	if level then
+		-- cleanup previous level
 		for _, element in workspace.Map.Elements:GetChildren() do
 			if LinkedData.Get(element) and LinkedData.Get(element, "ElementClass").Cleanup then
 				LinkedData.Get(element, "ElementClass"):Cleanup()
@@ -69,6 +70,7 @@ function Level.LoadLevel(levelName: string)
 			end
 		end
 		
+		-- load new level
 		local wasMenuLevel = workspace.Map.LevelSettings.MenuLevel.Value
 		
 		rootPart.Anchored = true
@@ -82,10 +84,17 @@ function Level.LoadLevel(levelName: string)
 		shared.GameState.CurrentLevel = levelName
 		oldMap:Destroy()
 
+		task.spawn(function()
+			if not level:WaitForChild("LevelSettings"):WaitForChild("MenuLevel").Value then
+				workspace.CurrentCamera.CFrame = workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0)
+			end
+		end)
+
         ContentProvider:PreloadAsync({level})
 
 		Level.LevelLoaded:Fire(levelName, wasMenuLevel)
 		
+		-- do stuff according to the new LevelSettings
 		local levelSettings = workspace.Map.LevelSettings
 		updateCharAnchored:FireServer(levelSettings.MenuLevel.Value)
 		rootPart.Anchored = levelSettings.MenuLevel.Value
@@ -102,11 +111,11 @@ function Level.LoadLevel(levelName: string)
 			Camera.Stop()
 		else
 			--enableCrosshairEvent:Fire()
-			local newPos = workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0)
-			char:PivotTo(workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0))
-			workspace.CurrentCamera.CFrame = newPos
-			Camera.Start()			
+			char:PivotTo(workspace.Map.SpawnLocation.CFrame + Vector3.new(0, 3, 0))
+			Camera.Start()
 		end
+
+		-- give functionality to things in the new level
 		for _, element in pairs(level.Elements:GetChildren()) do
 			local module = script.Elements:FindFirstChild(element.Name)
 			if module and module:IsA("ModuleScript") then

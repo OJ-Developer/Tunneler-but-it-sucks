@@ -13,6 +13,7 @@ function module.Start()
 
 	local menuUI = player.PlayerGui.MainMenu
 	menuUI.Enabled = true
+	menuUI.MainMenu.Visible = true
 
 	local camera = workspace.CurrentCamera
 	camera.CFrame = workspace.Map.Other.Camera.CFrame
