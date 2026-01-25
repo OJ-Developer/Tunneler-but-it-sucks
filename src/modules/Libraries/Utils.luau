@@ -42,6 +42,14 @@ function Utils.getInstancesOfType(haystack: {Instance}, desiredType: string)
 	return list
 end
 
+function Utils.getChildProperties(parentInstance: Instance, propertyName: string): {string}
+	local returnVal = {}
+	for _, child in parentInstance:GetChildren() do
+		table.insert(returnVal, child[propertyName])
+	end
+	return returnVal
+end
+
 
 
 -- VECTOR UTILS
@@ -132,30 +140,6 @@ end
 
 
 -- TABLE UTILS
-
-function Utils.contains(haystack: {any}, needle: any | {any})
-	for _, v in pairs(haystack) do
-		if type(needle) == "table" then
-			if Utils.contains(needle, v) then
-				return true
-			end
-		else
-			if v == needle then
-				return true
-			end
-		end
-	end
-	return false
-end
-
-function Utils.hasIndex(haystack: {any}, needle: any)
-	for i in pairs(haystack) do
-		if i == needle then
-			return true
-		end
-	end
-	return false
-end
 
 function Utils.merge(...: {any})
 	local newTable = {}

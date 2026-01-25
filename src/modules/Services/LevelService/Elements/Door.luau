@@ -45,23 +45,31 @@ function module.new(door)
 		tweenService:Create(thing, TweenInfo.new(doorOpenTime/2), {Rotation = thingDownPos.WorldRotation}):Play()
 	end
 
+	local thread
+
 	if startOpen.Value then
-		task.spawn(function()
-			open()
-		end)
+		thread = task.spawn(open)
 	end
 
 	table.insert(connections, activator.Value.Activated.Changed:Connect(function(activated)
+		if thread then
+			task.cancel(thread)
+		end
+		
 		if activated ~= startOpen.Value then
-			open()
+			thread = task.spawn(open)
 		else
-			close()
+			thread = task.spawn(close)
 		end
 	end))
 	
 	table.insert(connections, deactivator.Value.Activated.Changed:Once(function(activated)
 		if activated then
-			close()
+			if thread then
+				task.cancel(thread)
+			end
+
+			thread = task.spawn(close)
 		end
 	end))
 	

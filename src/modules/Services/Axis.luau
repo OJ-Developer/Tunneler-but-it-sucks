@@ -8,7 +8,7 @@ local AudioService = require(script.Parent.AudioService)
 local AxisTextures = require(ReplicatedStorage.Modules.Data.AxisTextures)
 local Voicelines = require(ReplicatedStorage.Modules.Data.Voicelines).Axis
 
-local axis = workspace:WaitForChild("Axis")
+local axis
 
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
@@ -16,7 +16,10 @@ local head = char:WaitForChild("Head")
 
 local playingSound: Sound
 
---Voicline stuff
+function module.Init()
+	axis = ReplicatedStorage.Other.Axis:Clone()
+	axis.Parent = workspace
+end
 
 function module.Start()
 	task.spawn(function()
@@ -25,6 +28,8 @@ function module.Start()
 		end
 	end)
 end
+
+--Voicline stuff
 
 function module.SetEmotion(emotion, speaking)
 	if speaking == 1 then

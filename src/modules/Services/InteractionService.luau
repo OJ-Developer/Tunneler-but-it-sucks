@@ -5,7 +5,7 @@ local RunService = game:GetService("RunService")
 local Object = require(ReplicatedStorage.Modules.Classes.Object)
 local Utils = require(ReplicatedStorage.Modules.Libraries.Utils)
 local World = require(ReplicatedStorage.Modules.Libraries.World)
-local Settings = require(ReplicatedStorage.Modules.Settings)
+local Settings = require(ReplicatedStorage.Configs.MainConfig)
 local LinkedData = require(script.Parent.LinkedData)
 local PortalService = require(script.Parent.PortalService)
 

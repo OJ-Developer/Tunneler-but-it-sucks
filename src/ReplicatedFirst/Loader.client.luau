@@ -130,7 +130,7 @@ end)
 
 -- MODULE LOADER
 
-local Settings = require(ReplicatedStorage.Modules.Settings)
+local Settings = require(ReplicatedStorage.Configs.MainConfig)
 
 shared.PlayerState = {}
 shared.GameState = {}

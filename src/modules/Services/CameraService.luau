@@ -66,7 +66,7 @@ function Camera.Init()
 	initialized = true
 end
 
-function Camera.Start()
+function Camera.Enable()
 	if not initialized then
 		repeat task.wait() until initialized
 	end
@@ -78,7 +78,7 @@ function Camera.Start()
 	runService:BindToRenderStep("UpdateRootPartOrientation", 3002, updateRootPartOrientation)
 end
 
-function Camera.Stop()
+function Camera.Disable()
 	if not initialized then
 		repeat task.wait() until initialized
 		task.wait()

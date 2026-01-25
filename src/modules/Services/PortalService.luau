@@ -3,8 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
+local ScriptSignal = require(ReplicatedStorage.Modules.Classes.ScriptSignal)
 local Axis = require(script.Parent.Axis)
-local Event = require(ReplicatedStorage.Modules.Classes.Event)
 local Utils = require(ReplicatedStorage.Modules.Libraries.Utils)
 local World = require(ReplicatedStorage.Modules.Libraries.World)
 local CameraService = require(script.Parent.CameraService)
@@ -25,7 +25,7 @@ local blueViewportCamera: Camera
 local redViewportCamera: Camera
 
 local PortalService = {
-    PortalPlaced = Event.new()
+    PortalPlaced = ScriptSignal.new()
 }
 
 local portalGunOffset: CFrameValue
@@ -73,7 +73,7 @@ function PortalService.Init()
     blueViewport.Parent.Adornee = bluePortal.Portal
     redViewport.Parent.Adornee = redPortal.Portal
 
-    shared.PlayerState.GunChanged = Event.new()
+    shared.PlayerState.GunChanged = ScriptSignal.new()
 end
 
 function PortalService.Start()
@@ -178,8 +178,8 @@ function PortalService.Start()
                 -- is player in portal zone
                 prevPlayerInPortal = playerInBluePortal or playerInRedPortal
                 
-                playerInBluePortal = Utils.contains(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
-                playerInRedPortal = Utils.contains(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
+                playerInBluePortal = table.find(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart")) ~= nil
+                playerInRedPortal = table.find(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart")) ~= nil
                 
                 objectsInBluePortal = {}
                 for _, part in pairs(inBluePortal) do
@@ -219,7 +219,7 @@ function PortalService.Start()
                 
                 local function updateObjectsCollisionGroupsForPortal(inPortal: {Part}, prevInPortal: {Part}, portalColour: string)
                     for _, part in pairs(Utils.merge(inPortal, prevInPortal)) do
-                        part:SetAttribute(`In{portalColour}Portal`, Utils.contains(inPortal, part))
+                        part:SetAttribute(`In{portalColour}Portal`, table.find(inPortal, part) ~= nil)
                         
                         local isInBluePortal = part:GetAttribute("InBluePortal")
                         local isInRedPortal = part:GetAttribute("InRedPortal")
@@ -345,7 +345,7 @@ end
 
 local function collisionGroupStuff(portal: Model, partsPortalIsOn: {Part}, prevPartsPortalIsOn: {Part}, portalColour: string)
 	for _, part: Part in pairs(Utils.merge(partsPortalIsOn, prevPartsPortalIsOn)) do
-		part:SetAttribute(`Behind{portalColour}Portal`, Utils.contains(partsPortalIsOn, part))
+		part:SetAttribute(`Behind{portalColour}Portal`, table.find(partsPortalIsOn, part) ~= nil)
 		
 		local behindBluePortal = part:GetAttribute("BehindBluePortal")
 		local behindRedPortal = part:GetAttribute("BehindRedPortal")

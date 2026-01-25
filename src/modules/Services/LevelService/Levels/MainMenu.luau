@@ -3,15 +3,17 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)
 local AudioService = require(ReplicatedStorage.Modules.Services.AudioService)
 
+local player = game.Players.LocalPlayer
+local char = player.Character
+local rootPart = char:WaitForChild("HumanoidRootPart")
+local menuUI = player.PlayerGui.MainMenu
+
 local module = {}
 
 function module.Start()
-	local player = game.Players.LocalPlayer
-	local char = player.Character
-	local rootPart = char:WaitForChild("HumanoidRootPart")
+	
 	rootPart.Anchored = true
 
-	local menuUI = player.PlayerGui.MainMenu
 	menuUI.Enabled = true
 	menuUI.MainMenu.Visible = true
 
@@ -22,7 +24,7 @@ function module.Start()
 end
 
 function module.Cleanup()
-	
+	menuUI.Enabled = false
 end
 
 return module

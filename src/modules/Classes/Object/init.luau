@@ -4,13 +4,13 @@ module.__index = module
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local objects = ReplicatedStorage:WaitForChild("Objects")
 
-local Event = require(script.Parent.Event)
 local linkedData = require(script.Parent.Parent.Services.LinkedData)
+local ScriptSignal = require(script.Parent.ScriptSignal)
 
 export type ObjectType = typeof(module) & {
 	Instance: Part,
 	Fizzled: boolean,
-	OnFizzle: typeof(Event)
+	OnFizzle: typeof(ScriptSignal)
 }
 
 function module.new(objectName: string, cframe: CFrame, ...)
@@ -22,7 +22,7 @@ function module.new(objectName: string, cframe: CFrame, ...)
 end
 
 function module.giveFunctionality(object: Part, ...)
-	local newObject = setmetatable({Instance = object, Fizzled = false, OnFizzle = Event.new()}, module)
+	local newObject = setmetatable({Instance = object, Fizzled = false, OnFizzle = ScriptSignal.new()}, module)
 
 	local objectModule = script.ObjectTypes:FindFirstChild(object.Name)
 	if objectModule and objectModule:IsA("ModuleScript") then

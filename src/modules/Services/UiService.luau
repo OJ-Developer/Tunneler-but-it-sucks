@@ -3,7 +3,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
-local CameraService = require(script.Parent.CameraService)
 local LevelService = require(script.Parent.LevelService)
 local LinkedData = require(script.Parent.LinkedData)
 local UiButton = require(ReplicatedStorage.Modules.Classes.UiButton)
@@ -50,7 +49,6 @@ function UiService.Init()
             local loadLevelButton = UiButton.new(newLevelOption.Play)
             loadLevelButton.OnClick:Connect(function()
                 LevelService.LoadLevel(level.Name)
-                CameraService.Stop()
                 playMenu.Visible = false
                 playMenu.Parent.Enabled = false
             end)
@@ -77,7 +75,7 @@ function UiService.Init()
     ReplicatedStorage.Inputs.Pause.Pressed:Connect(togglePauseMenu)
     LinkedData.Get(pauseMenu.MainMenu.Resume, "UiButtonClass").OnClick:Connect(togglePauseMenu)
     LinkedData.Get(pauseMenu.MainMenu.Quit, "UiButtonClass").OnClick:Connect(function()
-        LevelService.LevelLoaded("MainMenu")
+        LevelService.LoadLevel("MainMenu")
     end)
 
     -- settings menu stuff

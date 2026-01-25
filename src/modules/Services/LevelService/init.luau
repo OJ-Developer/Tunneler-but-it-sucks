@@ -5,16 +5,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Camera = require(script.Parent.CameraService)
-local Event = require(ReplicatedStorage.Modules.Classes.Event)
 local Object = require(ReplicatedStorage.Modules.Classes.Object)
+local ScriptSignal = require(ReplicatedStorage.Modules.Classes.ScriptSignal)
 local LinkedData = require(script.Parent.LinkedData)
-local Settings = require(ReplicatedStorage.Modules.Settings)
+local Settings = require(ReplicatedStorage.Configs.MainConfig)
 
 local updateCharAnchored = ReplicatedStorage.Events.UpdateCharAnchored
 
 local Level = {
-	LevelLoadStarted = Event.new(),
-	LevelLoaded = Event.new(),
+	LevelLoadStarted = ScriptSignal.new(),
+	LevelLoaded = ScriptSignal.new(),
 }
 
 local player = Players.LocalPlayer
@@ -37,12 +37,6 @@ function Level.Start()
 			if v.Position.Y <= -100 then
 				LinkedData.Get(v, "ObjectClass"):Fizzle()
 			end
-		end
-	end)
-
-	player.PlayerGui.test.TextBox.FocusLost:Connect(function(e)
-		if e then
-			Level.LoadLevel(player.PlayerGui.test.TextBox.Text)
 		end
 	end)
 end
@@ -83,19 +77,26 @@ function Level.LoadLevel(levelName: string)
 		level.Name = "Map"
 		shared.GameState.CurrentLevel = levelName
 		oldMap:Destroy()
+		
+		-- do levelsettings stuff
+		local levelSettings = workspace.Map.LevelSettings
+		if levelSettings.MenuLevel.Value then
+			--disableCrosshairEvent:Fire()
+			Camera.Disable()
+		else
+			--enableCrosshairEvent:Fire()
+			local newPos = workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0)
+			char:PivotTo(newPos)
+			workspace.CurrentCamera.CFrame = newPos
+			Camera.Enable()
+		end
 
-		task.spawn(function()
-			if not level:WaitForChild("LevelSettings"):WaitForChild("MenuLevel").Value then
-				workspace.CurrentCamera.CFrame = workspace:WaitForChild("Map"):WaitForChild("SpawnLocation").CFrame + Vector3.new(0, 3, 0)
-			end
-		end)
-
+		-- wait for level to fully load
         ContentProvider:PreloadAsync({level})
 
 		Level.LevelLoaded:Fire(levelName, wasMenuLevel)
 		
-		-- do stuff according to the new LevelSettings
-		local levelSettings = workspace.Map.LevelSettings
+		-- more level settings stuff
 		updateCharAnchored:FireServer(levelSettings.MenuLevel.Value)
 		rootPart.Anchored = levelSettings.MenuLevel.Value
 		if levelSettings.SkyMode.Value == "Day" then
@@ -104,15 +105,6 @@ function Level.LoadLevel(levelName: string)
 		elseif levelSettings.SkyMode.Value == "Night" then
 			Lighting.TimeOfDay = 0
 			Lighting.Brightness = 0
-		end
-		
-		if levelSettings.MenuLevel.Value then
-			--disableCrosshairEvent:Fire()
-			Camera.Stop()
-		else
-			--enableCrosshairEvent:Fire()
-			char:PivotTo(workspace.Map.SpawnLocation.CFrame + Vector3.new(0, 3, 0))
-			Camera.Start()
 		end
 
 		-- give functionality to things in the new level
