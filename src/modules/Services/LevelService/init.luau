@@ -128,9 +128,21 @@ function Level.LoadLevel(levelName: string)
 			levelModule = require(levelModuleScript)
 			levelThread = task.defer(levelModule.Start, player)
 		end
+
+		return true
 	else
 		warn('Unknown level: "'..levelName..'"')
+
+		return false
 	end
+end
+
+function Level.GetLevelNames()
+	local list = {}
+	for _, level in ReplicatedStorage.Levels:GetChildren() do
+		table.insert(list, level.Name)
+	end
+	return list
 end
 
 return Level

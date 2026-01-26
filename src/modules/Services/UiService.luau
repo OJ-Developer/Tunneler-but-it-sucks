@@ -82,7 +82,11 @@ function UiService.Init()
     local settingsMenu = playerGui.Settings
     local settingsMenus = settingsMenu.Settings.SettingsMenus
     LinkedData.Get(settingsMenus.Back, "UiButtonClass").OnClick:Connect(function()
-        (workspace.Map.LevelSettings.MenuLevel.Value and mainMenu or pauseMenu).Enabled = true
+        if workspace.Map.LevelSettings.MenuLevel.Value then
+            mainMenu.MainMenu.Visible = true
+        else
+            pauseMenu.Enabled = true
+        end
     end)
 end
 

@@ -32,38 +32,52 @@ end
 --Voicline stuff
 
 function module.SetEmotion(emotion, speaking)
-	if speaking == 1 then
-		axis.TextureID = AxisTextures[emotion].Speaking1
-	elseif speaking == 2 then
-		axis.TextureID = AxisTextures[emotion].Speaking2
+	if AxisTextures[emotion] then
+		if speaking == 1 then
+			axis.TextureID = AxisTextures[emotion].Speaking1
+		elseif speaking == 2 then
+			axis.TextureID = AxisTextures[emotion].Speaking2
+		else
+			axis.TextureID = AxisTextures[emotion].Normal
+		end
+
+		return true
 	else
-		axis.TextureID = AxisTextures[emotion].Normal
+		warn(`Axis emotion "{emotion}" does not exist`)
+		return false
 	end
 end
 
 function module.PlayVoiceline(voiceline)
-	-- stop other sounds
-	if playingSound and playingSound.Parent then
-		playingSound:Stop()
+	if Voicelines[voiceline] then
+		-- stop other sounds
+		if playingSound and playingSound.Parent then
+			playingSound:Stop()
+		end
+		
+		-- play sound
+		playingSound = AudioService.PlaySoundEffect(Voicelines[voiceline], shared.Settings.MuteAxis and 0 or 2)
+		
+		-- subtitles
+		if shared.Settings.ShowSubtitles and not shared.Settings.MuteAxis then
+			--subtitles.newSubtitle(Voicelines[voiceline].Subtitle, "Axis", Color3.new(0, 0.737255, 0), sound.TimeLength*1.2)
+		end
+		
+		-- update axis textures
+		while playingSound.Playing do
+			module.SetEmotion(Voicelines[voiceline].Emotion, 1)
+			task.wait(0.2)
+			module.SetEmotion(Voicelines[voiceline].Emotion, 2)
+			task.wait(0.2)
+		end
+		
+		module.SetEmotion(Voicelines[voiceline].Emotion, 0)
+
+		return true
+	else
+		warn(`Axis voiceline "{voiceline}" does not exist`)
+		return false
 	end
-	
-	-- play sound
-	playingSound = AudioService.PlaySoundEffect({Id = Voicelines[voiceline].SoundId}, shared.Settings.MuteAxis and 0 or 2)
-	
-	-- subtitles
-	if shared.Settings.ShowSubtitles and not shared.Settings.MuteAxis then
-		--subtitles.newSubtitle(Voicelines[voiceline].Subtitle, "Axis", Color3.new(0, 0.737255, 0), sound.TimeLength*1.2)
-	end
-	
-	-- update axis textures
-	while playingSound.Playing do
-		module.SetEmotion(Voicelines[voiceline].Emotion, 1)
-		task.wait(0.2)
-		module.SetEmotion(Voicelines[voiceline].Emotion, 2)
-		task.wait(0.2)
-	end
-	
-	module.SetEmotion(Voicelines[voiceline].Emotion, 0)
 end
 
 

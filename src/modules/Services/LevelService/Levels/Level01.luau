@@ -65,7 +65,7 @@ function module.Start(player: Player)
 	table.insert(connections, activationDetectors:WaitForChild("Room1EntranceHitbox").Value.Activated.Changed:Connect(function(val)
 		if val then
 			task.spawn(function()
-				Announcer.playVoiceline("wtl1")
+				Announcer.PlayVoiceline("wtl1")
 			end)
 			task.spawn(function()
 				Axis.PlayPath(path)

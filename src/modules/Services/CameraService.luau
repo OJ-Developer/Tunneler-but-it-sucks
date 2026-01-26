@@ -72,6 +72,7 @@ function Camera.Enable()
 	end
 	if running then return end
 	running = true
+	camera.CameraType = Enum.CameraType.Custom
 	local rotationVec3 = Vector3.new(camera.CFrame.Rotation:ToOrientation())
 	rotation = Vector2.new(rotationVec3.Y, rotationVec3.X)
 	runService:BindToRenderStep("UpdateCamera", 1, updateCamera)
@@ -85,6 +86,7 @@ function Camera.Disable()
 	end
 	if not running then return end
 	running = false
+	camera.CameraType = Enum.CameraType.Scriptable
 	runService:UnbindFromRenderStep("UpdateCamera")
 	runService:UnbindFromRenderStep("UpdateRootPartOrientation")
 end

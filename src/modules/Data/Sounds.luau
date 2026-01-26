@@ -22,10 +22,10 @@ return {
 
     SoundEffects = {
         PlaceHolder = {
-            Id = "rbxassetid://78561653916914"
+            SoundId = "rbxassetid://78561653916914"
         },
         GunFire = {
-            Id = "rbxassetid://1905367471",
+            SoundId = "rbxassetid://1905367471",
             VolumeMultiplier = 0.1
         }
     }

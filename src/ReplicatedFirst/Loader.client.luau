@@ -43,10 +43,12 @@ task.spawn(function()
 
     local assets = {}
 
+    local cachedAssets = Instance.new("Folder", workspace)
+
     local function decalFromId(id)
         local decal = Instance.new("Decal")
         decal.ColorMap = id
-        decal.Parent = workspace.CachedAssets
+        decal.Parent = cachedAssets
         table.insert(assets, decal)
         return decal
     end
@@ -54,7 +56,7 @@ task.spawn(function()
     local function soundFromId(id)
         local sound = Instance.new("Sound")
         sound.SoundId = id
-        sound.Parent = workspace.CachedAssets
+        sound.Parent = cachedAssets
         table.insert(assets, sound)
         return sound
     end
@@ -76,7 +78,7 @@ task.spawn(function()
 	end
 
     for _, soundEffect in Sounds.SoundEffects do
-        soundFromId(soundEffect.Id)
+        soundFromId(soundEffect.SoundId)
 	end
 
     for _, character in Voicelines do

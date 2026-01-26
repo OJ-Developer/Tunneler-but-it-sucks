@@ -7,7 +7,7 @@ return {
     Name = "WhatisBROcooking?(youCANTbelieveit)",
     Aliases = {"cook"},
     Description = "What is BRO cooking? (you CANT believe it)",
-    Group = "The actually interesting commands",
+    Group = "Tunneler but it sucks commands",
     Args = {
         {
             Type = "number",

@@ -39,7 +39,7 @@ end
 
 function AudioService.SoundInstanceFromSoundData(SoundEffectData, Volume: number?, ParentObject: Instance?)
     local sound = Instance.new("Sound")
-    sound.SoundId = SoundEffectData.Id
+    sound.SoundId = SoundEffectData.SoundId
     sound.Volume = Volume and (SoundEffectData.VolumeMultiplier and SoundEffectData.VolumeMultiplier * Volume or Volume) or (SoundEffectData.VolumeMultiplier or 1)
     sound.Parent = ParentObject or SoundEffectsFolder
     return sound

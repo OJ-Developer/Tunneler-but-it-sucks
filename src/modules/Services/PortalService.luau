@@ -130,6 +130,7 @@ function PortalService.Start()
 
                     local partsInVisibilityHitbox = workspace:GetPartsInPart(otherPortal.Parent.VisibilityHitbox)
                     for _, part in partsInVisibilityHitbox do
+                        if part:IsDescendantOf(char) then continue end
                         part:Clone().Parent = mainViewport
                     end
                 else
@@ -178,8 +179,10 @@ function PortalService.Start()
                 -- is player in portal zone
                 prevPlayerInPortal = playerInBluePortal or playerInRedPortal
                 
+                print(table.find(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart")))
                 playerInBluePortal = table.find(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart")) ~= nil
                 playerInRedPortal = table.find(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart")) ~= nil
+                print(playerInBluePortal)
                 
                 objectsInBluePortal = {}
                 for _, part in pairs(inBluePortal) do
@@ -339,6 +342,10 @@ local gunSpinTime = 0.3
 
 local canShootAxis = true
 
+function PortalService.CanPlacePortalOnPart(part: Part)
+    return shared.PlayerState.GunIgnoreMaterials or part:GetAttribute("CanHavePortals") and not shared.PlayerState.HoldingObject
+end
+
 local function getPartsPortalIsOn(portal: Portal)
 	return workspace:GetPartsInPart(portal.BehindPortalHitbox, World.overlapParams(World.FdiPresets.Building))
 end
@@ -401,7 +408,7 @@ local function firePortal(portal: Portal, redPortal: boolean)
 	
 	local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, World.raycastParams(World.FdiPresets.PortalCollision))
 	if raycast then
-		if raycast.Instance:IsA("BasePart") and raycast.Instance:GetAttribute("CanHavePortals") and not shared.PlayerState.HoldingObject then
+		if PortalService.CanPlacePortalOnPart(raycast.Instance) then
 			PortalService.PlacePortal(portal, redPortal, raycast.Instance, false, raycast.Position, raycast.Normal)
 		elseif raycast.Instance == workspace.Axis and canShootAxis then
 			Axis.scare()

@@ -33,7 +33,7 @@ function module.Start(player: Player)
 	char.HumanoidRootPart.Anchored = true
 	ScreenEffects.setScreenColourOverlay(0)
 	AudioService.PlaySoundEffectAndWait(Sounds.SoundEffects.PlaceHolder)
-	CameraService.Stop()
+	CameraService.Disable()
 	cam.CFrame = cutscenePoints.A.WorldCFrame
 	ScreenEffects.FadeScreenColourOverlay(1, 0.5)
 	local tween = TweenService:Create(cam, TweenInfo.new(0.5), {CFrame = cutscenePoints.B.WorldCFrame})
@@ -45,7 +45,7 @@ function module.Start(player: Player)
 	tween = TweenService:Create(cam, TweenInfo.new(1), {CFrame = cutscenePoints.D.WorldCFrame})
 	tween:Play()
 	task.wait(1)
-	CameraService.Start()
+	CameraService.Enable()
 	char.HumanoidRootPart.Anchored = false
 	task.wait(5)
 
@@ -97,7 +97,7 @@ function module.Start(player: Player)
 		if val then
 			task.spawn(function()
 				workspace.RedPortal.OnPart.Value = nil
-				Announcer.playVoiceline("wtl0")
+				Announcer.PlayVoiceline("wtl0")
 				task.wait(0.5)
 				Axis.PlayVoiceline("Level0")
 			end)
