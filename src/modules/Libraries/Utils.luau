@@ -151,4 +151,13 @@ function Utils.merge(...: {any})
 	return newTable
 end
 
+function Utils.tableContains(haystack: {any}, needles: {any})
+	for _, v in pairs(haystack) do
+		if table.find(needles, v) then
+			return true
+		end
+	end
+	return false
+end
+
 return Utils

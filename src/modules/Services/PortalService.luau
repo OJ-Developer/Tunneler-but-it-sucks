@@ -179,10 +179,8 @@ function PortalService.Start()
                 -- is player in portal zone
                 prevPlayerInPortal = playerInBluePortal or playerInRedPortal
                 
-                print(table.find(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart")))
-                playerInBluePortal = table.find(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart")) ~= nil
-                playerInRedPortal = table.find(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart")) ~= nil
-                print(playerInBluePortal)
+                playerInBluePortal = Utils.tableContains(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
+                playerInRedPortal = Utils.tableContains(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
                 
                 objectsInBluePortal = {}
                 for _, part in pairs(inBluePortal) do
