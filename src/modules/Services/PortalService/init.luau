@@ -7,8 +7,9 @@ local ScriptSignal = require(ReplicatedStorage.Modules.Classes.ScriptSignal)
 local Axis = require(script.Parent.Axis)
 local Utils = require(ReplicatedStorage.Modules.Libraries.Utils)
 local World = require(ReplicatedStorage.Modules.Libraries.World)
-local CameraService = require(script.Parent.CameraService)
 local LevelService = require(script.Parent.LevelService)
+local PortalRendering = require(script.PortalRendering)
+local PortalTeleportationLogic = require(script.PortalTeleportationLogic)
 
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
@@ -77,22 +78,7 @@ function PortalService.Init()
 end
 
 function PortalService.Start()
-    local inBluePortal = {}
-    local inRedPortal = {}
-
-    local objectsInBluePortal = {}
-    local objectsInRedPortal = {}
-
-    local prevInBluePortal = {}
-    local prevInRedPortal = {}
-
-    local playerInBluePortal = false
-    local playerInRedPortal = false
-    local playerInPortal = false
-    local prevPlayerInPortal = false
-
     local playerVel
-    local playerSpeed
 
     local function updateStats(playerVelocity: Vector3, dtime: number)
         --[[updateStatEvent:Fire("Fps", math.round(1/dtime))
@@ -105,44 +91,8 @@ function PortalService.Start()
     local teleportationConnection: RBXScriptConnection
 
     local function thing()
-        local renderBluePortal = true
-
         teleportationConnection = RunService.PreRender:Connect(function(dtime)
-            
-            -- PORTAL RENDERING
-
-            if shared.Settings.PortalRendering then
-                local mainPortal = renderBluePortal and bluePortal.Portal or redPortal.Portal
-                local otherPortal = renderBluePortal and redPortal.Portal or bluePortal.Portal
-                local mainViewport = renderBluePortal and blueViewport or redViewport
-                local mainCamera = renderBluePortal and blueViewportCamera or redViewportCamera
-
-                if bluePortal.OnPart.Value and redPortal.OnPart.Value then
-                    mainViewport.Visible = true
-
-                    mainViewport:ClearAllChildren()
-
-                    local vpfMask = otherPortal.Parent.ViewportFrameMask:Clone()
-                    vpfMask.Parent = mainViewport
-                    vpfMask.Transparency = 0
-
-                    mainCamera.CFrame = mainPortal.CFrame
-
-                    local partsInVisibilityHitbox = workspace:GetPartsInPart(otherPortal.Parent.VisibilityHitbox)
-                    for _, part in partsInVisibilityHitbox do
-                        if part:IsDescendantOf(char) then continue end
-                        part:Clone().Parent = mainViewport
-                    end
-                else
-                    mainViewport.Visible = false
-                end
-
-                renderBluePortal = not renderBluePortal
-            end
-
-
-
-            -- VIEWMODEL
+            PortalRendering(bluePortal, redPortal, char, blueViewport, redViewport, blueViewportCamera, redViewportCamera)
 
             if shared.PlayerState.HasGun then
                 portalGun.Transparency = 0
@@ -151,160 +101,9 @@ function PortalService.Start()
                 portalGun.Transparency = 1
             end
 
-
-
-            -- TELEPORTATION LOGIC
-
             playerVel = char.HumanoidRootPart.AssemblyLinearVelocity
-            playerSpeed = char.HumanoidRootPart.AssemblyLinearVelocity.Magnitude
-            
-            if bluePortal.OnPart.Value and redPortal.OnPart.Value then
-                prevInBluePortal = table.clone(objectsInBluePortal)
-                prevInRedPortal = table.clone(objectsInRedPortal)
-                
-                
-                -- update portalzone size according to player speed
-                bluePortal.PortalZone.Size = Vector3.new(bluePortal.PortalZone.Size.X, bluePortal.PortalZone.Size.Y, playerSpeed*dtime*10)
-                redPortal.PortalZone.Size = Vector3.new(redPortal.PortalZone.Size.X, redPortal.PortalZone.Size.Y, playerSpeed*dtime*10)
-                
-                
-                -- get parts in portal zones
-                local params = World.overlapParams(World.FdiPresets.Objects)
-                params.FilterDescendantsInstances = {params.FilterDescendantsInstances, char}
-                
-                inBluePortal = workspace:GetPartsInPart(bluePortal.PortalZone, params)
-                inRedPortal = workspace:GetPartsInPart(redPortal.PortalZone, params)
-                
-                
-                -- is player in portal zone
-                prevPlayerInPortal = playerInBluePortal or playerInRedPortal
-                
-                playerInBluePortal = Utils.tableContains(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
-                playerInRedPortal = Utils.tableContains(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
-                
-                objectsInBluePortal = {}
-                for _, part in pairs(inBluePortal) do
-                    if part.Parent ~= char then
-                        table.insert(objectsInBluePortal, part)
-                    end
-                end
-                objectsInRedPortal = {}
-                for _, part in pairs(inRedPortal) do
-                    if part.Parent ~= char then
-                        table.insert(objectsInRedPortal, part)
-                    end
-                end
-                
-                
-                -- update player collision group if playerInPortal changed
-                playerInPortal = playerInBluePortal or playerInRedPortal
-                
-                if playerInPortal ~= prevPlayerInPortal then
-                    for _, part in pairs(char:GetChildren()) do
-                        if part:IsA("BasePart") then
-                            local collisionGroup = "Default"
-                            if playerInBluePortal and not playerInRedPortal then
-                                collisionGroup = "InBluePortal"
-                            elseif (not playerInBluePortal) and playerInRedPortal then
-                                collisionGroup = "InRedPortal"
-                            elseif playerInBluePortal and playerInRedPortal then
-                                collisionGroup = "InBothPortals"
-                            end
-                            part.CollisionGroup = collisionGroup
-                        end
-                    end
-                end
-                
-                
-                -- update collision groups of objects in portals
-                
-                local function updateObjectsCollisionGroupsForPortal(inPortal: {Part}, prevInPortal: {Part}, portalColour: string)
-                    for _, part in pairs(Utils.merge(inPortal, prevInPortal)) do
-                        part:SetAttribute(`In{portalColour}Portal`, table.find(inPortal, part) ~= nil)
-                        
-                        local isInBluePortal = part:GetAttribute("InBluePortal")
-                        local isInRedPortal = part:GetAttribute("InRedPortal")
 
-                        local collisionGroup = "Default"
-
-                        if isInBluePortal and not isInRedPortal then
-                            collisionGroup = "InBluePortal"
-                        elseif (not isInBluePortal) and isInRedPortal then
-                            collisionGroup = "InRedPortal"
-                        elseif isInBluePortal and isInRedPortal then
-                            collisionGroup = "InBothPortals"
-                        end
-                        
-                        part.CollisionGroup = collisionGroup
-                    end
-                end
-                
-                updateObjectsCollisionGroupsForPortal(objectsInBluePortal, prevInBluePortal, "Blue")
-                updateObjectsCollisionGroupsForPortal(objectsInRedPortal, prevInRedPortal, "Red")
-                
-                
-                -- teleport object if they are behind the portal
-                
-                local function teleportObjectIfBehindPortal(object, entrancePortal: Part, exitPortal: Part, isPlayer: boolean, enteringRed: boolean)
-                    local camera = workspace.CurrentCamera
-                    
-                    --local pos = isPlayer and camera.CFrame.Position or object.Position
-                    local pos = object.Position
-                    
-                    local vel
-                    if isPlayer then
-                        vel = rootPart.AssemblyLinearVelocity
-                    else
-                        vel = object.AssemblyLinearVelocity
-                    end
-                    
-                    local entranceCframe = entrancePortal.CFrame
-                    local exitCframe = exitPortal.CFrame
-                    
-                    local behindPortal = entranceCframe.LookVector:Dot(pos-entrancePortal.Position) < 0
-                    
-                    if behindPortal then
-                        local projectedPos = Utils.projectThroughPortal(pos, entranceCframe, exitCframe)
-                        local projectedVel = Utils.projectThroughPortal(vel + pos, entranceCframe, exitCframe) - projectedPos
-                        if isPlayer then
-                            rootPart.CFrame = CFrame.new(projectedPos - Vector3.new(0, headHeight, 0))
-                            rootPart.AssemblyLinearVelocity = projectedVel
-                        else
-                            object.Position = projectedPos
-                            object.AssemblyLinearVelocity = projectedVel
-                        end
-                        
-                        local newCollisionGroup = `In{enteringRed and "Blue" or "Red"}Portal`
-                        object.CollisionGroup = newCollisionGroup
-
-                        if isPlayer then
-                            local projectedCam = Utils.projectRotationThroughPortal(camera.CFrame.Rotation, entranceCframe, exitCframe).Rotation
-                            CameraService.setCameraRotation(projectedCam)
-                            
-                            for _, part in pairs(object.Parent:GetChildren()) do
-                                if part:IsA("BasePart") then
-                                    part.CollisionGroup = newCollisionGroup
-                                end
-                            end
-                        end
-                    end
-                end
-                
-                for _, object in pairs(objectsInBluePortal) do
-                    teleportObjectIfBehindPortal(object, bluePortal.Portal, redPortal.Portal, false, false)
-                end
-                
-                for _, object in pairs(objectsInRedPortal) do
-                    teleportObjectIfBehindPortal(object, redPortal.Portal, bluePortal.Portal, false, true)
-                end
-                
-                if playerInBluePortal then
-                    teleportObjectIfBehindPortal(head, bluePortal.Portal, redPortal.Portal, true, false)
-                elseif playerInRedPortal then
-                    teleportObjectIfBehindPortal(head, redPortal.Portal, bluePortal.Portal, true, true)
-                end
-                
-            end
+            PortalTeleportationLogic(redPortal, bluePortal, char, dtime, headHeight)
             
             updateStats(playerVel, dtime)
         end)
