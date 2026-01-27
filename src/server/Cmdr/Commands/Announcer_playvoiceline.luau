@@ -12,7 +12,7 @@ return {
     },
     ClientRun = function(_, voicelineName)
         local ReplicatedStorage = game:GetService("ReplicatedStorage")
-        local Announcer = require(ReplicatedStorage.Modules.Services.Announcer)
+        local Announcer = require(ReplicatedStorage.Services.Announcer)
 
         local success = Announcer.PlayVoiceline(voicelineName)
 

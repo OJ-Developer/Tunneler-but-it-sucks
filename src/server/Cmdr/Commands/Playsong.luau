@@ -12,8 +12,8 @@ return {
     },
     ClientRun = function(_, song)
         local ReplicatedStorage = game:GetService("ReplicatedStorage")
-        local AudioService = require(ReplicatedStorage.Modules.Services.AudioService)
-        local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)
+        local AudioService = require(ReplicatedStorage.Services.AudioService)
+        local Sounds = require(ReplicatedStorage.Data.Sounds)
         local songData = Sounds.Music[song]
         if songData then
             AudioService.PlaySong(songData)

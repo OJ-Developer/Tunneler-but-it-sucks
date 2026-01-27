@@ -1,0 +1,118 @@
+{
+    "ClassName": "Folder",
+    "Children": [
+        {
+            "ClassName": "InputAction",
+            "Name": "Crouch",
+            "Children": [
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Keyboard",
+                    "Properties": {
+                        "KeyCode": "LeftShift"
+                    }
+                },
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Controller",
+                    "Properties": {
+                        "KeyCode": "ButtonL3"
+                    }
+                }
+            ]
+        },
+        {
+            "ClassName": "InputAction",
+            "Name": "DevConsole",
+            "Children": [
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Keyboard",
+                    "Properties": {
+                        "KeyCode": "Backquote"
+                    }
+                }
+            ]
+        },
+        {
+            "ClassName": "InputAction",
+            "Name": "FireBlue",
+            "Children": [
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Keyboard",
+                    "Properties": {
+                        "KeyCode": "MouseLeftButton"
+                    }
+                },
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Controller",
+                    "Properties": {
+                        "KeyCode": "ButtonR2"
+                    }
+                }
+            ]
+        },
+        {
+            "ClassName": "InputAction",
+            "Name": "FireRed",
+            "Children": [
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Keyboard",
+                    "Properties": {
+                        "KeyCode": "MouseRightButton"
+                    }
+                },
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Controller",
+                    "Properties": {
+                        "KeyCode": "ButtonL2"
+                    }
+                }
+            ]
+        },
+        {
+            "ClassName": "InputAction",
+            "Name": "Interact",
+            "Children": [
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Keyboard",
+                    "Properties": {
+                        "KeyCode": "E"
+                    }
+                },
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Controller",
+                    "Properties": {
+                        "KeyCode": "ButtonX"
+                    }
+                }
+            ]
+        },
+        {
+            "ClassName": "InputAction",
+            "Name": "Pause",
+            "Children": [
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Keyboard",
+                    "Properties": {
+                        "KeyCode": "Tab"
+                    }
+                },
+                {
+                    "ClassName": "InputBinding",
+                    "Name": "Controller",
+                    "Properties": {
+                        "KeyCode": "DPadUp"
+                    }
+                }
+            ]
+        }
+    ]
+}

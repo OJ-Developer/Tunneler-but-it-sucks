@@ -4,9 +4,7 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "Modules": {
-        "$path": "src/modules"
-      },
+      "$path": "src/ReplicatedStorage",
       "Packages": {
         "$path": "Packages"
       },
@@ -27,6 +25,10 @@
 
     "ReplicatedFirst": {
       "$path": "src/ReplicatedFirst"
+    },
+
+    "StarterGui": {
+      "$path": "src/StarterGui"
     }
   }
 }

@@ -37,9 +37,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 task.spawn(function()
     repeat task.wait() until game:IsLoaded()
 
-    local AxisTextures = require(ReplicatedStorage.Modules.Data.AxisTextures)
-    local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)
-    local Voicelines = require(ReplicatedStorage.Modules.Data.Voicelines)
+    local AxisTextures = require(ReplicatedStorage.Data.AxisTextures)
+    local Sounds = require(ReplicatedStorage.Data.Sounds)
+    local Voicelines = require(ReplicatedStorage.Data.Voicelines)
 
     local assets = {}
 
@@ -138,7 +138,7 @@ shared.PlayerState = {}
 shared.GameState = {}
 shared.Settings = {}
 
-local serviceModules = ReplicatedStorage.Modules.Services
+local serviceModules = ReplicatedStorage.Services
 local services = {}
 
 task.wait(1)
@@ -151,21 +151,25 @@ end
 for _, moduleScript in serviceModules:GetChildren() do
     printMaybe(`Loading module: "{moduleScript.Name}"`)
 
+    local module = require(moduleScript)
+    shared[moduleScript.Name] = module
+    services[moduleScript.Name] = module
+end
+
+for name, service in services do
     local function initModule()
-        local module = require(moduleScript)    
-        if module.Init then
-            printMaybe(`Initializing module: "{moduleScript.Name}"`)
-            module.Init()
-            printMaybe(`Successfully initialized module: "{moduleScript.Name}"`)
+        if service.Init then
+            printMaybe(`Initializing module: "{name}"`)
+            service.Init()
+            printMaybe(`Successfully initialized module: "{name}"`)
         end
-        services[moduleScript.Name] = module
     end
 
     if Settings.SafeLoad then
         local s, e = pcall(initModule)
 
         if not s then
-            warn(`Module {moduleScript.Name} experienced error "{e}" while initializing`)
+            warn(`Module {name} experienced error "{e}" while initializing`)
         end
     else
         initModule()

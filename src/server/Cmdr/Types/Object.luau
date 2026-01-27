@@ -1,7 +1,7 @@
 return function(registry)
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
     local objects = {}
-    for _, object in ReplicatedStorage.Objects:GetChildren() do
+    for _, object in ReplicatedStorage.Assets.Objects:GetChildren() do
         table.insert(objects, object.Name)
     end
 

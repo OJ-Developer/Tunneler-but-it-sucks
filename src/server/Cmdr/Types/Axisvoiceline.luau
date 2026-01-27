@@ -1,6 +1,6 @@
 return function(registry)
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local Voicelines = require(ReplicatedStorage.Modules.Data.Voicelines).Axis
+    local Voicelines = require(ReplicatedStorage.Data.Voicelines).Axis
     local voicelines = {}
     for voicelineName in Voicelines do
         table.insert(voicelines, voicelineName)

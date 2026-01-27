@@ -1,8 +1,3 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local Object = require(ReplicatedStorage.Modules.Classes.Object)
-local LinkedData = require(ReplicatedStorage.Modules.Services.LinkedData)
-
 return {
     Name = "WhatisBROcooking?(youCANTbelieveit)",
     Aliases = {"cook"},
@@ -21,6 +16,11 @@ return {
     end,
 
     ClientRun = function(context, amount)
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+        local Object = require(ReplicatedStorage.Classes.Object)
+        local LinkedData = require(ReplicatedStorage.Services.LinkedData)
+
         for _ = 1, amount do
             local part = Instance.new("Part")
             part.Size = Vector3.new(2,2,2)

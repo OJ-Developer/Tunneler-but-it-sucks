@@ -6,7 +6,7 @@ return {
     Args = {},
     ClientRun = function(_, song)
         local ReplicatedStorage = game:GetService("ReplicatedStorage")
-        local AudioService = require(ReplicatedStorage.Modules.Services.AudioService)
+        local AudioService = require(ReplicatedStorage.Services.AudioService)
         AudioService.StopSongs()
         return "Stopped playing song"
     end

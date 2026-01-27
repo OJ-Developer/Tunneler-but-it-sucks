@@ -12,7 +12,7 @@ return {
     },
     ClientRun = function(_, level)
         local ReplicatedStorage = game:GetService("ReplicatedStorage")
-        local LevelService = require(ReplicatedStorage.Modules.Services.LevelService)
+        local LevelService = require(ReplicatedStorage.Services.LevelService)
         local success = LevelService.LoadLevel(level)
         return success and `Successfully loaded level "{level}"` or `Level "{level}" does not exist`
     end

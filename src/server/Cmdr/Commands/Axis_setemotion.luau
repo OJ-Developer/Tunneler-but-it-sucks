@@ -12,7 +12,7 @@ return {
     },
     ClientRun = function(_, emotion)
         local ReplicatedStorage = game:GetService("ReplicatedStorage")
-        local Axis = require(ReplicatedStorage.Modules.Services.Axis)
+        local Axis = require(ReplicatedStorage.Services.Axis)
 
         local success = Axis.SetEmotion(emotion)
 

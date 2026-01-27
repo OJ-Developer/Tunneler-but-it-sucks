@@ -1,6 +1,6 @@
 return function(registry)
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)
+    local Sounds = require(ReplicatedStorage.Data.Sounds)
     local songNames = {}
     for songName in Sounds.Music do
         table.insert(songNames, songName)
