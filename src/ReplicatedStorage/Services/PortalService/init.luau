@@ -19,12 +19,13 @@ local head = char:WaitForChild("Head")
 local headHeight = head.Position.Y - rootPart.Position.Y
 local camera = workspace.CurrentCamera
 local mouse = player:GetMouse()
---[[local portalsUi = player.PlayerGui.Portals
+local playerGui = player.PlayerGui
 
-local blueViewport = portalsUi.BluePortalView.Frame
-local redViewport = portalsUi.RedPortalView.Frame
+local portalsUi: Folder
+local blueViewport: ViewportFrame
+local redViewport: ViewportFrame
 local blueViewportCamera: Camera
-local redViewportCamera: Camera]]
+local redViewportCamera: Camera
 
 local PortalService = {
     PortalPlaced = ScriptSignal.new()
@@ -79,14 +80,23 @@ function PortalService.Init()
 
     shared.Settings.PortalRendering = true
 
-    --[[blueViewportCamera = Instance.new("Camera", portalsUi)
+	portalsUi = Instance.new("Folder")
+	portalsUi.Name = "Portals"
+
+	local blueSurface = Instance.new("SurfaceGui")
+	blueSurface.Name = "Blue"
+	blueSurface.Adornee = bluePortal.Portal
+	blueViewport = Instance.new("ViewportFrame", blueSurface)
+
+	local redSurface = Instance.new("SurfaceGui")
+	redSurface.Name = "Blue"
+	redSurface.Adornee = redPortal.Portal
+	redViewport = Instance.new("ViewportFrame", redSurface)
+
+	blueViewportCamera = Instance.new("Camera", portalsUi)
     redViewportCamera = Instance.new("Camera", portalsUi)
-    
-    blueViewport.CurrentCamera = redViewportCamera
-    redViewport.CurrentCamera = blueViewportCamera
-    
-    blueViewport.Parent.Adornee = bluePortal.Portal
-    redViewport.Parent.Adornee = redPortal.Portal]]
+	
+	portalsUi.Parent = playerGui
 
     shared.PlayerState.GunChanged = ScriptSignal.new()
 end
@@ -106,7 +116,7 @@ function PortalService.Start()
 
     local function thing()
         teleportationConnection = RunService.PreRender:Connect(function(dtime)
-            --PortalRendering(bluePortal, redPortal, char, blueViewport, redViewport, blueViewportCamera, redViewportCamera)
+            PortalRendering(bluePortal, redPortal, char, blueViewport, redViewport, blueViewportCamera, redViewportCamera)
 
             if shared.PlayerState.HasGun then
                 portalGun.Transparency = 0

@@ -20,6 +20,25 @@
     "StarterPlayer": {
       "StarterPlayerScripts": {
         "$path": "src/client"
+      },
+
+      "StarterCharacterScripts": {
+        "Animate": {
+          "$className": "LocalScript",
+          "$properties": {
+            "Enabled": false
+          }
+        }
+      },
+
+      "$properties": {
+        "CharacterUseJumpPower": false,
+        "CharacterJumpHeight": 3.5,
+        "LoadCharacterAppearance": false,
+        "UserEmotesEnabled": false,
+        "DevComputerMovementMode": "KeyboardMouse",
+        "EnableMouseLockOption": false,
+        "AutoJumpEnabled": false
       }
     },
 
@@ -29,6 +48,105 @@
 
     "StarterGui": {
       "$path": "src/StarterGui"
+    },
+    
+    "Workspace": {
+      "$properties": {
+        "FallenPartsDestroyHeight": -50000,
+        "Gravity": 100,
+        "SignalBehavior": "Deferred"
+      },
+      "Map": {
+        "$className": "Folder",
+        "AxisPaths": {
+          "$className": "Folder"
+        },
+        "Building": {
+          "$className": "Folder"
+        },
+        "Elements": {
+          "$className": "Folder"
+        },
+        "Objects": {
+          "$className": "Folder"
+        },
+        "Other": {
+          "$className": "Folder"
+        },
+        "SpawnLocation": {
+          "$className": "SpawnLocation",
+          "$properties": {
+            "Anchored": true,
+            "Transparency": 1,
+            "Size": [100,1,100]
+          }
+        },
+        "LevelSettings": {
+          "$className": "Configuration",
+          "MenuLevel": {
+            "$className": "BoolValue"
+          }
+        }
+      }
+    },
+
+    "Lighting": {
+      "$properties": {
+        "Ambient": [0.64, 0.64, 0.64],
+        "Brightness": 3,
+        "EnvironmentDiffuseScale": 1,
+        "EnvironmentSpecularScale": 1,
+        "GlobalShadows": true,
+        "LightingStyle": "Realistic",
+        "OutdoorAmbient": [0.275, 0.275, 0.275],
+        "PrioritizeLightingQuality": true,
+        "ShadowSoftness": 0.2,
+        "ClockTime": 14.5,
+        "GeographicLatitude": 0
+      },
+      "Atmosphere": {
+        "$className": "Atmosphere",
+        "$properties": {
+          "Density": 0.3,
+          "Offset": 0.25,
+          "Color": [0.781,0.781,0.781],
+          "Decay": [0.416,0.44,0.491]
+        }
+      },
+      "Sky": {
+        "$className": "Sky",
+        "$properties": {
+          "CelestialBodiesShown": false,
+          "SkyboxBk": "rbxassetid://6444884337",
+          "SkyboxDn": "rbxassetid://6444884785",
+          "SkyboxFt": "rbxassetid://6444884337",
+          "SkyboxLf": "rbxassetid://6444884337",
+          "SkyboxRt": "rbxassetid://6444884337",
+          "SkyboxUp": "rbxassetid://6412503613"
+        }
+      },
+      "Bloom": {
+        "$className": "BloomEffect",
+        "$properties": {
+          "Intensity": 1,
+          "Size": 24,
+          "Threshold": 2
+        }
+      },
+      
+      "Blur": {
+        "$className": "BlurEffect",
+        "$properties": {
+          "Enabled": false,
+          "Size": 56
+        }
+      }
+    },
+
+    "MaterialService": {
+      "$properties": {
+        "Use2022Materials": true
+      }
     }
   }
 }

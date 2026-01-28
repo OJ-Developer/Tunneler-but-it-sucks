@@ -17,9 +17,6 @@ function module.Start()
 	menuUI.Enabled = true
 	menuUI.MainMenu.Visible = true
 
-	local camera = workspace.CurrentCamera
-	camera.CFrame = workspace.Map.Other.Camera.CFrame
-
 	AudioService.PlaySong(Sounds.Music.TunnelerButItSucks)
 end
 

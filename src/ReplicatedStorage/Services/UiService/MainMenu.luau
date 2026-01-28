@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local UiButton = require(ReplicatedStorage.Classes.UiButton)
-local LevelService = shared.LevelService
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
 local player = Players.LocalPlayer
@@ -36,7 +35,7 @@ function MainMenu.Init()
             
             local loadLevelButton = UiButton.new(newLevelOption.Play)
             loadLevelButton.OnClick:Connect(function()
-                LevelService.LoadLevel(level.Name)
+                shared.LevelService.LoadLevel(level.Name)
                 playMenu.Visible = false
                 playMenu.Parent.Enabled = false
             end)

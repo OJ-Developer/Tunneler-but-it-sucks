@@ -1,8 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Crosshair = require(script.Parent.Crosshair)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
-local LevelService = shared.LevelService
 
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui
@@ -17,14 +17,14 @@ function PauseMenu.Init()
 
     local function togglePauseMenu()
         pauseMenu.Enabled = not pauseMenu.Enabled
-        rootPart.Anchored = pauseMenu.Enabled
-        --(pauseMenu.Enabled and disasbleCrosshair or enableCrosshair)()
+        rootPart.Anchored = pauseMenu.Enabled;
+        (pauseMenu.Enabled and Crosshair.Disable or Crosshair.Enable)()
     end
 
     ReplicatedStorage.Inputs.Pause.Pressed:Connect(togglePauseMenu)
     LinkedData.Get(pauseMenu.MainMenu.Resume, "UiButtonClass").OnClick:Connect(togglePauseMenu)
     LinkedData.Get(pauseMenu.MainMenu.Quit, "UiButtonClass").OnClick:Connect(function()
-        LevelService.LoadLevel("MainMenu")
+        shared.LevelService.LoadLevel("MainMenu")
     end)
 end
 
