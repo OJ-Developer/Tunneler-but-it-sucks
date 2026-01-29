@@ -19,7 +19,14 @@
 
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "$path": "src/client"
+        "$path": "src/client",
+
+        "CameraScript": {
+            "$className": "LocalScript",
+            "$properties": {
+              "Enabled": false
+            }
+          }
       },
 
       "StarterCharacterScripts": {
@@ -32,6 +39,8 @@
       },
 
       "$properties": {
+        "DevComputerCameraMovementMode": "Classic",
+        "DevTouchCameraMovementMode": "Classic", 
         "CharacterUseJumpPower": false,
         "CharacterJumpHeight": 3.5,
         "LoadCharacterAppearance": false,
