@@ -5,7 +5,7 @@ local UiButton = require(ReplicatedStorage.Classes.UiButton)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
 local player = Players.LocalPlayer
-local playerGui = player.PlayerGui
+local playerGui = player.PlayerGui.Gui
 
 local MainMenu = {}
 

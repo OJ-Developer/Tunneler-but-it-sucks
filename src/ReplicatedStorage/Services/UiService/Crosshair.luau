@@ -9,7 +9,7 @@ local right: ImageLabel
 local dot: ImageLabel
 
 local player = Players.LocalPlayer
-local playerGui = player.PlayerGui
+local playerGui = player.PlayerGui.Gui
 local mouse = player:GetMouse()
 
 local Crosshair = {}

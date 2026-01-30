@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
 local player = Players.LocalPlayer
-local playerGui = player.PlayerGui
+local playerGui = player.PlayerGui.Gui
 
 local SettingsMenu = {}
 

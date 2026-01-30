@@ -6,7 +6,7 @@ local AudioService = require(ReplicatedStorage.Services.AudioService)
 local player = game.Players.LocalPlayer
 local char = player.Character
 local rootPart = char:WaitForChild("HumanoidRootPart")
-local menuUI = player.PlayerGui.MainMenu
+local menuUI = player.PlayerGui.Gui.MainMenu
 
 local module = {}
 

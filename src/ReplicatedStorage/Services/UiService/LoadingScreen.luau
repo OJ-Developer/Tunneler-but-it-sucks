@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
 local player = Players.LocalPlayer
-local playerGui = player.PlayerGui
+local playerGui = player.PlayerGui.Gui
 
 local loadingScreenRunning = false
 local loadingUi = playerGui.LoadingLevel

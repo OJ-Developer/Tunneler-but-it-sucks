@@ -46,6 +46,8 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
         playerInBluePortal = Utils.tableContains(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
         playerInRedPortal = Utils.tableContains(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
         
+
+        -- get objects in portal zone
         objectsInBluePortal = {}
         for _, part in pairs(inBluePortal) do
             if part.Parent ~= char then

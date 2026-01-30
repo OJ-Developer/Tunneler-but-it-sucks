@@ -16,7 +16,7 @@
                     "ClassName": "InputBinding",
                     "Name": "Controller",
                     "Properties": {
-                        "KeyCode": "ButtonL3"
+                        "KeyCode": "ButtonB"
                     }
                 }
             ]

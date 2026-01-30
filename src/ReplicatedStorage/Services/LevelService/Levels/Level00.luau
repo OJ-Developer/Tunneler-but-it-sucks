@@ -7,7 +7,7 @@ local Announcer = require(ReplicatedStorage.Services.Announcer)
 local AudioService = require(ReplicatedStorage.Services.AudioService)
 local Axis = require(ReplicatedStorage.Services.Axis)
 local CameraService = require(ReplicatedStorage.Services.CameraService)
-local ScreenEffects = require(ReplicatedStorage.Services.ScreenEffects)
+local UiService = require(ReplicatedStorage.Services.UiService)
 
 local module = {}
 
@@ -31,11 +31,11 @@ function module.Start(player: Player)
 	local cutscenePoints = workspace.Map.Other.CutscenePoints
 	char.HumanoidRootPart.CFrame = workspace.Map.SpawnLocation.CFrame + Vector3.new(0, 3, 0)
 	char.HumanoidRootPart.Anchored = true
-	ScreenEffects.setScreenColourOverlay(0)
+	UiService.ScreenEffects.setScreenColourOverlay({Transparency = 1})
 	AudioService.PlaySoundEffectAndWait(Sounds.SoundEffects.PlaceHolder)
 	CameraService.Disable()
 	cam.CFrame = cutscenePoints.A.WorldCFrame
-	ScreenEffects.FadeScreenColourOverlay(1, 0.5)
+	UiService.ScreenEffects.FadeScreenColourOverlay(0.5, {Transparency = 1})
 	local tween = TweenService:Create(cam, TweenInfo.new(0.5), {CFrame = cutscenePoints.B.WorldCFrame})
 	tween:Play()
 	task.wait(1)

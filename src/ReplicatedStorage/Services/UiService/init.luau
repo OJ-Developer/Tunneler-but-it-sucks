@@ -7,6 +7,7 @@ local Crosshair = require(script.Crosshair)
 local LoadingScreen = require(script.LoadingScreen)
 local MainMenu = require(script.MainMenu)
 local PauseMenu = require(script.PauseMenu)
+local ScreenEffects = require(script.ScreenEffects)
 local SettingsMenu = require(script.SettingsMenu)
 
 local UiService = {
@@ -14,13 +15,12 @@ local UiService = {
     PauseMenu = PauseMenu,
     SettingsMenu = SettingsMenu,
     Crosshair = Crosshair,
-    LoadingScreen = LoadingScreen
+    LoadingScreen = LoadingScreen,
+    ScreenEffects = ScreenEffects
 }
 
 local player = Players.LocalPlayer
-local playerGui = player.PlayerGui
-
-local subServices = {}
+local playerGui = player.PlayerGui.Gui
 
 function UiService.Init()
     for _, button in CollectionService:GetTagged("uiButton") do
@@ -29,19 +29,21 @@ function UiService.Init()
         end
     end
 
-    for _, v in script:GetChildren() do
-        local module = require(v)
-        table.insert(subServices, module)
-        if module.Init then
-            module.Init()
+    for _, module in UiService do
+        if typeof(module) == "table" then
+           if module.Init then
+                module.Init()
+            end 
         end
     end
 end
 
 function UiService.Start()
-    for _, module in subServices do
-        if module.Start then
-            module.Start()
+    for _, module in UiService do
+        if typeof(module) == "table" then
+            if module.Start then
+                module.Start()
+            end
         end
     end
 end

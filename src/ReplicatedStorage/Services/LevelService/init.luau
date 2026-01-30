@@ -3,6 +3,7 @@ local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 local Object = require(ReplicatedStorage.Classes.Object)
 local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
@@ -84,10 +85,12 @@ function Level.LoadLevel(levelName: string)
 		local levelSettings = workspace.Map.LevelSettings
 		if levelSettings.MenuLevel.Value then
 			UiService.Crosshair.Disable()
+			UserInputService.MouseIconEnabled = true
 			Camera.Disable()
 			workspace.CurrentCamera.CFrame = workspace.Map.SpawnLocation.CFrame
 		else
 			UiService.Crosshair.Enable()
+			UserInputService.MouseIconEnabled = false
 			local newPos = workspace.Map.SpawnLocation.CFrame + Vector3.new(0, 3, 0)
 			char:PivotTo(newPos)
 			workspace.CurrentCamera.CFrame = newPos

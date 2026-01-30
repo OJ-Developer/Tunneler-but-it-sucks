@@ -19,14 +19,7 @@
 
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "$path": "src/client",
-
-        "CameraScript": {
-            "$className": "LocalScript",
-            "$properties": {
-              "Enabled": false
-            }
-          }
+        "$path": "src/client"
       },
 
       "StarterCharacterScripts": {
@@ -87,7 +80,8 @@
           "$properties": {
             "Anchored": true,
             "Transparency": 1,
-            "Size": [100,1,100]
+            "Size": [100,1,100],
+            "Duration": 0
           }
         },
         "LevelSettings": {

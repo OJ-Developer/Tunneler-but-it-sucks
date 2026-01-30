@@ -19,7 +19,6 @@ function module.new(door)
 	local topDownPos = frame.TopDownPos
 
 	local activator = door.Configuration.Activator
-	if not activator.Value then return end
 	local deactivator = door.Configuration.Deactivator
 	local startOpen = door.Configuration.StartOpen
 	
@@ -34,7 +33,6 @@ function module.new(door)
 		tweenService:Create(bottomPart, TweenInfo.new(doorOpenTime/2), {Position = BottomDownPos.WorldPosition}):Play()
 		tweenService:Create(thing, TweenInfo.new(doorOpenTime/2), {Position = thingUpPos.WorldPosition}):Play()
 	end
-
 	local function close()
 		tweenService:Create(topPart, TweenInfo.new(doorOpenTime/2), {Position = topDownPos.WorldPosition}):Play()
 		tweenService:Create(bottomPart, TweenInfo.new(doorOpenTime/2), {Position = bottomUpPos.WorldPosition}):Play()
@@ -50,29 +48,31 @@ function module.new(door)
 	if startOpen.Value then
 		thread = task.spawn(open)
 	end
-
-	table.insert(connections, activator.Value.Activated.Changed:Connect(function(activated)
-		if thread then
-			task.cancel(thread)
-		end
-		
-		if activated ~= startOpen.Value then
-			thread = task.spawn(open)
-		else
-			thread = task.spawn(close)
-		end
-	end))
-	
-	table.insert(connections, deactivator.Value.Activated.Changed:Once(function(activated)
-		if activated then
+	if activator.Value then
+		table.insert(connections, activator.Value.Activated.Changed:Connect(function(activated)
 			if thread then
 				task.cancel(thread)
 			end
+			
+			if activated ~= startOpen.Value then
+				thread = task.spawn(open)
+			else
+				thread = task.spawn(close)
+			end
+		end))
+	end
+	if deactivator.Value then
+		table.insert(connections, deactivator.Value.Activated.Changed:Once(function(activated)
+			if activated then
+				if thread then
+					task.cancel(thread)
+				end
 
-			thread = task.spawn(close)
-		end
-	end))
-	
+				thread = task.spawn(close)
+			end
+		end))
+	end
+
 	return setmetatable({connections = connections}, module)
 end
 

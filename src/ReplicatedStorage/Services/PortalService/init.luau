@@ -55,6 +55,7 @@ export type Portal = Model & {
 }
 
 function PortalService.Init()
+	-- setup portals
     bluePortal = ReplicatedStorage.Assets.Portal:Clone()
 	bluePortal.Name = "BluePortal"
 	bluePortal.Portal.Decal.ColorMap = MiscData.PortalTextures.Blue
@@ -71,6 +72,7 @@ function PortalService.Init()
 	end
     redPortal.Parent = workspace
 
+	-- portalgun viewmodel
     portalGun = ReplicatedStorage.Assets.PortalGun:Clone()
     portalGun.Parent = workspace
 
@@ -78,27 +80,37 @@ function PortalService.Init()
     portalGunOffset.Value = CFrame.new(1.5, -1, -2)
     PortalService.PortalGunOffset = portalGunOffset
 
+	shared.PlayerState.GunChanged = ScriptSignal.new()
+
+	-- setup portal rendering ui
     shared.Settings.PortalRendering = true
 
 	portalsUi = Instance.new("Folder")
 	portalsUi.Name = "Portals"
 
-	local blueSurface = Instance.new("SurfaceGui")
+	local blueSurface = Instance.new("SurfaceGui", portalsUi)
 	blueSurface.Name = "Blue"
+	blueSurface.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
 	blueSurface.Adornee = bluePortal.Portal
 	blueViewport = Instance.new("ViewportFrame", blueSurface)
+	blueViewport.Size = UDim2.fromScale(1,1)
+	blueViewport.BorderSizePixel = 0
 
-	local redSurface = Instance.new("SurfaceGui")
+	local redSurface = Instance.new("SurfaceGui", portalsUi)
 	redSurface.Name = "Blue"
+	redSurface.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
 	redSurface.Adornee = redPortal.Portal
 	redViewport = Instance.new("ViewportFrame", redSurface)
+	redViewport.Size = UDim2.fromScale(1,1)
+	redViewport.BorderSizePixel = 0
 
 	blueViewportCamera = Instance.new("Camera", portalsUi)
     redViewportCamera = Instance.new("Camera", portalsUi)
+
+	blueViewport.CurrentCamera = redViewportCamera
+	redViewport.CurrentCamera = blueViewportCamera
 	
 	portalsUi.Parent = playerGui
-
-    shared.PlayerState.GunChanged = ScriptSignal.new()
 end
 
 function PortalService.Start()
