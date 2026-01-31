@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Utils = require(ReplicatedStorage.Modules.Utils)
 local World = require(ReplicatedStorage.Modules.World)
 local CameraService = require(ReplicatedStorage.Services.CameraService)
+local UiService = require(ReplicatedStorage.Services.UiService)
 
 local inBluePortal = {}
 local inRedPortal = {}
@@ -23,8 +24,9 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
     local head = char.Head
 
     local playerSpeed = char.HumanoidRootPart.AssemblyLinearVelocity.Magnitude
-    
-    if bluePortal.OnPart.Value and redPortal.OnPart.Value then
+
+    local active = bluePortal.OnPart.Value and redPortal.OnPart.Value
+    if active then
         prevInBluePortal = table.clone(objectsInBluePortal)
         prevInRedPortal = table.clone(objectsInRedPortal)
         
@@ -172,4 +174,6 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
             teleportObjectIfBehindPortal(head, redPortal.Portal, bluePortal.Portal, true, true)
         end
     end
+
+    UiService.UpdateDevstats(math.round(1/dtime), playerInBluePortal and active, playerInRedPortal and active, char.HumanoidRootPart.AssemblyLinearVelocity)
 end

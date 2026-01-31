@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MainConfig = require(ReplicatedStorage.Configs.MainConfig)
 local World = require(ReplicatedStorage.Modules.World)
+local PortalService
 
 local left: ImageLabel
 local right: ImageLabel
@@ -29,15 +30,19 @@ function Crosshair.Init()
     shared.PlayerState.HoldingObjectChanged:Connect(function(v)
         updateCrosshairVisibility(v == nil)
     end)
+
+    PortalService = shared.PortalService
 end
 
 function Crosshair.Start()
     task.spawn(function()
         while task.wait() do
             if shared.PlayerState.HasGun then
-                local objectRaycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MainConfig.ObjectMaxGrabDist, World.raycastParams(World.FdiPresets.Interactable))
+                warn("A")
+                local sucecss, objectRaycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MainConfig.ObjectMaxGrabDist, World.raycastParams(World.FdiPresets.Interactable))
 
-                if objectRaycast then
+                if sucecss then
+                    print(objectRaycast.Instance)
                     if (objectRaycast.Instance.Parent == workspace.Map.Objects) or (objectRaycast.Instance.Parent.Parent == workspace.Map.Elements and objectRaycast.Instance.Parent.Name == "StandingButton" and objectRaycast.Instance.Name == "Button") then
                         left.ImageColor3 = Color3.new(1, 1, 0)
                         right.ImageColor3 = Color3.new(1, 1, 0)

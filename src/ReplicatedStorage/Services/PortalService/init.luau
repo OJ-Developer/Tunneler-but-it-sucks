@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
 local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
 local MiscData = require(ReplicatedStorage.Data.MiscData)
@@ -50,6 +51,7 @@ export type Portal = Model & {
 		Decal: Decal
 	},
     PortalZone: Part,
+	PortalSurface: Part,
 
     PrimaryPart: Part
 }
@@ -91,15 +93,17 @@ function PortalService.Init()
 	local blueSurface = Instance.new("SurfaceGui", portalsUi)
 	blueSurface.Name = "Blue"
 	blueSurface.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	blueSurface.Adornee = bluePortal.Portal
+	blueSurface.ZOffset = 1
+	blueSurface.Adornee = bluePortal.PortalSurface
 	blueViewport = Instance.new("ViewportFrame", blueSurface)
 	blueViewport.Size = UDim2.fromScale(1,1)
 	blueViewport.BorderSizePixel = 0
 
 	local redSurface = Instance.new("SurfaceGui", portalsUi)
-	redSurface.Name = "Blue"
+	redSurface.Name = "Red"
 	redSurface.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	redSurface.Adornee = redPortal.Portal
+	redSurface.ZOffset = 1
+	redSurface.Adornee = redPortal.PortalSurface
 	redViewport = Instance.new("ViewportFrame", redSurface)
 	redViewport.Size = UDim2.fromScale(1,1)
 	redViewport.BorderSizePixel = 0
@@ -114,15 +118,6 @@ function PortalService.Init()
 end
 
 function PortalService.Start()
-    local playerVel
-
-    local function updateStats(playerVelocity: Vector3, dtime: number)
-        --[[updateStatEvent:Fire("Fps", math.round(1/dtime))
-        updateStatEvent:Fire("BluePortalZone", playerInBluePortal and "true" or "false")
-        updateStatEvent:Fire("RedPortalZone", playerInRedPortal and "true" or "false")
-        updateStatEvent:Fire("PlayerVelocity", tostring(VectorUtils.roundVector(playerVelocity)).." | "..math.round(playerVelocity.Magnitude))]]
-    end
-
     local teleportationThread
     local teleportationConnection: RBXScriptConnection
 
@@ -137,11 +132,7 @@ function PortalService.Start()
                 portalGun.Transparency = 1
             end
 
-            playerVel = char.HumanoidRootPart.AssemblyLinearVelocity
-
             PortalTeleportationLogic(redPortal, bluePortal, char, dtime, headHeight)
-            
-            updateStats(playerVel, dtime)
         end)
     end
 
@@ -271,17 +262,17 @@ end)
 -- OTHER FUNCTIONS
 
 function PortalService.RaycastThroughPortalLegacy(origin: Vector3, direction: Vector3, raycastParams: RaycastParams)
-    raycastParams:AddToFilter(bluePortal.Portal)
-    raycastParams:AddToFilter(redPortal.Portal)
+    raycastParams:AddToFilter(bluePortal.PortalSurface)
+    raycastParams:AddToFilter(redPortal.PortalSurface)
 
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then
-		if (raycast.Instance ~= bluePortal.Portal and raycast.Instance ~= redPortal.Portal) or 
-			(bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil) 
-		then return raycast.Position end
+		if (raycast.Instance ~= bluePortal.PortalSurface and raycast.Instance ~= redPortal.PortalSurface) or (bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil) then 
+			return raycast.Position 
+		end
 
 		local entryPortal = raycast.Instance
-		local exitPortal: Part = (entryPortal == bluePortal.Portal) and redPortal.Portal or bluePortal.Portal
+		local exitPortal: Part = (entryPortal == bluePortal.PortalSurface) and redPortal.PortalSurface or bluePortal.PortalSurface
 		
 		return Utils.projectThroughPortal(direction + origin, entryPortal.CFrame, exitPortal.CFrame)
 		
@@ -293,29 +284,36 @@ end
 
 local maxBounce = 5
 
-function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, depth: number?)
-	raycastParams:AddToFilter(bluePortal.Portal)
-    raycastParams:AddToFilter(redPortal.Portal)
+function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, depth: number?, blue: boolean?)
+	if blue == nil or not blue then
+		raycastParams:AddToFilter(bluePortal.PortalSurface)
+	end
+	if blue == nil or blue then
+    	raycastParams:AddToFilter(redPortal.PortalSurface)
+	end
 		
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then
-		if (raycast.Instance ~= bluePortal.Portal and raycast.Instance ~= redPortal.Portal) or 
-			(bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil) 
-		then return true, {Position = raycast.Position, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal} end
+		if (raycast.Instance ~= bluePortal.PortalSurface and raycast.Instance ~= redPortal.PortalSurface) or (bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil) then
+			print("raycast didnt pass through portal")
+			return true, {Position = raycast.Position, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal} 
+		end
 		
 		local entryPortal = raycast.Instance
-		local exitPortal = (entryPortal == bluePortal.Portal) and redPortal.Portal or bluePortal.Portal
+		local exitPortal = (entryPortal == bluePortal.PortalSurface) and redPortal.PortalSurface or bluePortal.PortalSurface
 		
 		local projectedTarget = Utils.projectThroughPortal(origin+direction, entryPortal.CFrame, exitPortal.CFrame)
 		
 		if depth and depth >= maxBounce then
+			print(`max bounce {raycast.Instance}`)
 			return true, {Position = projectedTarget, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal}
 		end
 		
 		local projectedOrigin = Utils.projectThroughPortal(raycast.Position, entryPortal.CFrame, exitPortal.CFrame)
 		local difference = projectedTarget - projectedOrigin
 		
-		return PortalService.RaycastThroughPortal(projectedOrigin, difference, raycastParams, depth and depth+1 or 2)
+		print(raycast.Instance)
+		return PortalService.RaycastThroughPortal(projectedOrigin, difference, raycastParams, depth and depth+1 or 2, raycast.Instance == bluePortal.PortalSurface)
 	end
 	return false, {Position = origin + direction}
 end

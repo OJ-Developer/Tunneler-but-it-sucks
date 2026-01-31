@@ -27,6 +27,7 @@ function InteractionService.Start()
         if shared.PlayerState.HoldingObject == nil then
             local success, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectMaxGrabDist, World.raycastParams(World.FdiPresets.Interactable))
             if success then
+                print(raycast.Instance)
                 if raycast.Instance:IsA("BasePart") then
                     if raycast.Instance.Anchored == false then
                         LinkedData.Get(raycast.Instance, "ObjectClass"):Pickup()

@@ -1,1 +1,2 @@
+- fix picking up objects though portals
 - add more ui shit

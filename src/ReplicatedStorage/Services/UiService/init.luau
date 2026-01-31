@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local UiButton = require(ReplicatedStorage.Classes.UiButton)
+local Utils = require(ReplicatedStorage.Modules.Utils)
 local Crosshair = require(script.Crosshair)
 local LoadingScreen = require(script.LoadingScreen)
 local MainMenu = require(script.MainMenu)
@@ -46,6 +47,15 @@ function UiService.Start()
             end
         end
     end
+end
+
+local devstats = playerGui.DevStats.Frame
+
+function UiService.UpdateDevstats(fps: number, inBluePortal: boolean, inRedPortal: boolean, velocity: Vector3)
+    devstats.FpsValue.Text = fps
+    devstats.BluePortalZoneValue.Text = inBluePortal and "true" or "false"
+    devstats.RedPortalZoneValue.Text = inRedPortal and "true" or "false"
+    devstats.PlayerVelocityValue.Text = `{Utils.roundVector(velocity)} | {math.round(velocity.Magnitude)}`
 end
 
 return UiService
