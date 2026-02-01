@@ -91,7 +91,7 @@ function Level.LoadLevel(levelName: string)
 		else
 			UiService.Crosshair.Enable()
 			UserInputService.MouseIconEnabled = false
-			local newPos = workspace.Map.SpawnLocation.CFrame + Vector3.new(0, 5, 0)
+			local newPos = workspace.Map.SpawnLocation.CFrame + Vector3.new(0, 4.25, 0)
 			char:PivotTo(newPos)
 			workspace.CurrentCamera.CFrame = newPos
 		end

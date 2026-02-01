@@ -25,8 +25,6 @@ local crouchHipHeight = normalHipHeight - crouchDist
 local CharacterService = {}
 
 function CharacterService.Init()
-    head.CanCollide = true
-
     kilometers = ReplicatedStorage.Assets.Characters.Kilometers:Clone()
     kilometers.Parent = workspace
     kilometers.LocalTransparencyModifier = 1

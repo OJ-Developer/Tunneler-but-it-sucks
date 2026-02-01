@@ -160,4 +160,26 @@ function Utils.tableContains(haystack: {any}, needles: {any})
 	return false
 end
 
+
+
+-- MISC UTILS
+
+function Utils.CopyParams(params: RaycastParams | OverlapParams)
+	local newParams
+	if typeof(params) == "RaycastParams" then
+		newParams = RaycastParams.new()
+		newParams.IgnoreWater = params.IgnoreWater
+	elseif typeof(params) == "OverlapParams" then
+		newParams = OverlapParams.new()
+		newParams.MaxParts = params.MaxParts
+	end
+
+	newParams.BruteForceAllSlow = params.BruteForceAllSlow
+	newParams.CollisionGroup = params.CollisionGroup
+	newParams.FilterDescendantsInstances = params.FilterDescendantsInstances
+	newParams.FilterType = params.FilterType
+	newParams.RespectCanCollide = params.RespectCanCollide
+	return newParams :: typeof(params)
+end
+
 return Utils

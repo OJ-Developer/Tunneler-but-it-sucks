@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 
 local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
 local MiscData = require(ReplicatedStorage.Data.MiscData)
@@ -261,41 +260,18 @@ end)
 
 -- OTHER FUNCTIONS
 
-function PortalService.RaycastThroughPortalLegacy(origin: Vector3, direction: Vector3, raycastParams: RaycastParams)
-    raycastParams:AddToFilter(bluePortal.PortalSurface)
-    raycastParams:AddToFilter(redPortal.PortalSurface)
-
-	local raycast = workspace:Raycast(origin, direction, raycastParams)
-	if raycast then
-		if (raycast.Instance ~= bluePortal.PortalSurface and raycast.Instance ~= redPortal.PortalSurface) or (bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil) then 
-			return raycast.Position 
-		end
-
-		local entryPortal = raycast.Instance
-		local exitPortal: Part = (entryPortal == bluePortal.PortalSurface) and redPortal.PortalSurface or bluePortal.PortalSurface
-		
-		return Utils.projectThroughPortal(direction + origin, entryPortal.CFrame, exitPortal.CFrame)
-		
-		--[[local offset = entryPortal.CFrame:PointToObjectSpace(origin + direction)
-		return exitPortal.CFrame:PointToWorldSpace(Vector3.new(-offset.X, offset.Y, -offset.Z))]]
-	end
-	return origin + direction
-end
-
-local maxBounce = 5
-
-function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, depth: number?, blue: boolean?)
-	if blue == nil or not blue then
+function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, second: boolean?)
+	local raycastParamsCopy = Utils.CopyParams(raycastParams)
+	if not second then
 		raycastParams:AddToFilter(bluePortal.PortalSurface)
+		raycastParams:AddToFilter(redPortal.PortalSurface)
 	end
-	if blue == nil or blue then
-    	raycastParams:AddToFilter(redPortal.PortalSurface)
-	end
-		
+
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then
-		if (raycast.Instance ~= bluePortal.PortalSurface and raycast.Instance ~= redPortal.PortalSurface) or (bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil) then
-			print("raycast didnt pass through portal")
+		local resultNotOnPortal = raycast.Instance ~= bluePortal.PortalSurface and raycast.Instance ~= redPortal.PortalSurface
+		local portalsNotActive = bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil
+		if resultNotOnPortal or portalsNotActive or second then
 			return true, {Position = raycast.Position, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal} 
 		end
 		
@@ -304,16 +280,10 @@ function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3,
 		
 		local projectedTarget = Utils.projectThroughPortal(origin+direction, entryPortal.CFrame, exitPortal.CFrame)
 		
-		if depth and depth >= maxBounce then
-			print(`max bounce {raycast.Instance}`)
-			return true, {Position = projectedTarget, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal}
-		end
-		
 		local projectedOrigin = Utils.projectThroughPortal(raycast.Position, entryPortal.CFrame, exitPortal.CFrame)
 		local difference = projectedTarget - projectedOrigin
 		
-		print(raycast.Instance)
-		return PortalService.RaycastThroughPortal(projectedOrigin, difference, raycastParams, depth and depth+1 or 2, raycast.Instance == bluePortal.PortalSurface)
+		return PortalService.RaycastThroughPortal(projectedOrigin, difference, raycastParamsCopy, true)
 	end
 	return false, {Position = origin + direction}
 end

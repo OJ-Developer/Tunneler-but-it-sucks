@@ -27,7 +27,6 @@ function InteractionService.Start()
         if shared.PlayerState.HoldingObject == nil then
             local success, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectMaxGrabDist, World.raycastParams(World.FdiPresets.Interactable))
             if success then
-                print(raycast.Instance)
                 if raycast.Instance:IsA("BasePart") then
                     if raycast.Instance.Anchored == false then
                         LinkedData.Get(raycast.Instance, "ObjectClass"):Pickup()
@@ -48,14 +47,13 @@ function InteractionService.Start()
         RunService.PreRender:Connect(function(dTime)
             if shared.PlayerState.HoldingObject then
                 if shared.PlayerState.HoldingObject:IsA("BasePart") then
-                    --local success, raycast = raycastUtils.raycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * script.Parent.Configuration.HoldDist.Value, RaycastUtils.raycastParams(RaycastUtils.FdiPresets.Collideable))
-                    local pos = PortalService.RaycastThroughPortalLegacy(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, World.raycastParams(World.FdiPresets.Collideable))
-                    pos -= camera.CFrame.LookVector * Utils.average(shared.PlayerState.HoldingObject.Size) / 2
+                    local _, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, World.raycastParams(World.FdiPresets.Collideable))
+                    raycast.Position -= camera.CFrame.LookVector * Utils.average(shared.PlayerState.HoldingObject.Size) / 2
                 
                     rotationOffset -= shared.PlayerState.HasGun and math.pi*0.5*dTime or rotationOffset
                     local playerRotationRy = rootPart.Orientation.Y
                     rotation = CFrame.Angles(0, math.rad(playerRotationRy+180)+rotationOffset, 0)
-                    shared.PlayerState.HoldingObject.CFrame = CFrame.new(pos) * rotation
+                    shared.PlayerState.HoldingObject.CFrame = CFrame.new(raycast.Position) * rotation
                 end
             end
         end)
