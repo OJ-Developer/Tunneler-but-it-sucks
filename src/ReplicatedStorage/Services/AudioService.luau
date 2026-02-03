@@ -1,7 +1,11 @@
 --[[local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Sounds = require(ReplicatedStorage.Modules.Data.Sounds)]]
 
-local AudioService = {}
+local AudioService = {
+    MusicVolume = 100,
+    SoundsVolume = 100,
+    VoiceVolume = 100
+}
 
 local SoundsFolder: Folder
 local SoundEffectsFolder: Folder

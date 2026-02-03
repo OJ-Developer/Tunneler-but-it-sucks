@@ -20,12 +20,12 @@ end
 local event = {}
 event.__index = event
 
-export type EventType = typeof(event) & {
+export type ScriptSignal = typeof(event) & {
 	connections: {}
 }
 
-export type ConnectionType = typeof(connection) & {
-	event: EventType,
+export type Connection = typeof(connection) & {
+	event: ScriptSignal,
 	fn: any,
 	connected: boolean
 }
@@ -34,12 +34,12 @@ function event.new()
 	return setmetatable({connections = {}}, event)
 end
 
-function event:Connect(fn): ConnectionType
+function event:Connect(fn): Connection
 	table.insert(self.connections, fn)
 	return connection.new(self, fn)
 end
 
-function event:Once(fn): ConnectionType
+function event:Once(fn): Connection
 	local connection
 	connection = self:Connect(function(...)
 		connection:Disconnect()

@@ -7,24 +7,26 @@ local ScriptSignal = require(script.Parent.ScriptSignal)
 local button = {}
 button.__index = button
 
-function button.new(buttonUI: GuiButton)
+function button.new(buttonUI)
 	local newButton = setmetatable({
 		instance = buttonUI,
 		OnClick = ScriptSignal.new(),
 	}, button)
 
-	local hover = buttonUI:FindFirstChild("Hover")
-	if not hover then
-		hover = Instance.new("Frame")
-		hover.Size = UDim2.fromScale(1,1)
-		hover.Transparency = 0.9
-		hover.BackgroundColor3 = Color3.new(1,1,1)
-		hover.BorderSizePixel = 0
-		hover.Visible = false
-		hover.ZIndex = -1
-		hover.Parent = newButton.instance
+	local hover
+	if not buttonUI.Parent:HasTag("SettingsOption") then
+		hover = buttonUI:FindFirstChild("Hover")
+		if not hover then
+			hover = Instance.new("Frame")
+			hover.Size = UDim2.fromScale(1,1)
+			hover.Transparency = 0.9
+			hover.BackgroundColor3 = Color3.new(1,1,1)
+			hover.BorderSizePixel = 0
+			hover.Visible = false
+			hover.ZIndex = -1
+			hover.Parent = newButton.instance
+		end
 	end
-	
 	
 	local showData
 	
@@ -41,17 +43,20 @@ function button.new(buttonUI: GuiButton)
 	local hide: {ObjectValue} = Utils.getInstancesWithProperty(children, "ObjectValue", "Name", "Hide")
 	
 	
+	if hover then
+		buttonUI.MouseEnter:Connect(function()
+			hover.Visible = true
+		end)
 
-	buttonUI.MouseEnter:Connect(function()
-		hover.Visible = true
-	end)
-
-	buttonUI.MouseLeave:Connect(function()
-		hover.Visible = false
-	end)
+		buttonUI.MouseLeave:Connect(function()
+			hover.Visible = false
+		end)
+	end
 
 	buttonUI.MouseButton1Down:Connect(function(x,y)
-		hover.Visible = false
+		if hover then
+			hover.Visible = false
+		end
 		newButton.OnClick:Fire()
 		
 		local function fireShowEvent(value)

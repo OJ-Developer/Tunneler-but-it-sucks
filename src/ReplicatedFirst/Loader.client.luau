@@ -132,11 +132,24 @@ end)
 
 -- MODULE LOADER
 
+local UserInputService = game:GetService("UserInputService")
+local VRService = game:GetService("VRService")
+
 local Settings = require(ReplicatedStorage.Configs.MainConfig)
+local Enums = require(ReplicatedStorage.Data.Enums)
 
 shared.PlayerState = {}
 shared.GameState = {}
 shared.Settings = {}
+if UserInputService.GamepadEnabled then
+    shared.InputDeviceType = Enums.InputDeviceType.Console
+elseif UserInputService.MouseEnabled and UserInputService.KeyboardEnabled then
+    shared.InputDeviceType = Enums.InputDeviceType.Keyboard
+elseif UserInputService.TouchEnabled then
+    shared.InputDeviceType = Enums.InputDeviceType.Mobile
+elseif VRService.VREnabled then
+    shared.InputDeviceType = Enums.InputDeviceType.VR
+end
 
 local serviceModules = ReplicatedStorage.Services
 local services = {}

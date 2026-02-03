@@ -8,3 +8,8 @@ ReplicatedStorage.Inputs.DevConsole.Keyboard.Changed:Connect(function(property)
         Cmdr:SetActivationKeys({ReplicatedStorage.Inputs.DevConsole.Keyboard.KeyCode})
     end
 end)
+
+ReplicatedStorage.Events.UpdateDevConsoleEnabled.Event:Connect(function(v)
+    Cmdr:SetEnabled(v)
+end)
+
