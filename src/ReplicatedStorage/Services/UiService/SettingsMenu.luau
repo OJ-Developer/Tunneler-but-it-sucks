@@ -27,8 +27,7 @@ function SettingsMenu.Init()
         for name, setting in catagorySettings do
             if setting.Type == Enums.SettingType.Boolean then
                 local optionUi = referenceSettingsOptions.ButtonSetting:Clone()
-                optionUi.Name = name
-                optionUi.Label.Text = setting.DisplayName or name
+                optionUi.Label.Text = setting.Name
                 
                 local state = setting.Default
                 optionUi.Button.Text = state and "On" or "Off"
@@ -40,15 +39,14 @@ function SettingsMenu.Init()
                 end)
 
                 if setting.OnStart then
-                    setting.OnStart(optionUi, setting.Default)
+                    setting.OnStart(optionUi, setting)
                 end
 
                 optionUi.Parent = settingsMenu[catagory].Settings
                 optionUi.Visible = true
             elseif setting.Type == Enums.SettingType.Slider then
                 local optionUi = referenceSettingsOptions.SliderSetting:Clone()
-                optionUi.Name = name
-                optionUi.Label.Text = setting.DisplayName or name
+                optionUi.Label.Text = setting.Name
 
                 local slider = optionUi.Slider
                 local dot = slider.Dot
@@ -87,15 +85,14 @@ function SettingsMenu.Init()
                 end)
 
                 if setting.OnStart then
-                    setting.OnStart(optionUi, setting.Default)
+                    setting.OnStart(optionUi, setting)
                 end
 
                 optionUi.Parent = settingsMenu[catagory].Settings
                 optionUi.Visible = true
             elseif setting.Type == Enums.SettingType.Keybind then
                 local optionUi = referenceSettingsOptions.ButtonSetting:Clone()
-                optionUi.Name = name
-                optionUi.Label.Text = setting.DisplayName or name
+                optionUi.Label.Text = setting.Name
 
                 local inputDeviceType = shared.InputDeviceType
                 local inputBinding: InputBinding = setting.InputAction[inputDeviceType]
@@ -134,7 +131,6 @@ function SettingsMenu.Init()
         end
 
         local padding = referenceSettingsOptions.Padding:Clone()
-        padding.Name = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
         padding.Parent = settingsMenu[catagory].Settings
     end
 end

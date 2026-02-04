@@ -10,44 +10,43 @@ local playerGui = player.PlayerGui.Gui
 
 local settings = {
     Video = {
-        Bloom = {
+        {
+            Name = "Bloom",
             Type = Enums.SettingType.Boolean,
             Default = true,
             OnChange = function(v)
-                Lighting.Bloom.Enabled = v
+                Lighting.Bloom.Intensity = v and 1 or 0
             end,
-            SortOrder = 1
         },
-        Shadows = {
+        {
+            Name = "Shadows",
             Type = Enums.SettingType.Boolean,
             Default = true,
             OnChange = function(v)
                 Lighting.GlobalShadows = v
             end,
-            SortOrder = 2
         },
-        PortalRendering = {
-            DisplayName = "Portal Rendering",
+        {
+            Name = "Portal Rendering",
             Type = Enums.SettingType.Boolean,
             Default = true,
             OnChange = function(v)
                 shared.Settings.PortalRendering = v
             end,
-            SortOrder = 3
         },
-        FpsCounter = {
-            DisplayName = "FPS Counter",
+        {
+            Name = "FPS Counter",
             Type = Enums.SettingType.Boolean,
             Default = false,
             OnChange = function(v)
                 playerGui.DevStats.Enabled = v
             end,
-            SortOrder = 4
         }
     },
 
     Audio = {
-        Music = {
+        {
+            Name = "Music",
             Type = Enums.SettingType.Slider,
             SliderMin = 0,
             SliderMax = 200,
@@ -55,9 +54,9 @@ local settings = {
             OnChange = function(v)
                 AudioService.MusicVolume = v
             end,
-            SortOrder = 1
         },
-        Sounds = {
+        {
+            Name = "Sounds",
             Type = Enums.SettingType.Slider,
             SliderMin = 0,
             SliderMax = 200,
@@ -65,9 +64,9 @@ local settings = {
             OnChange = function(v)
                 AudioService.SoundsVolume = v
             end,
-            SortOrder = 2
         },
-        Voice = {
+        {
+            Name = "Voice",
             Type = Enums.SettingType.Slider,
             SliderMin = 0,
             SliderMax = 200,
@@ -75,55 +74,51 @@ local settings = {
             OnChange = function(v)
                 AudioService.VoiceVolume = v
             end,
-            SortOrder = 3
         },
-        Subtitles = {
+        {
+            Name = "Subtitles",
             Type = Enums.SettingType.Boolean,
             Default = true,
             OnChange = function(v)
                 shared.Settings.Subtitles = v
             end,
-            SortOrder = 4
         }
     },
 
     Gameplay = {
-        MuteAxis = {
-            DisplayName = "Mute Axis",
+        {
+            Name = "Mute Axis",
             Type = Enums.SettingType.Boolean,
             Default = false,
             OnChange = function(v)
                 shared.Settings.MuteAxis = v
             end,
-            SortOrder = 1
         },
-        SpeedrunTimer = {
-            DisplayName = "Speedrun Timer",
+        {
+            Name = "Speedrun Timer",
             Type = Enums.SettingType.Boolean,
             Default = false,
             OnChange = function(v)
                 playerGui.SpeedrunTimer.Enabled = v
             end,
-            SortOrder = 2
         },
-        DevConsole = {
-            DisplayName = "Developer Console",
+        {
+            Name = "Developer Console",
             Type = Enums.SettingType.Boolean,
             Default = false,
-            OnStart = function(_, default)
-                ReplicatedStorage.Events.UpdateDevConsoleEnabled:Fire(default)
+            OnStart = function(_, setting)
+                ReplicatedStorage.Events.UpdateDevConsoleEnabled:Fire(setting.Default)
             end,
             OnChange = function(v)
                 shared.Settings.DevConsoleEnabled = not shared.Settings.DevConsoleEnabled
                 ReplicatedStorage.Events.UpdateDevConsoleEnabled:Fire(v)
             end,
-            SortOrder = 3
         }
     },
 
     Controls = {
-        CamSens = {
-            DisplayName = "Camera Sensitivity",
+        {
+            Name = "Camera Sensitivity",
             Type = Enums.SettingType.Slider,
             SliderMin = 0,
             SliderMax = 200,
@@ -131,35 +126,31 @@ local settings = {
             OnChange = function(v)
                 shared.Settings.CamSens = v
             end,
-            SortOrder = 1
         },
-        Portal1 = {
-            DisplayName = "Portal 1",
+        {
+            Name = "Portal 1",
             Type = Enums.SettingType.Keybind,
             InputAction = ReplicatedStorage.Inputs.FireBlue,
-            SortOrder = 2
         },
-        Portal2 = {
-            DisplayName = "Portal 2",
+        {
+            Name = "Portal 2",
             Type = Enums.SettingType.Keybind,
             InputAction = ReplicatedStorage.Inputs.FireRed,
-            SortOrder = 3
         },
-        Crouch = {
+        {
+            Name = "Crouch",
             Type = Enums.SettingType.Keybind,
             InputAction = ReplicatedStorage.Inputs.Crouch,
-            SortOrder = 4
         },
-        Interact = {
+        {
+            Name = "Interact",
             Type = Enums.SettingType.Keybind,
             InputAction = ReplicatedStorage.Inputs.Interact,
-            SortOrder = 5
         },
-        DevConsole = {
-            DisplayName = "Developer Console",
+        {
+            Name = "Developer Console",
             Type = Enums.SettingType.Keybind,
             InputAction = ReplicatedStorage.Inputs.DevConsole,
-            SortOrder = 6
         }
     }
 }
