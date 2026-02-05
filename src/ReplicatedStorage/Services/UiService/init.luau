@@ -11,6 +11,7 @@ local MainMenu = require(script.MainMenu)
 local PauseMenu = require(script.PauseMenu)
 local ScreenEffects = require(script.ScreenEffects)
 local SettingsMenu = require(script.SettingsMenu)
+local SpeedrunTimer = require(script.SpeedrunTimer)
 
 local UiService = {
     MainMenu = MainMenu,
@@ -19,7 +20,8 @@ local UiService = {
     Crosshair = Crosshair,
     LoadingScreen = LoadingScreen,
     ScreenEffects = ScreenEffects,
-    ExtrasMenu = ExtrasMenu
+    ExtrasMenu = ExtrasMenu,
+    SpeedrunTimer = SpeedrunTimer
 }
 
 local player = Players.LocalPlayer
