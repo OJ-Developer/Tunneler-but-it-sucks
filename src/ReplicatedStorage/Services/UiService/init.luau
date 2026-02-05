@@ -60,4 +60,18 @@ function UiService.UpdateDevstats(fps: number, inBluePortal: boolean, inRedPorta
     devstats.PlayerVelocityValue.Text = `{Utils.roundVector(velocity)} | {math.round(velocity.Magnitude)}`
 end
 
+function UiService.Subtitle(subtitle: string, speaker: string, colour: Color3, duration: number)
+	local subtitleUI = playerGui.Subtitles.Frame.ReferanceSubtitle:Clone()
+	subtitleUI.Parent = playerGui.Subtitles.Frame
+	subtitleUI.Text = speaker..": "..subtitle
+	subtitleUI.TextColor3 = colour
+	subtitleUI.Size = UDim2.new(0.5,0,0,30*math.ceil(subtitleUI.TextBounds.X/subtitleUI.AbsoluteSize.X))
+	subtitleUI.TextWrapped = true
+	subtitleUI.Visible = true
+	task.spawn(function()
+		task.wait(duration)
+		subtitleUI:Destroy()
+	end)
+end
+
 return UiService

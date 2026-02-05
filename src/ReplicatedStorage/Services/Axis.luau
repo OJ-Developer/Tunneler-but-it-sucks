@@ -7,6 +7,7 @@ local tweenService = game:GetService("TweenService")
 local AxisTextures = require(ReplicatedStorage.Data.AxisTextures)
 local Voicelines = require(ReplicatedStorage.Data.Voicelines).Axis
 local AudioService = require(script.Parent.AudioService)
+local UiService = require(script.Parent.UiService)
 
 local axis
 
@@ -56,11 +57,11 @@ function module.PlayVoiceline(voiceline)
 		end
 		
 		-- play sound
-		playingSound = AudioService.PlaySoundEffect(Voicelines[voiceline], shared.Settings.MuteAxis and 0 or 2)
+		playingSound = AudioService.PlaySoundEffect(Voicelines[voiceline], shared.Settings.MuteAxis and 0 or 2, nil, true)
 		
 		-- subtitles
-		if shared.Settings.ShowSubtitles and not shared.Settings.MuteAxis then
-			--subtitles.newSubtitle(Voicelines[voiceline].Subtitle, "Axis", Color3.new(0, 0.737255, 0), sound.TimeLength*1.2)
+		if shared.Settings.Subtitles and not shared.Settings.MuteAxis then
+			UiService.Subtitle(Voicelines[voiceline].Subtitle, "Axis", Color3.new(0, 0.737255, 0), playingSound.TimeLength*1.2)
 		end
 		
 		-- update axis textures

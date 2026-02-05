@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Enums = require(script.Parent.Enums)
 local AudioService = require(ReplicatedStorage.Services.AudioService)
+local CameraService = require(ReplicatedStorage.Services.CameraService)
 
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui.Gui
@@ -30,6 +31,9 @@ local settings = {
             Name = "Portal Rendering",
             Type = Enums.SettingType.Boolean,
             Default = true,
+            OnStart = function(_, setting)
+                shared.Settings.PortalRendering = setting.Default
+            end,
             OnChange = function(v)
                 shared.Settings.PortalRendering = v
             end,
@@ -53,6 +57,7 @@ local settings = {
             Default = 100,
             OnChange = function(v)
                 AudioService.MusicVolume = v
+                AudioService.UpdateVolume()
             end,
         },
         {
@@ -63,6 +68,7 @@ local settings = {
             Default = 100,
             OnChange = function(v)
                 AudioService.SoundsVolume = v
+                AudioService.UpdateVolume()
             end,
         },
         {
@@ -73,14 +79,19 @@ local settings = {
             Default = 100,
             OnChange = function(v)
                 AudioService.VoiceVolume = v
+                AudioService.UpdateVolume()
             end,
         },
         {
             Name = "Subtitles",
             Type = Enums.SettingType.Boolean,
             Default = true,
+            OnStart = function(_, setting)
+                shared.Settings.Subtitles = setting.Default
+            end,
             OnChange = function(v)
                 shared.Settings.Subtitles = v
+                AudioService.UpdateVolume()
             end,
         }
     },
@@ -90,6 +101,9 @@ local settings = {
             Name = "Mute Axis",
             Type = Enums.SettingType.Boolean,
             Default = false,
+            OnStart = function(_, setting)
+                shared.Settings.MuteAxis = setting.Default
+            end,
             OnChange = function(v)
                 shared.Settings.MuteAxis = v
             end,
@@ -124,7 +138,7 @@ local settings = {
             SliderMax = 200,
             Default = 100,
             OnChange = function(v)
-                shared.Settings.CamSens = v
+                CameraService.CameraSensitivity = v
             end,
         },
         {

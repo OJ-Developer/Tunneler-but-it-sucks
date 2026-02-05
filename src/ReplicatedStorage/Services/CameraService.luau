@@ -1,4 +1,6 @@
-local Camera = {}
+local Camera = {
+	CameraSensitivity = 100
+}
 
 -- services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -25,7 +27,7 @@ local maxYRot = 1.57
 
 -- private functions
 local function updateCamera()
-	rotation -= uis:GetMouseDelta() * math.rad(uis.MouseDeltaSensitivity / 2.5)
+	rotation -= uis:GetMouseDelta() * math.rad(uis.MouseDeltaSensitivity * Camera.CameraSensitivity * .004)
 	
 	local yRot = rotation.Y
 	if yRot > maxYRot then
