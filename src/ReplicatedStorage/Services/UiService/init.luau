@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UiButton = require(ReplicatedStorage.Classes.UiButton)
 local Utils = require(ReplicatedStorage.Modules.Utils)
 local Crosshair = require(script.Crosshair)
+local ExtrasMenu = require(script.ExtrasMenu)
 local LoadingScreen = require(script.LoadingScreen)
 local MainMenu = require(script.MainMenu)
 local PauseMenu = require(script.PauseMenu)
@@ -17,7 +18,8 @@ local UiService = {
     SettingsMenu = SettingsMenu,
     Crosshair = Crosshair,
     LoadingScreen = LoadingScreen,
-    ScreenEffects = ScreenEffects
+    ScreenEffects = ScreenEffects,
+    ExtrasMenu = ExtrasMenu
 }
 
 local player = Players.LocalPlayer
