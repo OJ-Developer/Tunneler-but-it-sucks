@@ -12,7 +12,7 @@ local LinkedData = require(script.Parent.LinkedData)
 local UiService = require(script.Parent.UiService)
 local Settings = require(ReplicatedStorage.Configs.MainConfig)
 
-local updateCharAnchored = ReplicatedStorage.Events.UpdateCharAnchored
+--local updateCharAnchored = ReplicatedStorage.Events.UpdateCharAnchored
 
 local Level = {
 	LevelLoadStarted = ScriptSignal.new(),
@@ -103,7 +103,7 @@ function Level.LoadLevel(levelName: string)
 		UiService.LoadingScreen.Disable()
 		
 		-- more level settings stuff
-		updateCharAnchored:FireServer(levelSettings.MenuLevel.Value)
+		--updateCharAnchored:FireServer(levelSettings.MenuLevel.Value)
 		rootPart.Anchored = levelSettings.MenuLevel.Value
 		if levelSettings.SkyMode.Value == "Day" then
 			Lighting.TimeOfDay = 14.5

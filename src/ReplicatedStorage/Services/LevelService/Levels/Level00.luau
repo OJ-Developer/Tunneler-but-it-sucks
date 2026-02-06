@@ -31,7 +31,7 @@ function module.Start(player: Player)
 	local cutscenePoints = workspace.Map.Other.CutscenePoints
 	char.HumanoidRootPart.CFrame = workspace.Map.SpawnLocation.CFrame + Vector3.new(0, 3, 0)
 	char.HumanoidRootPart.Anchored = true
-	UiService.ScreenEffects.setScreenColourOverlay({Transparency = 1})
+	UiService.ScreenEffects.setScreenColourOverlay({Transparency = 0})
 	AudioService.PlaySoundEffectAndWait(Sounds.SoundEffects.PlaceHolder)
 	CameraService.Disable()
 	cam.CFrame = cutscenePoints.A.WorldCFrame
