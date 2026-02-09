@@ -44,13 +44,13 @@ function Fizzler:Init()
 	self.t = task.spawn(function()
 		while task.wait() do
 			if self.Enabled then
-				local objectsInFizzler = workspace:GetPartsInPart(fizzler, World.overlapParams(World.FdiPresets.Objects))
+				local objectsInFizzler = workspace:GetPartsInPart(fizzler, World.overlapParams(World.ParamPreset.Objects))
 
 				for _, object in objectsInFizzler do
 					LinkedData.Get(object, "ObjectClass"):Fizzle()
 				end
 
-				local playerInFizzler = workspace:GetPartsInPart(fizzler, World.overlapParams(World.FdiPresets.Player))
+				local playerInFizzler = workspace:GetPartsInPart(fizzler, World.overlapParams(World.ParamPreset.Player))
 
 				if #playerInFizzler > 0 then
 					if workspace.BluePortal.Fizzleable.Value then

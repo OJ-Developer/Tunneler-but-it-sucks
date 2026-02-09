@@ -30,7 +30,7 @@ function FloorButton:Init()
 
 	self.t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitbox, World.overlapParams(World.FdiPresets.FloorButtonActivators))
+			local partsInHitbox = workspace:GetPartsInPart(hitbox, World.overlapParams(World.ParamPreset.FloorButtonActivators))
 			local newActivated = false
 			if #partsInHitbox > 0 then
 				newActivated = true

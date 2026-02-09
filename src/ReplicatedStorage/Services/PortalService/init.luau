@@ -170,7 +170,7 @@ function PortalService.CanPlacePortalOnPart(part: Part)
 end
 
 local function getPartsPortalIsOn(portal: Portal)
-	return workspace:GetPartsInPart(portal.BehindPortalHitbox, World.overlapParams(World.FdiPresets.Building))
+	return workspace:GetPartsInPart(portal.BehindPortalHitbox, World.overlapParams(World.ParamPreset.Building))
 end
 
 local function collisionGroupStuff(portal: Model, partsPortalIsOn: {Part}, prevPartsPortalIsOn: {Part}, portalColour: string)
@@ -229,7 +229,7 @@ local function firePortal(portal: Portal, redPortal: boolean)
 	local tween = TweenService:Create(portalGunOffset, TweenInfo.new(gunSpinTime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Value = portalGunOffset.Value * CFrame.Angles(0, 0, redPortal and -gunSpinAmount or gunSpinAmount)})
 	tween:Play()
 	
-	local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, World.raycastParams(World.FdiPresets.PortalCollision))
+	local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, World.raycastParams(World.ParamPreset.PortalCollision))
 	if raycast then
 		if PortalService.CanPlacePortalOnPart(raycast.Instance) then
 			PortalService.PlacePortal(portal, redPortal, raycast.Instance, false, raycast.Position, raycast.Normal)

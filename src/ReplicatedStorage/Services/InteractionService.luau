@@ -20,12 +20,25 @@ shared.PlayerState.HoldingObjectChanged = ScriptSignal.new()
 
 local InteractionService = {}
 
+function InteractionService.Init()
+    local noCollisionsFolder = Instance.new("Folder")
+    noCollisionsFolder.Name = "NoObjectCollision"
+    noCollisionsFolder.Parent = char
+
+    for _, part in char:GetChildren() do
+        if part:IsA("BasePart") and part.CanCollide then
+            local constraint = Instance.new("NoCollisionConstraint")
+            constraint.Part0 = part
+            constraint.Parent = noCollisionsFolder
+        end
+    end
+end
 
 function InteractionService.Start()
     -- pressing e
     ReplicatedStorage.Inputs.Interact.Pressed:Connect(function()
         if shared.PlayerState.HoldingObject == nil then
-            local success, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectMaxGrabDist, World.raycastParams(World.FdiPresets.Interactable))
+            local success, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectMaxGrabDist, World.raycastParams(World.ParamPreset.Interactable))
             if success then
                 if raycast.Instance:IsA("BasePart") then
                     if raycast.Instance.Anchored == false then
@@ -44,13 +57,13 @@ function InteractionService.Start()
     task.spawn(function()
         local rotation = CFrame.new()
         local rotationOffset = 0
-        RunService.PreRender:Connect(function(dTime)
+        RunService.PreRender:Connect(function(dtime)
             if shared.PlayerState.HoldingObject then
                 if shared.PlayerState.HoldingObject:IsA("BasePart") then
-                    local _, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, World.raycastParams(World.FdiPresets.Collideable))
+                    local _, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, World.raycastParams(World.ParamPreset.ObjectCollideable))
                     raycast.Position -= camera.CFrame.LookVector * Utils.average(shared.PlayerState.HoldingObject.Size) / 2
                 
-                    rotationOffset -= shared.PlayerState.HasGun and math.pi*0.5*dTime or rotationOffset
+                    rotationOffset -= shared.PlayerState.HasGun and math.pi*0.5*dtime or rotationOffset
                     local playerRotationRy = rootPart.Orientation.Y
                     rotation = CFrame.Angles(0, math.rad(playerRotationRy+180)+rotationOffset, 0)
                     shared.PlayerState.HoldingObject.CFrame = CFrame.new(raycast.Position) * rotation

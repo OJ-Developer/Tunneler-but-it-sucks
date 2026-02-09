@@ -26,48 +26,86 @@ function module.getPortalRaycastExcludeParts()
 	return exclude
 end
 
-module.FdiPresets = {
-	Collideable = {getFdiTable = module.getMapCollideableParts},
+module.ParamPreset = {
+	Collideable = {
+		RespectCanCollide = true,
+		FilterType = Enum.RaycastFilterType.Include
+	},
 
-	Interactable = {getFdiTable = function()
-		return {workspace.Map.Objects, workspace.Map.Elements}
-	end},
+	Interactable = {
+		FilterDescendantsInstances = function()
+			return {workspace.Map.Objects, workspace.Map.Elements}
+		end,
+		FilterType = Enum.RaycastFilterType.Include
+	},
 
-	Player = {getFdiTable = function()
-		return {char}
-	end},
+	Player = {
+		FilterDescendantsInstances = function()
+			return {char}
+		end,
+		FilterType = Enum.RaycastFilterType.Include
+	},
 
-	FloorButtonActivators = {getFdiTable = function()
-		return {Utils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
-	end},
+	FloorButtonActivators = {
+		FilterDescendantsInstances = function()
+			return {Utils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
+		end,
+		FilterType = Enum.RaycastFilterType.Include
+	},
 
-	Objects = {getFdiTable = function()
-		return {workspace.Map.Objects}
-	end},
+	Objects = {
+		FilterDescendantsInstances = function()
+			return {workspace.Map.Objects}
+		end,
+		FilterType = Enum.RaycastFilterType.Include
+	},
 
-	CanHavePortals = {getFdiTable = module.getPortalableParts},
+	CanHavePortals = {
+		FilterDescendantsInstances = module.getPortalableParts,
+		FilterType = Enum.RaycastFilterType.Include
+	},
 
-	PortalCollision = {getFdiTable = function()
-		return module.getPortalRaycastExcludeParts(), true
-	end},
+	PortalCollision = {
+		FilterDescendantsInstances = function()
+			return module.getPortalRaycastExcludeParts()
+		end,
+		FilterType = Enum.RaycastFilterType.Exclude
+	},
 
-	Building = {getFdiTable = function()
-		return {workspace.Map.Building}
-	end},
+	Building = {
+		FilterDescendantsInstances = function()
+			return {workspace.Map.Building}
+		end,
+		FilterType = Enum.RaycastFilterType.Include
+	},
 
-	NonStatic = {getFdiTable = function()
-		return {workspace.Map.Elements, workspace.Map.Objects, workspace.Axis, workspace.Kilometers}
-	end}
+	NonStatic = {
+		FilterDescendantsInstances = function()
+			return {workspace.Map.Elements, workspace.Map.Objects, workspace.Axis, workspace.Kilometers}
+		end,
+		FilterType = Enum.RaycastFilterType.Include
+	},
+
+	ObjectCollideable = {
+		RespectCanCollide = true,
+		FilterDescendantsInstances = function()
+			return {workspace.Map.Objects, char}
+		end,
+		FilterType = Enum.RaycastFilterType.Exclude
+	}
 }
 
-local function theRestOfTheParamsStuff(params, fdiPreset)
-	local fdi, exclude = fdiPreset.getFdiTable()
-	if exclude then
-		params.FilterType = Enum.RaycastFilterType.Exclude
-	else
-		params.FilterType = Enum.RaycastFilterType.Include
+local function theRestOfTheParamsStuff(params, paramData)
+	local fdiFunc = paramData.FilterDescendantsInstances
+	local fdi = {}
+	if fdiFunc then
+		fdi = fdiFunc()
 	end
 	params.FilterDescendantsInstances = fdi
+	for name, value in paramData do
+		if name == "FilterDescendantsInstances" then continue end
+		params[name] = value
+	end
 end
 
 function module.raycastParams(fdiPreset)

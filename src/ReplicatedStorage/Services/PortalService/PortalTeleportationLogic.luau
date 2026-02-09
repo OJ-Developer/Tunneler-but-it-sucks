@@ -37,7 +37,7 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
         
         
         -- get parts in portal zones
-        local params = World.overlapParams(World.FdiPresets.Objects)
+        local params = World.overlapParams(World.ParamPreset.Objects)
         params.FilterDescendantsInstances = {params.FilterDescendantsInstances, char}
         
         inBluePortal = workspace:GetPartsInPart(bluePortal.PortalZone, params)

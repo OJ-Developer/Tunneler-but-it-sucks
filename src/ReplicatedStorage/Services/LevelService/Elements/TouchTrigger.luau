@@ -23,7 +23,7 @@ function TouchTrigger:Init()
 	
 	self.t = task.spawn(function()
 		while task.wait() do
-			local partsInHitbox = workspace:GetPartsInPart(hitboxPart, World.overlapParams(World.FdiPresets.Player))
+			local partsInHitbox = workspace:GetPartsInPart(hitboxPart, World.overlapParams(World.ParamPreset.Player))
 
 			local newActivated = #partsInHitbox > 0
 

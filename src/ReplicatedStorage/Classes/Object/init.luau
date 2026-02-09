@@ -1,16 +1,20 @@
-local module = {}
-module.__index = module
-
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local objects = ReplicatedStorage.Assets.Objects
 
 local linkedData = require(script.Parent.Parent.Services.LinkedData)
 local ScriptSignal = require(script.Parent.ScriptSignal)
 
+local player = Players.LocalPlayer
+local char = player.Character
+
 shared.PlayerState.HoldingObjectChanged = ScriptSignal.new()
 
+local module = {}
+module.__index = module
+
 export type ObjectType = typeof(module) & {
-	Instance: Part,
+	Model: Part,
 	Fizzled: boolean,
 	OnFizzle: typeof(ScriptSignal)
 }
@@ -25,7 +29,7 @@ end
 
 function module.giveFunctionality(object: Part, ...)
 	local newObject = setmetatable({
-		Instance = object, 
+		Model = object, 
 		Fizzled = false, 
 		OnFizzle = ScriptSignal.new()
 	}, module)
@@ -45,7 +49,7 @@ function module:Fizzle()
 	print(self, "was fizzled")
 	self.Fizzled = true
 	self.OnFizzle:Fire()
-	local object = self.Instance
+	local object = self.Model
 
 	if shared.PlayerState.HoldingObject == object then
 		self:Drop()
@@ -88,9 +92,11 @@ function module:Fizzle()
 end
 
 function module:Pickup()
-	local object = self.Instance
-    object.Anchored = true
-	object.CanCollide = false
+	local object = self.Model
+    --object.Anchored = true
+	for _, constraint in char.NoObjectCollision:GetChildren() do
+		constraint.Part1 = self.Model
+	end
 	shared.PlayerState.HoldingObject = object
 	shared.PlayerState.HoldingObjectChanged:Fire(self)
 end
@@ -102,6 +108,9 @@ function module.Drop()
 		shared.PlayerState.HoldingObject.AssemblyLinearVelocity = Vector3.zero
 		shared.PlayerState.HoldingObject.AssemblyAngularVelocity = Vector3.zero
 		shared.PlayerState.HoldingObject = nil
+		for _, constraint in char.NoObjectCollision:GetChildren() do
+			constraint.Part1 = nil
+		end
 		shared.PlayerState.HoldingObjectChanged:Fire()
 	else
 		warn("tried to drop object with no object beind held")

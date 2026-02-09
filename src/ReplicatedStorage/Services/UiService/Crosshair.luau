@@ -38,7 +38,7 @@ function Crosshair.Start()
     task.spawn(function()
         while task.wait() do
             if shared.PlayerState.HasGun then
-                local sucecss, objectRaycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MainConfig.ObjectMaxGrabDist, World.raycastParams(World.FdiPresets.Interactable))
+                local sucecss, objectRaycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MainConfig.ObjectMaxGrabDist, World.raycastParams(World.ParamPreset.Interactable))
 
                 if sucecss then
                     if (objectRaycast.Instance.Parent == workspace.Map.Objects) or (objectRaycast.Instance.Parent.Parent == workspace.Map.Elements and objectRaycast.Instance.Parent.Name == "StandingButton" and objectRaycast.Instance.Name == "Button") then
@@ -53,7 +53,7 @@ function Crosshair.Start()
                 left.ImageColor3 = Color3.new(0, 0, 1)
                 right.ImageColor3 = shared.PlayerState.GunUpgraded and Color3.new(1, 0.5, 0) or Color3.new(0, 0, 1)
                 
-                local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, World.raycastParams(World.FdiPresets.PortalCollision))
+                local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, World.raycastParams(World.ParamPreset.PortalCollision))
                 if raycast then
                     if raycast.Instance:IsA("BasePart") then
                         if raycast.Instance:GetAttribute("CanHavePortals") then
