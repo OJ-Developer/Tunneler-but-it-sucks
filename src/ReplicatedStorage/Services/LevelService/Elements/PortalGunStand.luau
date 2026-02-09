@@ -2,31 +2,39 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local World = require(ReplicatedStorage.Modules.World)
 
-local module = {}
-module.__index = module
+local PortalGunStand = {}
+PortalGunStand.__index = PortalGunStand
 
-function module.new(portalGunStand)
+function PortalGunStand.new(portalGunStand)
+	local self = setmetatable({}, PortalGunStand)
+
+	self.Model = portalGunStand
+	
+	return self
+end
+
+function PortalGunStand:Init()
+	local portalGunStand = self.Model
+
 	local gun = portalGunStand.Stand.Gun
 	local hitbox = portalGunStand.Hitbox
-
-	local t = task.spawn(function()
+	
+	self.t = task.spawn(function()
 		while task.wait() do
 			local partsInHitbox = workspace:GetPartsInPart(hitbox, World.overlapParams(World.FdiPresets.Player))
-
+			
 			if #partsInHitbox > 0 then
 				shared.PlayerState.HasGun = true
-				shared.PlayerState.GunChanged:Fire(true, false)
+				shared.PlayerState.GunChanged:Fire(true, true)
 				gun.Transparency = 1
 				return
 			end
 		end
 	end)
-	
-	return setmetatable({t=t}, module)
 end
 
-function module:Cleanup()
+function PortalGunStand:Cleanup()
 	task.cancel(self.t)
 end
 
-return module
+return PortalGunStand

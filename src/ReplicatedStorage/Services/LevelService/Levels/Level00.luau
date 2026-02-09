@@ -7,6 +7,7 @@ local Announcer = require(ReplicatedStorage.Services.Announcer)
 local AudioService = require(ReplicatedStorage.Services.AudioService)
 local Axis = require(ReplicatedStorage.Services.Axis)
 local CameraService = require(ReplicatedStorage.Services.CameraService)
+local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 local UiService = require(ReplicatedStorage.Services.UiService)
 
 local module = {}
@@ -14,16 +15,20 @@ local module = {}
 local connections: {RBXScriptConnection} = {}
 
 function module.Start(player: Player)
-	
+
 	-- SETUP
 
 	local char = player.Character
 	local cam = workspace.CurrentCamera
+	
+	local level: typeof(workspace.Level00) = workspace.Map
+	local building = level.Building
+	local elements = level.Elements
+
 
 	-- MUSIC
 
 	AudioService.PlaySong(Sounds.Music["0"])
-	
 
 
 	-- CUTSCENE
@@ -60,8 +65,7 @@ function module.Start(player: Player)
 	Axis.PlayVoiceline("TestingIsDangerous")
 	Axis.PlayVoiceline("TheTestingWillBegin")
 
-	local otherRandomStuff = workspace.Map.CustomFunctionality.OtherRandomStuff
-	local thingIdkWhatToCall = otherRandomStuff.ThingIdkWhatToCall.Value
+	local thingIdkWhatToCall = building.ThingIdkWhatToCall.Value
 
 	tween = TweenService:Create(thingIdkWhatToCall, TweenInfo.new(5), {Position = thingIdkWhatToCall.Position + Vector3.new(0, 22, 0)})
 	tween:Play()
@@ -73,19 +77,17 @@ function module.Start(player: Player)
 	end
 	task.wait(5)
 
-	workspace.Map.CustomFunctionality.StartPortalActivator.Activated.Value = true
+	LinkedData.Get(elements.StartPortalPlacer1, "ElementClass"):SetActivated(true)
+	LinkedData.Get(elements.StartPortalPlacer2, "ElementClass"):SetActivated(true)
 
 	task.spawn(function()
 		Axis.PlayPath(path, path.B)
 	end)
 
 
-
 	-- OTHER AXIS STUFF
 
-	local otherActivators = workspace.Map.CustomFunctionality.OtherActivators
-
-	table.insert(connections, otherActivators.AxisMoveHitbox1.Value.Activated.Changed:Connect(function(val)
+	table.insert(connections, LinkedData.Get(elements.AxisMoveHitbox1, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayPath(path, path.C)
@@ -93,7 +95,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, otherActivators.Room1EnterHitbox.Value.Activated.Changed:Connect(function(val)
+	table.insert(connections, LinkedData.Get(elements.Room1EnterHitbox, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				workspace.RedPortal.OnPart.Value = nil
@@ -104,15 +106,18 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, otherActivators.AxisMoveHitbox2.Value.Activated.Changed:Connect(function(val)
+	table.insert(connections, LinkedData.Get(elements.AxisMoveHitbox2, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayPath(path, path.F)
 			end)
+			task.spawn(function()
+				Axis.PlayVoiceline("RestAreas")
+			end)
 		end
 	end))
 
-	table.insert(connections, otherActivators.Level1LoadHitbox.Value.Activated.Changed:Connect(function(val)
+	table.insert(connections, LinkedData.Get(elements.Level1LoadHitbox, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				LevelService.LoadLevel("Level01")
@@ -120,7 +125,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, otherActivators.AxisVoiclineHitbox1.Value.Activated.Changed:Connect(function(val)
+	table.insert(connections, LinkedData.Get(elements.AxisVoiclineHitbox1, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayVoiceline("TunnelsConfuzzled")
@@ -128,22 +133,13 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, otherActivators.AxisVoiclineHitbox2.Value.Activated.Changed:Connect(function(val)
+	table.insert(connections, LinkedData.Get(elements.AxisVoiclineHitbox2, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayVoiceline("Level0Yay")
 			end)
 		end
 	end))
-
-	table.insert(connections, otherActivators.AxisVoiclineHitbox3.Value.Activated.Changed:Connect(function(val)
-		if val then
-			task.spawn(function()
-				Axis.PlayVoiceline("RestAreas")
-			end)
-		end
-	end))
-
 end
 
 function module.Cleanup()

@@ -24,7 +24,11 @@ function module.new(objectName: string, cframe: CFrame, ...)
 end
 
 function module.giveFunctionality(object: Part, ...)
-	local newObject = setmetatable({Instance = object, Fizzled = false, OnFizzle = ScriptSignal.new()}, module)
+	local newObject = setmetatable({
+		Instance = object, 
+		Fizzled = false, 
+		OnFizzle = ScriptSignal.new()
+	}, module)
 
 	local objectModule = script.ObjectTypes:FindFirstChild(object.Name)
 	if objectModule and objectModule:IsA("ModuleScript") then
@@ -38,8 +42,14 @@ function module.giveFunctionality(object: Part, ...)
 end
 
 function module:Fizzle()
+	print(self, "was fizzled")
 	self.Fizzled = true
+	self.OnFizzle:Fire()
 	local object = self.Instance
+
+	if shared.PlayerState.HoldingObject == object then
+		self:Drop()
+	end
 
     task.spawn(function()
 		if linkedData.Get(object) then

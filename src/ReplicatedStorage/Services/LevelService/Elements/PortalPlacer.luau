@@ -1,38 +1,52 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 local PortalService = require(ReplicatedStorage.Services.PortalService)
 
-local module = {}
-module.__index = module
+local PortalPlacer = {}
+PortalPlacer.__index = PortalPlacer
 
-function module.new(portalPlacer)
-	local portalPlacePlace = portalPlacer.PortalPlacePlace
+function PortalPlacer.new(portalPlacer)
+	local self = setmetatable({}, PortalPlacer)
 
-	local activator = portalPlacer.Configuration.Activator
-	if not activator.Value then return end
-	local onPart = portalPlacer.Configuration.OnPart
-	local portal = workspace:WaitForChild(portalPlacer.Configuration.Portal.Value.."Portal")
-
-	local prevActivated = activator.Value.Activated.Value
-
-	local t = task.spawn(function()
-		while task.wait() do
-			if activator.Value.Activated.Value ~= prevActivated then
-				if activator.Value.Activated.Value then
-					PortalService.PlacePortal(portal, portalPlacer.Configuration.Portal.Value == "Red", onPart.Value, true, portalPlacePlace.WorldCFrame)
-				end
-			end
-
-			prevActivated = activator.Value.Activated.Value
-		end
-	end)
+	self.Model = portalPlacer
+	self.Configuration = portalPlacer.Configuration
 	
-	return setmetatable({t=t}, module)
+	self.PortalPlacePlace = portalPlacer.PortalPlacePlace.WorldCFrame
+
+	self.OnPart = portalPlacer.Configuration.OnPart.Value
+	self.PortalColour = portalPlacer.Configuration.Portal.Value
+	self.Portal = workspace[self.PortalColour.."Portal"]
+
+	return self
 end
 
-function module:Cleanup()
-	if not self.t then return end
-	task.cancel(self.t)
+function PortalPlacer:Init()
+	local portalPlacer = self.Model
+
+	local activatorObject = portalPlacer.Configuration.Activator
+	local activator
+	if activatorObject.Value then
+		activator = LinkedData.Get(activatorObject.Value, "ElementClass")
+	end
+	
+	if activator then
+		self.c = activator.OnActivated:Connect(function(activated)
+			self:SetActivated(activated)
+		end)
+	end
 end
 
-return module
+function PortalPlacer:SetActivated(activated)
+	if activated then
+		PortalService.PlacePortal(self.Portal, self.PortalColour == "Red", self.OnPart, true, self.PortalPlacePlace.WorldCFrame)
+	end
+end
+
+function PortalPlacer:Cleanup()
+	if self.c then
+		self.c:Disconnect()
+	end
+end
+
+return PortalPlacer

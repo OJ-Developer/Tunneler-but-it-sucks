@@ -1,79 +1,86 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Object = require(ReplicatedStorage.Classes.Object)
+local World = require(ReplicatedStorage.Modules.World)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 local PortalService = require(ReplicatedStorage.Services.PortalService)
 
-local module = {}
-module.__index = module
+local Fizzler = {}
+Fizzler.__index = Fizzler
 
-function module.new(fizzler)
-	local particleEmitter = fizzler:WaitForChild("ParticleEmitter")
+function Fizzler.new(fizzler)
+	local self = setmetatable({}, Fizzler)
 
-	local activator = fizzler:WaitForChild("Configuration"):WaitForChild("Activator")
-	local connected = activator ~= nil
-	local startEnabled = fizzler.Configuration:WaitForChild("StartEnabled")
+	self.Instance = fizzler
 
-	local enabled = fizzler:WaitForChild("Enabled")
+	self.StartEnabled = fizzler.Configuration.StartEnabled.Value
+	self.Enabled = self.StartEnabled
+	
+	return self
+end
 
-	local prevActivated
-	if connected then
-		prevActivated = activator.Value:WaitForChild("Activated").Value
-	end
+function Fizzler:Init()
+	local fizzler = self.Instance
 
-	if startEnabled.Value then
+	if self.Enabled then
 		fizzler.Transparency = 0.5
-		particleEmitter.Enabled = true
+		fizzler.ParticleEmitter.Enabled = true
 	else
 		fizzler.Transparency = 1
-		particleEmitter.Enabled = false
+		fizzler.ParticleEmitter.Enabled = false
 	end
 
-	local starting = true
+	local activatorObject = fizzler.Configuration.Activator
+	local activator
+	if activatorObject.Value then
+		activator = LinkedData.Get(activatorObject.Value, "ElementClass")
+	end
 
-	local t = task.spawn(function()
+	if activator then
+		self.c = activator.OnActivated:Connect(function(activated)
+			self:SetActivated(activated)
+		end)
+	end
+
+	self.t = task.spawn(function()
 		while task.wait() do
-			if connected and (activator.Value.Activated.Value ~= prevActivated) or starting then
-				enabled.Value = activator.Value.Activated.Value ~= startEnabled.Value
-				if enabled.Value then
-					fizzler.Transparency = 0.5
-					particleEmitter.Enabled = true
-				else
-					fizzler.Transparency = 1
-					particleEmitter.Enabled = false
+			if self.Enabled then
+				local objectsInFizzler = workspace:GetPartsInPart(fizzler, World.overlapParams(World.FdiPresets.Objects))
+
+				for _, object in objectsInFizzler do
+					LinkedData.Get(object, "ObjectClass"):Fizzle()
 				end
-			end
 
-			prevActivated = activator.Value.Activated.Value
-			if enabled.Value then
-				local partsInFizzler = workspace:GetPartsInPart(fizzler)
+				local playerInFizzler = workspace:GetPartsInPart(fizzler, World.overlapParams(World.FdiPresets.Player))
 
-				for _, part in pairs(partsInFizzler) do
-					if part.Parent == workspace.Map.Objects then
-						if shared.PlayerState.HoldingObject then
-							Object.Drop()
-						end
-						LinkedData.Get(part, "ObjectClass"):Fizzle()
+				if #playerInFizzler > 0 then
+					if workspace.BluePortal.Fizzleable.Value then
+						PortalService.PlacePortal(workspace.BluePortal, false, nil, true, CFrame.new(Vector3.new(0,-20,20)))
 					end
-					if part.Parent == game.Players.LocalPlayer.Character then
-						if workspace.BluePortal.Fizzleable.Value then
-							PortalService.PlacePortal(workspace.BluePortal, false, nil, true, CFrame.new(Vector3.new(0,-20,20)))
-						end
-						if workspace.RedPortal.Fizzleable.Value then
-							PortalService.PlacePortal(workspace.RedPortal, true, nil, true, CFrame.new(Vector3.new(0,-20,20)))
-						end
+					if workspace.RedPortal.Fizzleable.Value then
+						PortalService.PlacePortal(workspace.RedPortal, true, nil, true, CFrame.new(Vector3.new(0,-20,20)))
 					end
 				end
 			end
-			starting = false
 		end
 	end)
-	
-	return setmetatable({t=t}, module)
 end
 
-function module:Cleanup()
+function Fizzler:SetActivated(activated)
+	self.Enabled = activated ~= self.StartEnabled
+	if self.Enabled then
+		self.Instance.Transparency = 0.5
+		self.Instance.ParticleEmitter.Enabled = true
+	else
+		self.Instance.Transparency = 1
+		self.Instance.ParticleEmitter.Enabled = false
+	end
+end
+
+function Fizzler:Cleanup()
 	task.cancel(self.t)
+	if self.c then
+		self.c:Disconnect()
+	end
 end
 
-return module
+return Fizzler

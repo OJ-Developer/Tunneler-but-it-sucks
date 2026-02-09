@@ -2,37 +2,41 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TweenService = game:GetService("TweenService")
 
+local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
 local MiscData = require(ReplicatedStorage.Data.MiscData)
 
-local module = {}
-module.__index = module
+local StandingButton = {}
+StandingButton.__index = StandingButton
 
-function module.new(standingButton)
+function StandingButton.new(standingButton)
+	local self = setmetatable({}, StandingButton)
+
+	self.Model = standingButton
+	self.OnActivated = ScriptSignal.new()
+
 	local stand = standingButton.Stand
 
 	stand.TextureID = MiscData.StandingButtonTextures.Deactivated
 	
-	return setmetatable({model = standingButton}, module)
+	return self
 end
 
-function module:Press()
-	local buttonPart = self.model.Button
-	local stand = self.model.Stand
-
-	local activated = self.model.Activated
+function StandingButton:Press()
+	local buttonPart = self.Model.Button
+	local stand = self.Model.Stand
 
 	local upPos = stand.UpPos
 	local downPos = stand.DownPos
 
-	activated.Value = true
+	self.OnActivated:Fire(true)
 	TweenService:Create(buttonPart, TweenInfo.new(0.1), {Position = downPos.WorldPosition}):Play()
 	stand.TextureID = MiscData.StandingButtonTextures.Activated
 
-	task.wait(self.model.Configuration.PressTime.Value)
+	task.wait(self.Model.Configuration.PressTime.Value)
 
-	activated.Value = false
+	self.OnActivated:Fire(false)
 	TweenService:Create(buttonPart, TweenInfo.new(0.1), {Position = upPos.WorldPosition}):Play()
 	stand.TextureID = MiscData.StandingButtonTextures.Deactivated
 end
 
-return module
+return StandingButton

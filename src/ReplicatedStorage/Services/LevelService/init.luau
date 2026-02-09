@@ -26,6 +26,10 @@ local rootPart = char:WaitForChild("HumanoidRootPart")
 local levelModule
 local levelThread
 
+function Level.Init()
+	shared.Elements = {}
+end
+
 function Level.Start()
 	task.spawn(function()
 		Level.LoadLevel(Settings.StartLevel)
@@ -117,18 +121,25 @@ function Level.LoadLevel(levelName: string)
 		end
 
 		-- give functionality to things in the new level
-		for _, element in pairs(level.Elements:GetChildren()) do
-			local module = script.Elements:FindFirstChild(element.Name)
-			if module and module:IsA("ModuleScript") then
-				local requiredElement = require(module).new(element)
-				if not requiredElement then continue end
-				LinkedData.Set(element, "ElementClass", requiredElement)
+		table.clear(shared.Elements)
+		for _, element in level.Elements:GetChildren() do
+			local moduleScript = script.Elements:FindFirstChild(element:GetAttribute("ElementType"))
+			if moduleScript and moduleScript:IsA("ModuleScript") then
+				local newElement = require(moduleScript).new(element)
+				shared.Elements[moduleScript.Name] = newElement
+				LinkedData.Set(element, "ElementClass", newElement)
 			else
 				warn('Unknown testing element: "'..element.Name..'"')
 			end
 		end
 		
-		for _, object in pairs(level.Objects:GetChildren()) do
+		for _, element in shared.Elements do
+			if element.Init then
+				element:Init()
+			end
+		end
+		
+		for _, object in level.Objects:GetChildren() do
 			Object.giveFunctionality(object)
 		end
 		

@@ -1,27 +1,47 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
-local module = {}
-module.__index = module
+local RestingArea = {}
+RestingArea.__index = RestingArea
 
-function module.new(restingArea)
-	local thingIdkWhatToCall = restingArea.Thingidkwhattocall
+function RestingArea.new(restingArea)
+	local self = setmetatable({}, RestingArea)
 
-	local upPos = thingIdkWhatToCall.Up
+	self.Model = restingArea
+	self.Activated = false
 
-	local activator = restingArea.Configuration.Activator
-	if not activator.Value then return end
+	return self
+end
+
+function RestingArea:Init()
+	local restingArea = self.Model
+
+	local activatorObject = restingArea.Configuration.Activator
+	local activator
+	if activatorObject.Value then
+		activator = LinkedData.Get(activatorObject.Value, "ElementClass")
+	end
 	
-	local t = task.spawn(function()
-		repeat task.wait() until activator.Value.Activated.Value
-		local tween = TweenService:Create(thingIdkWhatToCall, TweenInfo.new(5), {Position = upPos.WorldPosition})
+	if activator then
+		self.c = activator.OnActivated:Connect(function(activated)
+			self:SetActivated(activated)
+		end)
+	end
+end
+
+function RestingArea:SetActivated(activated)
+	if activated and not self.Activated then
+		self.Activated = true
+		local tween = TweenService:Create(self.Model.Thingidkwhattocall, TweenInfo.new(5), {Position = self.Model.Thingidkwhattocall.Up.WorldPosition})
 		tween:Play()
-	end)
-	
-	return setmetatable({t=t}, module)
+	end
 end
 
-function module:Cleanup()
-	task.cancel(self.t)
+function RestingArea:Cleanup()
+	if self.c then
+		self.c:Disconnect()
+	end
 end
 
-return module
+return RestingArea

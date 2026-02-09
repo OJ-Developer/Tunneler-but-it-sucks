@@ -2,43 +2,61 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local Object = require(ReplicatedStorage.Classes.Object)
+local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
-local module = {}
-module.__index = module
+local ProjectileSender = {}
+ProjectileSender.__index = ProjectileSender
 
-function module.new(sender)
-	local finished = false
+function ProjectileSender.new(sender)
+	local self = setmetatable({}, ProjectileSender)
 
-	local spawnPoint: Attachment = sender.ProjectileSpawnPoint
-	local activatorElement = sender.Configuration.Activator.Value
-	if not activatorElement then return end
-	local activator: BoolValue = activatorElement.Activated
+	self.Model = sender
+	self.Finished = false
 
-	local projectile: Object.ObjectType
+	self.SpawnPoint = sender.ProjectileSpawnPoint.WorldCFrame
 
-	local thread
-	local mainConnection = activator.Changed:Connect(function(val)
-		if val and (not (projectile and projectile.Instance and projectile.Instance.Parent)) and (not finished) then
-			thread = task.spawn(function()
-				TweenService:Create(sender, TweenInfo.new(2, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {Rotation = Vector3.new(sender.Rotation.X, sender.Rotation.Y, 1800)}):Play()
-				task.wait(2)
-
-				projectile = Object.new("EnergyProjectile", spawnPoint.WorldCFrame, -sender.CFrame.LookVector)
-			end)
-		end
-	end)
-
-	return setmetatable({thread = thread, mainConnection = mainConnection}, module)
+	return self
 end
 
-function module:Cleanup()
-	if self.thread then
-		task.cancel(self.thread)
+function ProjectileSender:Init()
+	local sender = self.Model
+
+	local activatorObject = sender.Configuration.Activator
+	local activator
+	if activatorObject.Value then
+		activator = LinkedData.Get(activatorObject.Value, "ElementClass")
 	end
-	self.mainConnection:Disconnect()
-	if self.renderStepConnection then
-		self.renderStepConnection:Disconnect()
+
+	if activator then
+		self.c = activator.OnActivated:Connect(function(val)
+			self:SetActivated(val)
+		end)
 	end
 end
 
-return module
+function ProjectileSender:SetActivated(activated)
+	if activated and (not (self.Projectile and self.Projectile.Instance and self.Projectile.Instance.Parent)) and (not self.Finished) then
+		self.t = task.spawn(function()
+			TweenService:Create(
+				self.Model, 
+				TweenInfo.new(2, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), 
+				{Rotation = Vector3.new(self.Model.Rotation.X, self.Model.Rotation.Y, 1800)}
+			):Play()
+
+			task.wait(2)
+
+			self.Projectile = Object.new("EnergyProjectile", self.SpawnPoint, -self.Model.CFrame.LookVector)
+		end)
+	end
+end
+
+function ProjectileSender:Cleanup()
+	if self.t then
+		task.cancel(self.t)
+	end
+	if self.c then
+		self.c:Disconnect()
+	end
+end
+
+return ProjectileSender
