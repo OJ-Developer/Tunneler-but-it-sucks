@@ -1,8 +1,8 @@
 return {
     Game = {
-        Normal = "rbxassetid://136336850794486",
-        Speaking1 = "rbxassetid://103743996144461",
-        Speaking2 = "rbxassetid://103743996144461"
+        Normal = "rbxassetid://113257043759951",
+        Speaking1 = "rbxassetid://118661603157856",
+        Speaking2 = "rbxassetid://118661603157856"
     },
     Happy = {
         Normal = "rbxassetid://18791043957",

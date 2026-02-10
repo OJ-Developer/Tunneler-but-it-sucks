@@ -67,6 +67,7 @@ function InteractionService.Start()
                     local playerRotationRy = rootPart.Orientation.Y
                     rotation = CFrame.Angles(0, math.rad(playerRotationRy+180)+rotationOffset, 0)
                     shared.PlayerState.HoldingObject.CFrame = CFrame.new(raycast.Position) * rotation
+                    shared.PlayerState.HoldingObject.AssemblyLinearVelocity = Vector3.zero
                 end
             end
         end)

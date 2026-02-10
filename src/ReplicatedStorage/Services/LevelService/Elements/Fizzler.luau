@@ -77,7 +77,9 @@ function Fizzler:SetActivated(activated)
 end
 
 function Fizzler:Cleanup()
-	task.cancel(self.t)
+	if self.t then
+		task.cancel(self.t)
+	end
 	if self.c then
 		self.c:Disconnect()
 	end

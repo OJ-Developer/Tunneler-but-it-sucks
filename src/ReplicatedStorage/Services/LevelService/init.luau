@@ -26,10 +26,6 @@ local rootPart = char:WaitForChild("HumanoidRootPart")
 local levelModule
 local levelThread
 
-function Level.Init()
-	shared.Elements = {}
-end
-
 function Level.Start()
 	task.spawn(function()
 		Level.LoadLevel(Settings.StartLevel)
@@ -121,19 +117,19 @@ function Level.LoadLevel(levelName: string)
 		end
 
 		-- give functionality to things in the new level
-		table.clear(shared.Elements)
+		local loadedElements = {}
 		for _, element in level.Elements:GetChildren() do
 			local moduleScript = script.Elements:FindFirstChild(element:GetAttribute("ElementType"))
 			if moduleScript and moduleScript:IsA("ModuleScript") then
 				local newElement = require(moduleScript).new(element)
-				shared.Elements[moduleScript.Name] = newElement
+				table.insert(loadedElements, newElement)
 				LinkedData.Set(element, "ElementClass", newElement)
 			else
 				warn('Unknown testing element: "'..element.Name..'"')
 			end
 		end
 		
-		for _, element in shared.Elements do
+		for _, element in loadedElements do
 			if element.Init then
 				element:Init()
 			end

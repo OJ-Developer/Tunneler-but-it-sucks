@@ -90,6 +90,7 @@ function PortalService.Init()
 	portalsUi.Name = "Portals"
 
 	local blueSurface = Instance.new("SurfaceGui", portalsUi)
+	blueSurface.LightInfluence = 1
 	blueSurface.Name = "Blue"
 	blueSurface.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
 	blueSurface.ZOffset = 1
@@ -99,6 +100,7 @@ function PortalService.Init()
 	blueViewport.BorderSizePixel = 0
 
 	local redSurface = Instance.new("SurfaceGui", portalsUi)
+	redSurface.LightInfluence = 1
 	redSurface.Name = "Red"
 	redSurface.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
 	redSurface.ZOffset = 1

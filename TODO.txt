@@ -1,5 +1,3 @@
 - fix shooting through fizzlers
-- fix portal viewport gui brightness
 - fix cube droppers
 - fix energy projectiles
-- fix doors that should start open not being open
