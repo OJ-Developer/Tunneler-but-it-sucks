@@ -14,6 +14,14 @@ function energyProjectile.new(projectile, startDir, sender)
 
 	projectile.AssemblyLinearVelocity = startDir * projectileSpeed
 
+	local parentClass = LinkedData.Get(projectile, "ObjectClass")
+
+	if sender then
+		self.OnFizzleConnection = parentClass.OnFizzle:Connect(function()
+			sender.Active = false
+		end)
+	end
+
 	task.spawn(function()
 		self.renderStepConnection = runService.RenderStepped:Connect(function(dtime)
 			local oParams = OverlapParams.new()
@@ -30,7 +38,7 @@ function energyProjectile.new(projectile, startDir, sender)
 				game.Players.LocalPlayer.Character
 			}
 			local overlappingParts = workspace:GetPartsInPart(projectile, oParams)
-			print("overlapping parts", overlappingParts)
+			
 			for _, part in overlappingParts do
 				if part.Parent == workspace.Map.Elements and part:GetAttribute("ElementType") == "ProjectileReceiver" then
 					projectile:Destroy()
@@ -55,6 +63,9 @@ function energyProjectile.new(projectile, startDir, sender)
 					self:Cleanup()
 
 					self.renderStepConnection:Disconnect()
+					if sender then
+						sender.Active = false
+					end
 					return
 				end
 			end
@@ -63,14 +74,15 @@ function energyProjectile.new(projectile, startDir, sender)
 		end)
 	end)
 
-	print("created energy projectile", self)
-
 	return self
 end
 
 function energyProjectile:Cleanup()
 	if self.renderStepConnection then
 		self.renderStepConnection:Disconnect()
+	end
+	if self.OnFizzleConnection then
+		self.OnFizzleConnection:Disconnect()
 	end
 end
 

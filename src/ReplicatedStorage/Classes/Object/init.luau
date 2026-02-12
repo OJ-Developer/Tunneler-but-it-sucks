@@ -28,11 +28,13 @@ function module.new(objectName: string, cframe: CFrame, ...)
 end
 
 function module.giveFunctionality(object: Part, ...)
-	local newObject = setmetatable({
-		Model = object, 
-		Fizzled = false, 
-		OnFizzle = ScriptSignal.new()
-	}, module)
+	local self = setmetatable({}, module)
+
+	self.Model = object
+	self.Fizzled = false
+	self.OnFizzle = ScriptSignal.new()
+
+	linkedData.Set(object, "ObjectClass", self)
 
 	local objectModule = script.ObjectTypes:FindFirstChild(object.Name)
 	if objectModule and objectModule:IsA("ModuleScript") then
@@ -40,9 +42,7 @@ function module.giveFunctionality(object: Part, ...)
 		linkedData.Set(object, "SpecificObjectClass", objectTable)
 	end
 
-	linkedData.Set(object, "ObjectClass", newObject)
-
-	return newObject
+	return self
 end
 
 function module:Fizzle()
