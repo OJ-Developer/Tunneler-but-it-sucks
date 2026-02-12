@@ -28,8 +28,7 @@ end
 
 module.ParamPreset = {
 	Collideable = {
-		RespectCanCollide = true,
-		FilterType = Enum.RaycastFilterType.Include
+		RespectCanCollide = true
 	},
 
 	Interactable = {

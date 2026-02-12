@@ -60,13 +60,13 @@ function CubeDropper:DropCube()
 			self.c2:Disconnect()
 			print("remove old connection")
 		end
-		print(self.CurrentCube)
+		print("current cube: ", self.CurrentCube)
 		self.c2 = self.CurrentCube.OnFizzle:Connect(function()
 			print("about to drop new cube")
 			task.wait(3)
 			self:DropCube()
 		end)
-		print("connected")
+		print("connected", self.CurrentCube)
 	end
 
 	TweenService:Create(doorPart1, TweenInfo.new(0.5), {Rotation = part1OpenedRot.WorldRotation}):Play()

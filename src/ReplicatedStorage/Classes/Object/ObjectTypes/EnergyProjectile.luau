@@ -2,25 +2,26 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local runService = game:GetService("RunService")
 
 local Utils = require(ReplicatedStorage.Modules.Utils)
+local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
 local energyProjectile = {}
 energyProjectile.__index = energyProjectile
 
 local projectileSpeed = 17
 
-function energyProjectile.new(projectile, startDir)
-	local newEnergyProjectile = setmetatable({}, energyProjectile)
+function energyProjectile.new(projectile, startDir, sender)
+	local self = setmetatable({}, energyProjectile)
 
 	projectile.AssemblyLinearVelocity = startDir * projectileSpeed
 
 	task.spawn(function()
-		newEnergyProjectile.renderStepConnection = runService.RenderStepped:Connect(function(dtime)
+		self.renderStepConnection = runService.RenderStepped:Connect(function(dtime)
 			local oParams = OverlapParams.new()
 			oParams.FilterType = Enum.RaycastFilterType.Include
 			local elements = workspace.Map.Elements:GetChildren()
 			local filteredElements = {}
 			for _, element in elements do
-				if element.Name == "ProjectileSender" or element.Name == "Hitbox" then continue end
+				if element:GetAttribute("ElementType") == "ProjectileSender" or element:GetAttribute("ElementType") == "TouchTrigger" then continue end
 				table.insert(filteredElements, element)
 			end
 			oParams.FilterDescendantsInstances = {
@@ -29,13 +30,16 @@ function energyProjectile.new(projectile, startDir)
 				game.Players.LocalPlayer.Character
 			}
 			local overlappingParts = workspace:GetPartsInPart(projectile, oParams)
-
+			print("overlapping parts", overlappingParts)
 			for _, part in overlappingParts do
-				if part.Parent == workspace.Map.Elements and part.Name == "ProjectileReceiver" then
+				if part.Parent == workspace.Map.Elements and part:GetAttribute("ElementType") == "ProjectileReceiver" then
 					projectile:Destroy()
 
-					part.Activated.Value = true
-					newEnergyProjectile.renderStepConnection:Disconnect()
+					LinkedData.Get(part, "ElementClass"):Activate()
+					self.renderStepConnection:Disconnect()
+					if sender then
+						sender.Finished = true
+					end
 					return
 				elseif part:GetAttribute("Bounce") and part.Parent == workspace.Map.Building then
 					local rParams = RaycastParams.new()
@@ -48,9 +52,9 @@ function energyProjectile.new(projectile, startDir)
 				else
 					if projectile:GetAttribute("InBluePortal") or projectile:GetAttribute("InRedPortal") then break end
 					projectile:Destroy()
-					newEnergyProjectile:Cleanup()
+					self:Cleanup()
 
-					newEnergyProjectile.renderStepConnection:Disconnect()
+					self.renderStepConnection:Disconnect()
 					return
 				end
 			end
@@ -59,7 +63,9 @@ function energyProjectile.new(projectile, startDir)
 		end)
 	end)
 
-	return newEnergyProjectile
+	print("created energy projectile", self)
+
+	return self
 end
 
 function energyProjectile:Cleanup()

@@ -48,6 +48,10 @@ end
 function module:Fizzle()
 	print(self, "was fizzled")
 	self.Fizzled = true
+	self.OnFizzle:Connect(function()
+		print("AAAAAAAAAAAA")
+	end)
+	print(self.OnFizzle)
 	self.OnFizzle:Fire()
 	local object = self.Model
 

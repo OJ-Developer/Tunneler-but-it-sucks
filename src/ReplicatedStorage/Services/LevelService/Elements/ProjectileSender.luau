@@ -35,7 +35,7 @@ function ProjectileSender:Init()
 end
 
 function ProjectileSender:SetActivated(activated)
-	if activated and (not (self.Projectile and self.Projectile.Instance and self.Projectile.Instance.Parent)) and (not self.Finished) then
+	if activated and not (self.Projectile and self.Projectile.Instance and self.Projectile.Instance.Parent) and not self.Finished then
 		self.t = task.spawn(function()
 			TweenService:Create(
 				self.Model, 
@@ -45,7 +45,8 @@ function ProjectileSender:SetActivated(activated)
 
 			task.wait(2)
 
-			self.Projectile = Object.new("EnergyProjectile", self.SpawnPoint, -self.Model.CFrame.LookVector)
+			self.Projectile = Object.new("EnergyProjectile", self.SpawnPoint, -self.Model.CFrame.LookVector, self)
+			print("new energy projectile", self.Projectile)
 		end)
 	end
 end
