@@ -50,23 +50,16 @@ function CubeDropper:DropCube()
 	local part2ClosedRot = tube.Part2ClosedRot
 	local part2OpenedRot = tube.Part2OpenedRot
 
-	print("dropCube()")
-
 	self.CurrentCube = self.NextCube
 
-	print("Auto drop cube", autoDropCube)
 	if autoDropCube then
 		if self.c2 then
 			self.c2:Disconnect()
-			print("remove old connection")
 		end
-		print("current cube: ", self.CurrentCube)
 		self.c2 = self.CurrentCube.OnFizzle:Connect(function()
-			print("about to drop new cube")
 			task.wait(3)
 			self:DropCube()
 		end)
-		print("connected", self.CurrentCube)
 	end
 
 	TweenService:Create(doorPart1, TweenInfo.new(0.5), {Rotation = part1OpenedRot.WorldRotation}):Play()
@@ -94,6 +87,9 @@ function CubeDropper:SetActivated(activated)
 			self.Dropping = true
 			
 			if self.CurrentCube then
+				if self.c2 then
+					self.c2:Disconnect()
+				end
 				self.CurrentCube:Fizzle()
 			end
 

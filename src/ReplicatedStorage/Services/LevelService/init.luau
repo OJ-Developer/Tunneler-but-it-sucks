@@ -136,6 +136,7 @@ function Level.LoadLevel(levelName: string)
 		end
 		
 		for _, object in level.Objects:GetChildren() do
+			if object:GetAttribute("Initialized") then continue end
 			Object.giveFunctionality(object)
 		end
 		

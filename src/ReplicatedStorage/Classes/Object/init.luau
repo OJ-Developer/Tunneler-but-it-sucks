@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local objects = ReplicatedStorage.Assets.Objects
@@ -20,11 +21,11 @@ export type ObjectType = typeof(module) & {
 }
 
 function module.new(objectName: string, cframe: CFrame, ...)
-	local newObject = objects[objectName]:Clone()
-	newObject.Parent = workspace.Map.Objects
-	newObject.CFrame = cframe
+	local self = objects[objectName]:Clone()
+	self.Parent = workspace.Map.Objects
+	self.CFrame = cframe
 	
-	return module.giveFunctionality(newObject, ...)
+	return module.giveFunctionality(self, ...)
 end
 
 function module.giveFunctionality(object: Part, ...)
@@ -33,6 +34,11 @@ function module.giveFunctionality(object: Part, ...)
 	self.Model = object
 	self.Fizzled = false
 	self.OnFizzle = ScriptSignal.new()
+	self.UniqueId = HttpService:GenerateGUID(false)
+
+	print(debug.traceback(), self)
+
+	object:SetAttribute("Initialized", true)
 
 	linkedData.Set(object, "ObjectClass", self)
 
@@ -46,12 +52,7 @@ function module.giveFunctionality(object: Part, ...)
 end
 
 function module:Fizzle()
-	print(self, "was fizzled")
 	self.Fizzled = true
-	self.OnFizzle:Connect(function()
-		print("AAAAAAAAAAAA")
-	end)
-	print(self.OnFizzle)
 	self.OnFizzle:Fire()
 	local object = self.Model
 
