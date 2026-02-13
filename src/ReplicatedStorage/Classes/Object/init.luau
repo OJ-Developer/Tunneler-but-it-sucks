@@ -36,8 +36,6 @@ function module.giveFunctionality(object: Part, ...)
 	self.OnFizzle = ScriptSignal.new()
 	self.UniqueId = HttpService:GenerateGUID(false)
 
-	print(debug.traceback(), self)
-
 	object:SetAttribute("Initialized", true)
 
 	linkedData.Set(object, "ObjectClass", self)

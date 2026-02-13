@@ -1,5 +1,7 @@
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 local Utils = require(script.Parent.Utils)
 
 local player = Players.LocalPlayer
@@ -18,7 +20,7 @@ end
 function module.getPortalRaycastExcludeParts()
 	local exclude = {workspace.BluePortal, workspace.RedPortal, workspace[game.Players.LocalPlayer.Name], workspace.Map.Objects}
 	for _, part in pairs(workspace:GetDescendants()) do
-		if (part:IsA("BasePart") and (part:HasTag("hitboxVisibility") or part.Name == "MeshFence")) or (part.Name == "Fizzler" and not part.Enabled.Value) then
+		if (part:IsA("BasePart") and (part:HasTag("hitboxVisibility") or part.Name == "MeshFence")) or (part:GetAttribute("ElementType") == "Fizzler" and not LinkedData.Get(part, "ElementClass").Enabled) then
 			table.insert(exclude, part)
 		end
 	end

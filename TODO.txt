@@ -1,1 +1,3 @@
-- fix shooting through fizzlers
+- Camera sensitivity setting actually working
+- Settings saving
+- Stop speedrun timer in loading screens
