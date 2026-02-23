@@ -1,4 +1,3 @@
-- Settings saving
-- Stop speedrun timer in loading screens
-- fix portal in level 0 room 1
-- fix level 1 module
+- test speedrun timer in loading screens
+- test level 1 thing
+- fix holding objects through portals

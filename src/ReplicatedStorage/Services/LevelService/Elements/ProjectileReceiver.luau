@@ -1,7 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
+local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 
 local ProjectileReceiver = {}
 ProjectileReceiver.__index = ProjectileReceiver
@@ -13,21 +14,21 @@ function ProjectileReceiver.new(reciever)
 	self.Activated = false
 	self.Model = reciever
 
+	self.Garbage = Garbage.new()
+
 	return self
 end
 
 function ProjectileReceiver:Activate()
 	if self.Activated then return end
 	self.OnActivated:Fire()
-	self.c = RunService.PreRender:Connect(function()
+	self.Garbage:Add(RunService.PreRender:Connect(function()
 		self.Model.Rotation += Vector3.new(0, 0, 3)
-	end)
+	end))
 end
 
 function ProjectileReceiver:Cleanup()
-	if self.c then
-		self.c:Disconnect()
-	end
+	self.Garbage:Cleanup()
 end
 
 return ProjectileReceiver

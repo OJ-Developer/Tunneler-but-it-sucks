@@ -1,5 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local tweenService = game:GetService("TweenService")
+
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
 local doorOpenTime = 0.5
@@ -11,7 +13,7 @@ function Door.new(door)
 	local self = setmetatable({}, Door)
 
 	self.Model = door
-	self.Connections = {}
+	self.Garbage = Garbage.new()
 
 	return self
 end
@@ -38,12 +40,12 @@ function Door:Init()
 	end
 	
 	if activator then
-		table.insert(self.Connections, activator.OnActivated:Connect(function(activated)
+		self.Garbage:Add(activator.OnActivated:Connect(function(activated)
 			self:SetActivated(activated)
 		end))
 	end
 	if deactivator then
-		table.insert(self.Connections, deactivator.OnActivated:Once(function(activated)
+		self.Garbage:Add(deactivator.OnActivated:Once(function(activated)
 			if activated then
 				self:SetActivated(false, true)
 			end
@@ -106,9 +108,7 @@ function Door:SetActivated(activated, setTrueState)
 end
 
 function Door:Cleanup()
-	for _, connection in self.Connections do
-		connection:Disconnect()
-	end
+	self.Garbage:Cleanup()
 end
 
 return Door

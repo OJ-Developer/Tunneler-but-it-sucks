@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
 local Object = require(ReplicatedStorage.Classes.Object)
-local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
+local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 local Camera = require(script.Parent.CameraService)
 local LinkedData = require(script.Parent.LinkedData)
 local UiService = require(script.Parent.UiService)

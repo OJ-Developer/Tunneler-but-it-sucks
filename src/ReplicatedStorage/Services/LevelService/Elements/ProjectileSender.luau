@@ -29,15 +29,15 @@ function ProjectileSender:Init()
 	end
 
 	if activator then
-		self.c = activator.OnActivated:Connect(function(val)
+		self.Garbage:Add(activator.OnActivated:Connect(function(val)
 			self:SetActivated(val)
-		end)
+		end))
 	end
 end
 
 function ProjectileSender:SetActivated(activated)
 	if activated and not self.Active and not self.Finished then
-		self.t = task.spawn(function()
+		self.Garbage:Add(task.spawn(function()
 			self.Active = true
 
 			TweenService:Create(
@@ -49,17 +49,12 @@ function ProjectileSender:SetActivated(activated)
 			task.wait(2)
 
 			self.Projectile = Object.new("EnergyProjectile", self.SpawnPoint, -self.Model.CFrame.LookVector, self)
-		end)
+		end))
 	end
 end
 
 function ProjectileSender:Cleanup()
-	if self.t then
-		task.cancel(self.t)
-	end
-	if self.c then
-		self.c:Disconnect()
-	end
+	self.Garbage:Cleanup()
 end
 
 return ProjectileSender

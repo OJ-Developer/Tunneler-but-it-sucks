@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Utils = require(ReplicatedStorage.Modules.Utils)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
-local ScriptSignal = require(script.Parent.ScriptSignal)
+local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 
 local button = {}
 button.__index = button

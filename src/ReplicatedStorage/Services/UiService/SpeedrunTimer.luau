@@ -16,7 +16,7 @@ function SpeedrunTimer.Init()
     local currentlevel = ""
     local portalsPlaced = 0
 
-    local timing = false
+    local wasTiming = false
 
     local renderStepConnection
 
@@ -34,7 +34,7 @@ function SpeedrunTimer.Init()
     local function start()
         if renderStepConnection then return end
 
-        timing = true
+        wasTiming = true
 
         renderStepConnection = RunService.PreRender:Connect(function(dtime)
             totalTime += dtime
@@ -45,7 +45,6 @@ function SpeedrunTimer.Init()
 
     local function pause()
         if renderStepConnection then
-            timing = false
             renderStepConnection:Disconnect()
         end
     end
@@ -53,6 +52,7 @@ function SpeedrunTimer.Init()
     LevelService.LevelLoaded:Connect(function(newLevelName, fromMenu)
         if workspace.Map.LevelSettings.MenuLevel.Value then
             pause()
+            wasTiming = false
         elseif fromMenu then
             totalTime = 0
             portalsPlaced = 0
@@ -73,7 +73,7 @@ function SpeedrunTimer.Init()
         pause()
     end)
     LevelService.LevelLoaded:Connect(function()
-        if timing then
+        if wasTiming then
             start()
         end
     end)

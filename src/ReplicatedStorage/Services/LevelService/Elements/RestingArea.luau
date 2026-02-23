@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
 local RestingArea = {}
@@ -10,6 +11,7 @@ function RestingArea.new(restingArea)
 
 	self.Model = restingArea
 	self.Activated = false
+	self.Garbage = Garbage.new()
 
 	return self
 end
@@ -24,9 +26,9 @@ function RestingArea:Init()
 	end
 	
 	if activator then
-		self.c = activator.OnActivated:Connect(function(activated)
+		self.Garbage:Add(activator.OnActivated:Connect(function(activated)
 			self:SetActivated(activated)
-		end)
+		end))
 	end
 end
 
@@ -39,9 +41,7 @@ function RestingArea:SetActivated(activated)
 end
 
 function RestingArea:Cleanup()
-	if self.c then
-		self.c:Disconnect()
-	end
+	self.Garbage:Cleanup()
 end
 
 return RestingArea

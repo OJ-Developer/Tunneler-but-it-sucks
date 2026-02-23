@@ -1,13 +1,19 @@
-local module = {}
-
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local tweenService = game:GetService("TweenService")
 
 local AxisTextures = require(ReplicatedStorage.Data.AxisTextures)
+local Enums = require(ReplicatedStorage.Data.Enums)
 local Voicelines = require(ReplicatedStorage.Data.Voicelines).Axis
 local AudioService = require(script.Parent.AudioService)
 local UiService = require(script.Parent.UiService)
+
+local Axis = {
+	State = {
+		Speaking = false,
+		Emotion = Enums.AxisEmotion.Happy
+	}
+}
 
 local axis
 
@@ -17,12 +23,12 @@ local head = char:WaitForChild("Head")
 
 local playingSound: Sound
 
-function module.Init()
+function Axis.Init()
 	axis = ReplicatedStorage.Assets.Axis:Clone()
 	axis.Parent = workspace
 end
 
-function module.Start()
+function Axis.Start()
 	task.spawn(function()
 		while task.wait() do
 			axis.CFrame = CFrame.lookAt(axis.Position, head.Position) * CFrame.Angles(0,math.rad(270),0)
@@ -32,7 +38,7 @@ end
 
 --Voicline stuff
 
-function module.SetEmotion(emotion, speaking)
+function Axis.SetEmotion(emotion, speaking)
 	if AxisTextures[emotion] then
 		if speaking == 1 then
 			axis.TextureID = AxisTextures[emotion].Speaking1
@@ -49,8 +55,10 @@ function module.SetEmotion(emotion, speaking)
 	end
 end
 
-function module.PlayVoiceline(voiceline)
+function Axis.PlayVoiceline(voiceline)
 	if Voicelines[voiceline] then
+		Axis.ShutUp()
+
 		-- stop other sounds
 		if playingSound and playingSound.Parent then
 			playingSound:Stop()
@@ -66,13 +74,13 @@ function module.PlayVoiceline(voiceline)
 		
 		-- update axis textures
 		while playingSound.Playing do
-			module.SetEmotion(Voicelines[voiceline].Emotion, 1)
+			Axis.SetEmotion(Voicelines[voiceline].Emotion, 1)
 			task.wait(0.2)
-			module.SetEmotion(Voicelines[voiceline].Emotion, 2)
+			Axis.SetEmotion(Voicelines[voiceline].Emotion, 2)
 			task.wait(0.2)
 		end
 		
-		module.SetEmotion(Voicelines[voiceline].Emotion, 0)
+		Axis.SetEmotion(Voicelines[voiceline].Emotion, 0)
 
 		return true
 	else
@@ -81,11 +89,16 @@ function module.PlayVoiceline(voiceline)
 	end
 end
 
+function Axis.ShutUp()
+	if not playingSound then return end
+	playingSound.Playing = false
+end
+
 
 
 -- movement
 
-function module.PlayPath(path, startFrom)
+function Axis.PlayPath(path, startFrom)
 	-- axis start pos
 	if startFrom then
 		axis.Position = startFrom.WorldPosition
@@ -112,7 +125,7 @@ function module.PlayPath(path, startFrom)
 		
 		-- plays voiceline if necessary
 		if pos:GetAttribute("Voiceline") then
-			module.PlayVoiceline(pos:GetAttribute("Voiceline"))
+			Axis.PlayVoiceline(pos:GetAttribute("Voiceline"))
 		end
 		
 		-- moves axis to next point
@@ -128,12 +141,12 @@ function module.PlayPath(path, startFrom)
 	end
 end
 
-function module.scare()
+function Axis.scare()
 	local scaredVoicelines = {"BeCarefull", "Carefull", "LookOut", "BackUp", "OhNo"}
 	local voiceline = scaredVoicelines[math.random(1, #scaredVoicelines)]
 	task.spawn(function()
-		module.PlayVoiceline(voiceline)
+		Axis.PlayVoiceline(voiceline)
 	end)
 end
 
-return module
+return Axis

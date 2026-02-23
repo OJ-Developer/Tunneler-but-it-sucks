@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 local PortalService = require(ReplicatedStorage.Services.PortalService)
 
@@ -18,6 +19,8 @@ function PortalPlacer.new(portalPlacer)
 	self.PortalColour = portalPlacer.Configuration.Portal.Value
 	self.Portal = workspace[self.PortalColour.."Portal"]
 
+	self.Garbage = Garbage.new()
+
 	return self
 end
 
@@ -31,9 +34,9 @@ function PortalPlacer:Init()
 	end
 	
 	if activator then
-		self.c = activator.OnActivated:Connect(function(activated)
+		self.Garbage:Add(activator.OnActivated:Connect(function(activated)
 			self:SetActivated(activated)
-		end)
+		end))
 	end
 end
 
@@ -44,9 +47,7 @@ function PortalPlacer:SetActivated(activated)
 end
 
 function PortalPlacer:Cleanup()
-	if self.c then
-		self.c:Disconnect()
-	end
+	self.Garbage:Cleanup()
 end
 
 return PortalPlacer

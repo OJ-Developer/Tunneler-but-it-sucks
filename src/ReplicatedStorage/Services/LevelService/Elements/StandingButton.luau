@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TweenService = game:GetService("TweenService")
 
-local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
+local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 local MiscData = require(ReplicatedStorage.Data.MiscData)
 
 local StandingButton = {}

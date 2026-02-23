@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local Object = require(ReplicatedStorage.Classes.Object)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
@@ -12,6 +13,7 @@ function CubeDropper.new(cubeDropper)
 	
 	self.Model = cubeDropper
 	self.Dropping = false
+	self.Garbage = Garbage.new()
 
 	return self
 end
@@ -29,9 +31,9 @@ function CubeDropper:Init()
 	end
 
 	if activator then
-		self.c1 = activator.OnActivated:Connect(function(val)
+		self.Garbage:Add(activator.OnActivated:Connect(function(val)
 			self:SetActivated(val)
-		end)
+		end))
 	end
 end
 
@@ -53,13 +55,14 @@ function CubeDropper:DropCube()
 	self.CurrentCube = self.NextCube
 
 	if autoDropCube then
-		if self.c2 then
-			self.c2:Disconnect()
+		if self.AutoDropCubeConnection then
+			self.AutoDropCubeConnection:Disconnect()
 		end
-		self.c2 = self.CurrentCube.OnFizzle:Connect(function()
+		self.AutoDropCubeConnection = self.CurrentCube.OnFizzle:Connect(function()
 			task.wait(3)
 			self:DropCube()
 		end)
+		self.Garbage:Add(self.AutoDropCubeConnection)
 	end
 
 	TweenService:Create(doorPart1, TweenInfo.new(0.5), {Rotation = part1OpenedRot.WorldRotation}):Play()
@@ -87,8 +90,8 @@ function CubeDropper:SetActivated(activated)
 			self.Dropping = true
 			
 			if self.CurrentCube then
-				if self.c2 then
-					self.c2:Disconnect()
+				if self.AutoDropCubeConnection then
+					self.AutoDropCubeConnection:Disconnect()
 				end
 				self.CurrentCube:Fizzle()
 			end
@@ -99,10 +102,7 @@ function CubeDropper:SetActivated(activated)
 end
 
 function CubeDropper:Cleanup()
-	self.c1:Disconnect()
-	if self.c2 then
-		self.c2:Disconnect()
-	end
+	self.Garbage:Cleanup()
 end
 
 return CubeDropper

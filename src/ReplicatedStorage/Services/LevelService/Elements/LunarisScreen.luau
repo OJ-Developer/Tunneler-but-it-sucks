@@ -1,4 +1,8 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
+
 local speed = 3
 
 local colours = {
@@ -12,7 +16,10 @@ LunarisScreen.__index = LunarisScreen
 
 function LunarisScreen.new(ui)
 	local self = setmetatable({}, LunarisScreen)
+
 	self.UiObject = ui
+	self.Garbage = Garbage.new()
+
 	return self
 end
 
@@ -24,7 +31,7 @@ function LunarisScreen:Init()
 
 	ui.Frame.UIGradient.Color = colours.blue
 
-	self.t = task.spawn(function()
+	self.Garbage:Add(task.spawn(function()
 		while true do
 			img1.Position = UDim2.fromScale(0, 0)
 			img2.Position = UDim2.fromScale(0,-1)
@@ -32,11 +39,11 @@ function LunarisScreen:Init()
 			TweenService:Create(img2, TweenInfo.new(speed,Enum.EasingStyle.Linear), {Position = UDim2.fromScale(0,0)}):Play()
 			task.wait(speed)
 		end
-	end)
+	end))
 end
 
 function LunarisScreen:Cleanup()
-	task.cancel(self.t)
+	self.Garbage:Cleanup()
 end
 
 return LunarisScreen

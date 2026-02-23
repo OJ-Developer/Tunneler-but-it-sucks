@@ -1,7 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local tweenService = game:GetService("TweenService")
 
-local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
+local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 local World = require(ReplicatedStorage.Modules.World)
 
 local FloorButton = {}
@@ -12,6 +13,7 @@ function FloorButton.new(floorButton)
 
 	self.Model = floorButton
 	self.OnActivated = ScriptSignal.new()
+	self.Garbage = Garbage.new()
 	
 	return self
 end
@@ -28,7 +30,7 @@ function FloorButton:Init()
 	local upPos = buttonBase.UpPos
 	local downPos =  buttonBase.DownPos
 
-	self.t = task.spawn(function()
+	self.Garbage:Add(task.spawn(function()
 		while task.wait() do
 			local partsInHitbox = workspace:GetPartsInPart(hitbox, World.overlapParams(World.ParamPreset.FloorButtonActivators))
 			local newActivated = false
@@ -44,11 +46,11 @@ function FloorButton:Init()
 				tween.Completed:Wait()
 			end
 		end
-	end)
+	end))
 end
 
 function FloorButton:Cleanup()
-	task.cancel(self.t)
+	self.Garbage:Cleanup()
 end
 
 return FloorButton

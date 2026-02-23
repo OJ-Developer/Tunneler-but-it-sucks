@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local LevelService = require(script.Parent.Parent)
 local Sounds = require(ReplicatedStorage.Data.Sounds)
 local Announcer = require(ReplicatedStorage.Services.Announcer)
@@ -10,14 +11,14 @@ local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
 local module = {}
 
-local connections = {}
+local garbage = Garbage.new()
 
 function module.Start(player: Player)
-	
+
 	-- SETUP
 
-	local activationDetectors = workspace.Map.CustomFunctionality.ActivationDetectors
-	local portalGunStandSpinButton = activationDetectors:WaitForChild("PortalGunStandSpinButton")
+	local level: typeof(workspace.Level01) = workspace.Map
+	local elements = level.Elements
 
 
 	-- MUSIC
@@ -25,44 +26,45 @@ function module.Start(player: Player)
 	AudioService.PlaySong(Sounds.Music["0"])
 
 
-
 	-- PORTAL GUN STAND
 
-	local portalPlacer1 = workspace.Map.CustomFunctionality.CustomActivators.PortalPlacer1
-	local portalPlacer2 = workspace.Map.CustomFunctionality.CustomActivators.PortalPlacer2
+	local portalPlacer1 = LinkedData.Get(elements.PortalGunRoomPortalPlacer1, "ElementClass") 
+	local portalPlacer2 = LinkedData.Get(elements.PortalGunRoomPortalPlacer2, "ElementClass")
 
-	local portalGunStand = workspace.Map.CustomFunctionality.Other.PortalGunStand
+	local portalGunStand = elements.PortalGunStand
 
 	local portalGunCurrentlyAt = 2
 
 	local function spinPortalGunStand(val)
 		if val then
 			if portalGunCurrentlyAt == 1 then
-				local tween = TweenService:Create(portalGunStand.Value.Stand.Gun, TweenInfo.new(5, Enum.EasingStyle.Linear), {CFrame = portalGunStand.Value.Stand.Pos2.WorldCFrame})
+				local tween = TweenService:Create(portalGunStand.Stand.Gun, TweenInfo.new(5, Enum.EasingStyle.Linear), {CFrame = portalGunStand.Stand.Pos2.WorldCFrame})
 				tween:Play()
 				task.wait(5)
-				portalPlacer2.Activated.Value = true
-				portalPlacer1.Activated.Value = false
+				portalPlacer2:SetActivated(true)
+				portalPlacer1:SetActivated(false)
 				portalGunCurrentlyAt = 2
 			elseif portalGunCurrentlyAt == 2 then
-				local tween = TweenService:Create(portalGunStand.Value.Stand.Gun, TweenInfo.new(5, Enum.EasingStyle.Linear), {CFrame = portalGunStand.Value.Stand.Pos1.WorldCFrame})
+				local tween = TweenService:Create(portalGunStand.Stand.Gun, TweenInfo.new(5, Enum.EasingStyle.Linear), {CFrame = portalGunStand.Stand.Pos1.WorldCFrame})
 				tween:Play()
 				task.wait(5)
-				portalPlacer2.Activated.Value = false
-				portalPlacer1.Activated.Value = true
+				portalPlacer2:SetActivated(false)
+				portalPlacer1:SetActivated(true)
 				portalGunCurrentlyAt = 1
 			end
 		end
 	end
 
-	table.insert(connections, portalGunStandSpinButton.Value.Activated.Changed:Connect(spinPortalGunStand))
+	local portalGunSpinButton = LinkedData.Get(elements.PortalGunStandSpinButton, "ElementClass")
+
+	garbage:Add(portalGunSpinButton.OnActivated:Connect(spinPortalGunStand))
 
 
 	-- OTHER HITBOX THINGS AND STUFF
 
 	local path = workspace.Map.AxisPaths.Path1
-
-	table.insert(connections, activationDetectors:WaitForChild("Room1EntranceHitbox").Value.Activated.Changed:Connect(function(val)
+	
+	garbage:Add(LinkedData.Get(elements.Room1EntranceTrigger, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Announcer.PlayVoiceline("wtl1")
@@ -73,7 +75,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, activationDetectors:WaitForChild("Room2EntranceHitbox").Value.Activated.Changed:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.Room2EntranceTrigger, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayVoiceline("AnotherTestDone")
@@ -86,10 +88,10 @@ function module.Start(player: Player)
 
 	local ethmdIntroThread = nil
 
-	table.insert(connections, activationDetectors:WaitForChild("Room3EntranceHitbox").Value.Activated.Changed:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.Room3EntranceTrigger, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
-				LinkedData.Get(portalGunStandSpinButton.Value, "ElementClass"):Press()
+				portalGunSpinButton:Press()
 				Axis.PlayPath(path, path.F)
 			end)
 			ethmdIntroThread = task.spawn(function()
@@ -100,9 +102,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	local ruleVoicelineThread = nil
-
-	table.insert(connections, shared.PlayerState.GunChanged:Connect(function(val)
+	garbage:Add(shared.PlayerState.GunChanged:Connect(function(val)
 		if val then
 			AudioService.PlaySong(Sounds.Music.SmallLengthExperiment)
 			
@@ -112,7 +112,7 @@ function module.Start(player: Player)
 			task.spawn(function()
 				Axis.PlayPath(path, path.H)
 			end)
-			ruleVoicelineThread = task.spawn(function()
+			garbage:Add(task.spawn(function()
 				Axis.PlayVoiceline("SafetyGuildlines")
 				Axis.PlayVoiceline("Rule1")
 				Axis.PlayVoiceline("Rule2")
@@ -129,11 +129,11 @@ function module.Start(player: Player)
 				Axis.PlayVoiceline("Sorry")
 				task.wait(60)
 				Axis.PlayVoiceline("Rule11")
-			end)
+			end))
 		end
 	end))
 
-	table.insert(connections, activationDetectors:WaitForChild("Room4EntranceHitbox").Value.Activated.Changed:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.Room4EntranceTrigger, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayPath(path, path.J)
@@ -141,13 +141,9 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, activationDetectors:WaitForChild("LevelEndHitbox").Value.Activated.Changed:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.LevelEndTrigger, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
-				if ruleVoicelineThread then
-					task.cancel(ruleVoicelineThread)
-				end
-				
 				LevelService.LoadLevel("Level02")
 			end)
 		end
@@ -156,9 +152,7 @@ function module.Start(player: Player)
 end
 
 function module.Cleanup()
-	for _, v in connections do
-		v:Disconnect()
-	end
+	garbage:Cleanup()
 end
 
 return module

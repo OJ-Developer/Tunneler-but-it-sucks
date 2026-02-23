@@ -3,7 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
-local ScriptSignal = require(ReplicatedStorage.Classes.ScriptSignal)
+local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 local MiscData = require(ReplicatedStorage.Data.MiscData)
 local Utils = require(ReplicatedStorage.Modules.Utils)
 local World = require(ReplicatedStorage.Modules.World)

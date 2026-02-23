@@ -3,8 +3,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local objects = ReplicatedStorage.Assets.Objects
 
+local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 local linkedData = require(script.Parent.Parent.Services.LinkedData)
-local ScriptSignal = require(script.Parent.ScriptSignal)
 
 local player = Players.LocalPlayer
 local char = player.Character

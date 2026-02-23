@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local World = require(ReplicatedStorage.Modules.World)
 
 local PortalGunStand = {}
@@ -9,6 +10,7 @@ function PortalGunStand.new(portalGunStand)
 	local self = setmetatable({}, PortalGunStand)
 
 	self.Model = portalGunStand
+	self.Garbage = Garbage.new()
 	
 	return self
 end
@@ -19,7 +21,7 @@ function PortalGunStand:Init()
 	local gun = portalGunStand.Stand.Gun
 	local hitbox = portalGunStand.Hitbox
 	
-	self.t = task.spawn(function()
+	self.Garbage:Add(task.spawn(function()
 		while task.wait() do
 			local partsInHitbox = workspace:GetPartsInPart(hitbox, World.overlapParams(World.ParamPreset.Player))
 			
@@ -30,11 +32,11 @@ function PortalGunStand:Init()
 				return
 			end
 		end
-	end)
+	end))
 end
 
 function PortalGunStand:Cleanup()
-	task.cancel(self.t)
+	self.Garbage:Cleanup()
 end
 
 return PortalGunStand

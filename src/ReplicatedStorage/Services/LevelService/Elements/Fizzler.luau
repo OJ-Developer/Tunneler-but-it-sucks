@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local World = require(ReplicatedStorage.Modules.World)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 local PortalService = require(ReplicatedStorage.Services.PortalService)
@@ -14,6 +15,8 @@ function Fizzler.new(fizzler)
 
 	self.StartEnabled = fizzler.Configuration.StartEnabled.Value
 	self.Enabled = self.StartEnabled
+
+	self.Garbage = Garbage.new()
 	
 	return self
 end
@@ -36,12 +39,12 @@ function Fizzler:Init()
 	end
 
 	if activator then
-		self.c = activator.OnActivated:Connect(function(activated)
+		self.Garbage:Add(activator.OnActivated:Connect(function(activated)
 			self:SetActivated(activated)
-		end)
+		end))
 	end
 
-	self.t = task.spawn(function()
+	self.Garbage:Add(task.spawn(function()
 		while task.wait() do
 			if self.Enabled then
 				local objectsInFizzler = workspace:GetPartsInPart(fizzler, World.overlapParams(World.ParamPreset.Objects))
@@ -62,7 +65,7 @@ function Fizzler:Init()
 				end
 			end
 		end
-	end)
+	end))
 end
 
 function Fizzler:SetActivated(activated)
@@ -77,12 +80,7 @@ function Fizzler:SetActivated(activated)
 end
 
 function Fizzler:Cleanup()
-	if self.t then
-		task.cancel(self.t)
-	end
-	if self.c then
-		self.c:Disconnect()
-	end
+	self.Garbage:Cleanup()
 end
 
 return Fizzler

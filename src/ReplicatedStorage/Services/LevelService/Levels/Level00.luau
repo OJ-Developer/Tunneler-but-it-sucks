@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local LevelService = require(script.Parent.Parent)
 local Sounds = require(ReplicatedStorage.Data.Sounds)
 local Announcer = require(ReplicatedStorage.Services.Announcer)
@@ -12,7 +13,7 @@ local UiService = require(ReplicatedStorage.Services.UiService)
 
 local module = {}
 
-local connections: {RBXScriptConnection} = {}
+local garbage = Garbage.new()
 
 function module.Start(player: Player)
 
@@ -87,7 +88,7 @@ function module.Start(player: Player)
 
 	-- OTHER AXIS STUFF
 
-	table.insert(connections, LinkedData.Get(elements.AxisMoveHitbox1, "ElementClass").OnActivated:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.AxisMoveHitbox1, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayPath(path, path.C)
@@ -95,7 +96,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, LinkedData.Get(elements.Room1EnterHitbox, "ElementClass").OnActivated:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.Room1EnterHitbox, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				workspace.RedPortal.OnPart.Value = nil
@@ -106,7 +107,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, LinkedData.Get(elements.AxisMoveHitbox2, "ElementClass").OnActivated:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.AxisMoveHitbox2, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayPath(path, path.F)
@@ -117,7 +118,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, LinkedData.Get(elements.Level1LoadHitbox, "ElementClass").OnActivated:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.Level1LoadHitbox, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				LevelService.LoadLevel("Level01")
@@ -125,7 +126,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, LinkedData.Get(elements.AxisVoiclineHitbox1, "ElementClass").OnActivated:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.AxisVoiclineHitbox1, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayVoiceline("TunnelsConfuzzled")
@@ -133,7 +134,7 @@ function module.Start(player: Player)
 		end
 	end))
 
-	table.insert(connections, LinkedData.Get(elements.AxisVoiclineHitbox2, "ElementClass").OnActivated:Connect(function(val)
+	garbage:Add(LinkedData.Get(elements.AxisVoiclineHitbox2, "ElementClass").OnActivated:Connect(function(val)
 		if val then
 			task.spawn(function()
 				Axis.PlayVoiceline("Level0Yay")
@@ -143,9 +144,7 @@ function module.Start(player: Player)
 end
 
 function module.Cleanup()
-	for _, connection in connections do
-		connection:Disconnect()
-	end
+	garbage:Cleanup()
 end
 
 return module

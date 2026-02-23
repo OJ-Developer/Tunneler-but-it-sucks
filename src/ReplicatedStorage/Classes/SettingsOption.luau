@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ScriptSignal = require(script.Parent.ScriptSignal)
+local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
 local SettingsOption = {}
