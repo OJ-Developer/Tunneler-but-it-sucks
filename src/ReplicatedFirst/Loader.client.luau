@@ -93,6 +93,7 @@ task.spawn(function()
     ContentProvider:PreloadAsync(assets)
     ContentProvider:PreloadAsync({playerGui})
     ContentProvider:PreloadAsync({player.Character or player.CharacterAdded:Wait()})
+    shared.DatastoreData = ReplicatedStorage.Events.GetPlayerDatastore:InvokeServer()
 	
 	loaded = true
 end)
@@ -156,7 +157,7 @@ local services = {}
 
 task.wait(1)
 
-function printMaybe(...)
+local function printMaybe(...)
     if Settings.MakeTheModuleLoaderSHUTUP then return end
     print(...)
 end

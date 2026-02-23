@@ -9,7 +9,7 @@
                     "ClassName": "InputBinding",
                     "Name": "Keyboard",
                     "Properties": {
-                        "KeyCode": "LeftShift"
+                        "KeyCode": "LeftControl"
                     }
                 },
                 {

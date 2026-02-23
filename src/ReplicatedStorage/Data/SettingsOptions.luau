@@ -15,6 +15,7 @@ local settings = {
             Name = "Bloom",
             Type = Enums.SettingType.Boolean,
             Default = true,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 Lighting.Bloom.Intensity = v and 1 or 0
             end,
@@ -23,6 +24,7 @@ local settings = {
             Name = "Shadows",
             Type = Enums.SettingType.Boolean,
             Default = true,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 Lighting.GlobalShadows = v
             end,
@@ -31,9 +33,7 @@ local settings = {
             Name = "Portal Rendering",
             Type = Enums.SettingType.Boolean,
             Default = true,
-            OnStart = function(_, setting)
-                shared.Settings.PortalRendering = setting.Default
-            end,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 shared.Settings.PortalRendering = v
             end,
@@ -42,6 +42,7 @@ local settings = {
             Name = "FPS Counter",
             Type = Enums.SettingType.Boolean,
             Default = false,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 playerGui.DevStats.Enabled = v
             end,
@@ -55,6 +56,7 @@ local settings = {
             SliderMin = 0,
             SliderMax = 200,
             Default = 100,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 AudioService.MusicVolume = v
                 AudioService.UpdateVolume()
@@ -66,6 +68,7 @@ local settings = {
             SliderMin = 0,
             SliderMax = 200,
             Default = 100,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 AudioService.SoundsVolume = v
                 AudioService.UpdateVolume()
@@ -77,6 +80,7 @@ local settings = {
             SliderMin = 0,
             SliderMax = 200,
             Default = 100,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 AudioService.VoiceVolume = v
                 AudioService.UpdateVolume()
@@ -86,9 +90,7 @@ local settings = {
             Name = "Subtitles",
             Type = Enums.SettingType.Boolean,
             Default = true,
-            OnStart = function(_, setting)
-                shared.Settings.Subtitles = setting.Default
-            end,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 shared.Settings.Subtitles = v
                 AudioService.UpdateVolume()
@@ -101,9 +103,7 @@ local settings = {
             Name = "Mute Axis",
             Type = Enums.SettingType.Boolean,
             Default = false,
-            OnStart = function(_, setting)
-                shared.Settings.MuteAxis = setting.Default
-            end,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 shared.Settings.MuteAxis = v
             end,
@@ -112,6 +112,7 @@ local settings = {
             Name = "Speedrun Timer",
             Type = Enums.SettingType.Boolean,
             Default = false,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 playerGui.SpeedrunTimer.Enabled = v
             end,
@@ -120,11 +121,9 @@ local settings = {
             Name = "Developer Console",
             Type = Enums.SettingType.Boolean,
             Default = false,
-            OnStart = function(_, setting)
-                ReplicatedStorage.Events.UpdateDevConsoleEnabled:Fire(setting.Default)
-            end,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
-                shared.Settings.DevConsoleEnabled = not shared.Settings.DevConsoleEnabled
+                shared.Settings.DevConsoleEnabled = v
                 ReplicatedStorage.Events.UpdateDevConsoleEnabled:Fire(v)
             end,
         }
@@ -137,6 +136,7 @@ local settings = {
             SliderMin = 0,
             SliderMax = 200,
             Default = 100,
+            RunOnChangeOnStart = true,
             OnChange = function(v)
                 CameraService.CameraSensitivity = v
             end,

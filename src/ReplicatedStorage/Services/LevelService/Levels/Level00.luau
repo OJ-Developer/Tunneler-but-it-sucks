@@ -65,7 +65,7 @@ function module.Start(player: Player)
 	Axis.PlayVoiceline("TestingIsDangerous")
 	Axis.PlayVoiceline("TheTestingWillBegin")
 
-	local thingIdkWhatToCall = building.ThingIdkWhatToCall.Value
+	local thingIdkWhatToCall = building.Thingidkwhattocall
 
 	tween = TweenService:Create(thingIdkWhatToCall, TweenInfo.new(5), {Position = thingIdkWhatToCall.Position + Vector3.new(0, 22, 0)})
 	tween:Play()

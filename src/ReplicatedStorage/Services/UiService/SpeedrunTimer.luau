@@ -18,6 +18,8 @@ function SpeedrunTimer.Init()
 
     local timing = false
 
+    local renderStepConnection
+
     local function formatTime(t)
         return string.format("%02i", math.floor(t/3600))..":"..string.format("%02i", math.floor((t/60)%60))..":"..string.format("%05.2f", t%60)
     end
@@ -29,18 +31,37 @@ function SpeedrunTimer.Init()
         end
     end
 
+    local function start()
+        if renderStepConnection then return end
+
+        timing = true
+
+        renderStepConnection = RunService.PreRender:Connect(function(dtime)
+            totalTime += dtime
+            levelTime += dtime
+            updateUi()
+        end)
+    end
+
+    local function pause()
+        if renderStepConnection then
+            timing = false
+            renderStepConnection:Disconnect()
+        end
+    end
+
     LevelService.LevelLoaded:Connect(function(newLevelName, fromMenu)
         if workspace.Map.LevelSettings.MenuLevel.Value then
-            timing = false
+            pause()
         elseif fromMenu then
             totalTime = 0
             portalsPlaced = 0
             for i = 0, 9 do
                 ui["Level0"..tostring(i)].Text = "Level0"..tostring(i)..": 00:00:00.00"
             end
-            timing = true
+            start()
         else
-            timing = true
+            start()
         end
 
         currentlevel = newLevelName
@@ -48,11 +69,12 @@ function SpeedrunTimer.Init()
         levelTime = 0
     end)
 
-    RunService.PreRender:Connect(function(dtime)
+    LevelService.LevelLoadStarted:Connect(function()
+        pause()
+    end)
+    LevelService.LevelLoaded:Connect(function()
         if timing then
-            totalTime += dtime
-            levelTime += dtime
-            updateUi()
+            start()
         end
     end)
 

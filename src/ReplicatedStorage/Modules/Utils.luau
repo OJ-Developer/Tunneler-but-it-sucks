@@ -160,6 +160,15 @@ function Utils.tableContains(haystack: {any}, needles: {any})
 	return false
 end
 
+function Utils.AllValuesAreTrue(t: {})
+	for i, v in t do
+		if v then continue end
+		return false
+	end
+
+	return true
+end
+
 
 
 -- MISC UTILS

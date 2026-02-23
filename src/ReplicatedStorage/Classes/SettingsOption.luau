@@ -7,31 +7,31 @@ local SettingsOption = {}
 SettingsOption.__index = SettingsOption
 
 function SettingsOption.new(optionUi)
-	local newButton = setmetatable({
-		Instance = optionUi,
-		Type = optionUi.Type.Value,
-		OnChange = ScriptSignal.new()
-	}, SettingsOption)
+	local self = setmetatable({}, SettingsOption)
+
+	self.Instance = optionUi
+	self.Type = optionUi.Type.Value
+	self.OnChange = ScriptSignal.new()
 	
-	if newButton.Type == "bool" then
-		newButton.State = optionUi.Default.Value
-		optionUi.Button.Text = newButton.State and "On" or "Off"
+	if self.Type == "bool" then
+		self.State = optionUi.Default.Value
+		optionUi.Button.Text = self.State and "On" or "Off"
 
 		LinkedData.Get(optionUi.Button, "UiButtonClass").OnClick:Connect(function()
-			newButton.State = not newButton.State
-			optionUi.Button.Text = newButton.State and "On" or "Off"
-			newButton.OnChange:Fire(newButton.State)
+			self.State = not self.State
+			optionUi.Button.Text = self.State and "On" or "Off"
+			self.OnChange:Fire(self.State)
 		end)
-	elseif newButton.Type == "slider" then
-		newButton.Range = {
+	elseif self.Type == "slider" then
+		self.Range = {
 			min = optionUi.Min.Value,
 			max = optionUi.Max.Value
 		}
 	end
 
-	LinkedData.Set(optionUi, "SettingsOptionClass", newButton)
+	LinkedData.Set(optionUi, "SettingsOptionClass", self)
 	
-	return newButton
+	return self
 end
 
 return SettingsOption

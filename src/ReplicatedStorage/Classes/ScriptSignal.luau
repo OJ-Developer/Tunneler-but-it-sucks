@@ -59,7 +59,7 @@ function event:Wait()
 end
 
 function event:Fire(...)
-	for _, fn in pairs(self.connections) do
+	for _, fn in self.connections do
 		task.spawn(fn, ...)
 	end
 end

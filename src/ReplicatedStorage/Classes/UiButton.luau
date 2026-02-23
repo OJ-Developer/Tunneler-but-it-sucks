@@ -8,10 +8,9 @@ local button = {}
 button.__index = button
 
 function button.new(buttonUI)
-	local newButton = setmetatable({
-		instance = buttonUI,
-		OnClick = ScriptSignal.new(),
-	}, button)
+	local self = setmetatable({}, button)
+	self.instance = buttonUI
+	self.OnClick = ScriptSignal.new()
 
 	local hover
 	if not buttonUI.Parent:HasTag("SettingsOption") then
@@ -20,11 +19,11 @@ function button.new(buttonUI)
 			hover = Instance.new("Frame")
 			hover.Size = UDim2.fromScale(1,1)
 			hover.Transparency = 0.9
-			hover.BackgroundColor3 = Color3.new(1,1,1)
+			hover.BackgroundColor3 = Color3.new(1, 1, 1)
 			hover.BorderSizePixel = 0
 			hover.Visible = false
 			hover.ZIndex = -1
-			hover.Parent = newButton.instance
+			hover.Parent = self.instance
 		end
 	end
 	
@@ -57,7 +56,7 @@ function button.new(buttonUI)
 		if hover then
 			hover.Visible = false
 		end
-		newButton.OnClick:Fire()
+		self.OnClick:Fire()
 		
 		local function fireShowEvent(value)
 			if showData and value.Value:FindFirstChild("Show") and value.Value.Show:IsA("BindableEvent") then
@@ -86,9 +85,9 @@ function button.new(buttonUI)
 		end
 	end)
 
-	LinkedData.Set(buttonUI, "UiButtonClass", newButton)
+	LinkedData.Set(buttonUI, "UiButtonClass", self)
 	
-	return newButton
+	return self
 end
 
 return button

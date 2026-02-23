@@ -54,7 +54,7 @@ function Level.LoadLevel(levelName: string)
 		end
 		
 		for _, object in workspace.Map.Objects:GetChildren() do
-			if LinkedData.Get(object, "SpecificObjectClass") and LinkedData.Get(object, "SpecificObjectClass").Cleanup then
+			if LinkedData.Get(object) and LinkedData.Get(object, "SpecificObjectClass") and LinkedData.Get(object, "SpecificObjectClass").Cleanup then
 				LinkedData.Get(object, "SpecificObjectClass"):Cleanup()
 			end
 		end

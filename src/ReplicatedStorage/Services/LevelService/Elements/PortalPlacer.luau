@@ -39,7 +39,7 @@ end
 
 function PortalPlacer:SetActivated(activated)
 	if activated then
-		PortalService.PlacePortal(self.Portal, self.PortalColour == "Red", self.OnPart, true, self.PortalPlacePlace.WorldCFrame)
+		PortalService.PlacePortal(self.Portal, self.PortalColour == "Red", self.OnPart, true, self.PortalPlacePlace)
 	end
 end
 
