@@ -19,14 +19,14 @@ function mt:Cleanup()
         if not v then continue end
 
         local t = typeof(v)
-        if t == "RBXScriptConnection" then
-            v:Disconnect()
-        elseif t == "thread" then
+        if t == "thread" then
             pcall(function()
                 task.cancel(v)
             end)
         elseif t == "Instance" then
             v:Destory()
+        elseif v.Disconnect and typeof(v.Disconnect) == "function" then
+            v:Disconnect()
         end
     end
 end

@@ -43,7 +43,7 @@ function InteractionService.Start()
                 if raycast.Instance:IsA("BasePart") then
                     if raycast.Instance.Anchored == false then
                         LinkedData.Get(raycast.Instance, "ObjectClass"):Pickup()
-                    elseif raycast.Instance.Name == "Button" and raycast.Instance.Parent.Name == "StandingButton" then
+                    elseif raycast.Instance.Name == "Button" and raycast.Instance.Parent:GetAttribute("ElementType") == "StandingButton" then
                         LinkedData.Get(raycast.Instance.Parent, "ElementClass"):Press()
                     end
                 end
@@ -60,7 +60,7 @@ function InteractionService.Start()
         RunService.PreRender:Connect(function(dtime)
             if shared.PlayerState.HoldingObject then
                 if shared.PlayerState.HoldingObject:IsA("BasePart") then
-                    local _, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, World.raycastParams(World.ParamPreset.ObjectCollideable))
+                    local _, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, World.raycastParams(World.ParamPreset.ObjectCollideable), true)
                     raycast.Position -= camera.CFrame.LookVector * Utils.average(shared.PlayerState.HoldingObject.Size) / 2
                 
                     rotationOffset -= shared.PlayerState.HasGun and math.pi*0.5*dtime or rotationOffset

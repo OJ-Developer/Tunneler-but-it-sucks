@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local Garbage = require(ReplicatedStorage.Classes.Garbage)
 local Object = require(ReplicatedStorage.Classes.Object)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 
@@ -15,6 +16,8 @@ function ProjectileSender.new(sender)
 	self.Active = false
 
 	self.SpawnPoint = sender.ProjectileSpawnPoint.WorldCFrame
+
+	self.Garbage = Garbage.new()
 
 	return self
 end

@@ -262,22 +262,39 @@ end)
 
 -- OTHER FUNCTIONS
 
-function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, second: boolean?)
+function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3, raycastParams: RaycastParams, debug: boolean?, second: boolean?)
 	local raycastParamsCopy = Utils.CopyParams(raycastParams)
-	if not second then
+	local paramsInclude = raycastParams.FilterType == Enum.RaycastFilterType.Include
+	if paramsInclude and not second then
 		raycastParams:AddToFilter(bluePortal.PortalSurface)
 		raycastParams:AddToFilter(redPortal.PortalSurface)
 	end
 
 	local raycast = workspace:Raycast(origin, direction, raycastParams)
 	if raycast then
+		if debug then
+			print(raycast.Instance)
+		end
 		local resultNotOnPortal = raycast.Instance ~= bluePortal.PortalSurface and raycast.Instance ~= redPortal.PortalSurface
 		local portalsNotActive = bluePortal.OnPart.Value == nil or redPortal.OnPart.Value == nil
+
+		local entryPortal
+
+		if resultNotOnPortal and not paramsInclude then
+			local portalRaycast = workspace:Raycast(origin, raycast.Position - origin, World.raycastParams(World.ParamPreset.Portals))
+			resultNotOnPortal = portalRaycast == nil
+			if raycast then
+				entryPortal = portalRaycast.Instance
+			end
+		end
+
 		if resultNotOnPortal or portalsNotActive or second then
-			return true, {Position = raycast.Position, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal} 
+			return true, {Position = raycast.Position, Instance = raycast.Instance, Distance = raycast.Distance, Normal = raycast.Normal}
 		end
 		
-		local entryPortal = raycast.Instance
+		if not entryPortal then
+			entryPortal = raycast.Instance
+		end
 		local exitPortal = (entryPortal == bluePortal.PortalSurface) and redPortal.PortalSurface or bluePortal.PortalSurface
 		
 		local projectedTarget = Utils.projectThroughPortal(origin+direction, entryPortal.CFrame, exitPortal.CFrame)
@@ -285,7 +302,7 @@ function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3,
 		local projectedOrigin = Utils.projectThroughPortal(raycast.Position, entryPortal.CFrame, exitPortal.CFrame)
 		local difference = projectedTarget - projectedOrigin
 		
-		return PortalService.RaycastThroughPortal(projectedOrigin, difference, raycastParamsCopy, true)
+		return PortalService.RaycastThroughPortal(projectedOrigin, difference, raycastParamsCopy, debug, true)
 	end
 	return false, {Position = origin + direction}
 end

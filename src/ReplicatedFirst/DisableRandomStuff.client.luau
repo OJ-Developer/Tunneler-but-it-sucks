@@ -11,3 +11,6 @@ repeat
     end)
     task.wait()
 until disabled
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+char:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Climbing, false)

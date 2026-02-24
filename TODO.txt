@@ -1,3 +1,1 @@
-- test speedrun timer in loading screens
-- test level 1 thing
-- fix holding objects through portals
+- Add minimum portal velocity thing so people don’t have seizures 

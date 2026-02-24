@@ -93,6 +93,13 @@ module.ParamPreset = {
 			return {workspace.Map.Objects, char}
 		end,
 		FilterType = Enum.RaycastFilterType.Exclude
+	},
+
+	Portals = {
+		FilterDescendantsInstances = function()
+			return {workspace.BluePortal.PortalSurface, workspace.RedPortal.PortalSurface}
+		end,
+		FilterType = Enum.RaycastFilterType.Include
 	}
 }
 
