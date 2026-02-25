@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Utils = {}
 
 -- INSTANCE UTILS
@@ -70,8 +71,27 @@ function Utils.roundVector(vec: Vector3)
 	)
 end
 
-function Utils.average(vec: Vector3)
-	return (vec.X + vec.Y + vec.Z) / 3
+function Utils.average(v: Vector3 | {number})
+	if typeof(v) == "Vector3" then
+		return (v.X + v.Y + v.Z) / 3
+	elseif typeof(v) == "table" then
+		return Utils.Sum(v) / #v
+	end
+	error(`erp98ugherpiuognerpoijkm {v}`)
+end
+
+function Utils.AverageVectors(vt: {Vector3}): Vector3
+	local x = {}
+	local y = {}
+	local z = {}
+
+	for _, v in vt do
+		table.insert(x, v.X)
+		table.insert(y, v.Y)
+		table.insert(z, v.Z)
+	end
+
+	return Vector3.new(Utils.average(x), Utils.average(y), Utils.average(z))
 end
 
 function Utils.projectThroughPortal(pos: Vector3, entryCFrame: CFrame, exitCFrame: CFrame): Vector3
@@ -169,6 +189,14 @@ function Utils.AllValuesAreTrue(t: {})
 	return true
 end
 
+function Utils.Sum<a>(t: {a}): a
+	local result = 0
+	for _, v in t do
+		result += v
+	end
+	return result
+end
+
 
 
 -- MISC UTILS
@@ -189,6 +217,17 @@ function Utils.CopyParams(params: RaycastParams | OverlapParams)
 	newParams.FilterType = params.FilterType
 	newParams.RespectCanCollide = params.RespectCanCollide
 	return newParams :: typeof(params)
+end
+
+function Utils.GetTaggedDescendants(tag: string, ancestor: Instance): {Instance}
+	local tagged = CollectionService:GetTagged(tag)
+	local result = {}
+	for _, v in tagged do
+		if v:IsDescendantOf(ancestor) then
+			table.insert(result, v)
+		end
+	end
+	return result
 end
 
 return Utils
