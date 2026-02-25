@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local MainConfig = require(ReplicatedStorage.Configs.MainConfig)
 local Utils = require(ReplicatedStorage.Modules.Utils)
 local World = require(ReplicatedStorage.Modules.World)
 local CameraService = require(ReplicatedStorage.Services.CameraService)
@@ -113,12 +114,10 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
         updateObjectsCollisionGroupsForPortal(objectsInRedPortal, prevInRedPortal, "Red")
         
         
-        -- teleport object if they are behind the portal
-        
+        -- teleport things if they are behind a portal
         local function teleportObjectIfBehindPortal(object, entrancePortal: Part, exitPortal: Part, isPlayer: boolean, enteringRed: boolean)
             local camera = workspace.CurrentCamera
             
-            --local pos = isPlayer and camera.CFrame.Position or object.Position
             local pos = object.Position
             
             local vel
@@ -134,16 +133,26 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
             local behindPortal = entranceCframe.LookVector:Dot(pos-entrancePortal.Position) < 0
             
             if behindPortal then
+                -- project the position and velocity of the object and then apply the new values to the object
                 local projectedPos = Utils.projectThroughPortal(pos, entranceCframe, exitCframe)
-                local projectedVel = Utils.projectThroughPortal(vel + pos, entranceCframe, exitCframe) - projectedPos
+                local projectedVel = (Utils.projectThroughPortal(vel + pos, entranceCframe, exitCframe) - projectedPos) * 0.8
                 if isPlayer then
                     rootPart.CFrame = CFrame.new(projectedPos - Vector3.new(0, headHeight, 0))
                     rootPart.AssemblyLinearVelocity = projectedVel
                 else
                     object.Position = projectedPos
+                    
+                    -- add minimum velocity when going through a portal
+                    local length = projectedVel.magnitude
+                    if length < MainConfig.MinimumPlayerPortalVelocity and length ~= 0 then
+                        print(`Speed is {length} which is less than {MainConfig.MinimumPlayerPortalVelocity}. Increasing speed.`)
+                        projectedVel = Utils.Unit(projectedVel) * MainConfig.MinimumPlayerPortalVelocity
+                    end
+
                     object.AssemblyLinearVelocity = projectedVel
                 end
                 
+                -- update collision groups
                 local newCollisionGroup = `In{enteringRed and "Blue" or "Red"}Portal`
                 object.CollisionGroup = newCollisionGroup
 
@@ -159,7 +168,8 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
                 end
             end
         end
-        
+
+        -- teleport object if they are behind the portal
         for _, object in pairs(objectsInBluePortal) do
             teleportObjectIfBehindPortal(object, bluePortal.Portal, redPortal.Portal, false, false)
         end
@@ -167,7 +177,8 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
         for _, object in pairs(objectsInRedPortal) do
             teleportObjectIfBehindPortal(object, redPortal.Portal, bluePortal.Portal, false, true)
         end
-        
+
+        -- teleport player if behind portal
         if playerInBluePortal then
             teleportObjectIfBehindPortal(head, bluePortal.Portal, redPortal.Portal, true, false)
         elseif playerInRedPortal then

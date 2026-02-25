@@ -135,6 +135,7 @@ end)
 
 local UserInputService = game:GetService("UserInputService")
 local VRService = game:GetService("VRService")
+local RunService = game:GetService("RunService")
 
 local Settings = require(ReplicatedStorage.Configs.MainConfig)
 local Enums = require(ReplicatedStorage.Data.Enums)
@@ -156,6 +157,10 @@ local serviceModules = ReplicatedStorage.Services
 local services = {}
 
 task.wait(1)
+
+if Settings.MakeTheModuleLoaderSHUTUP == nil then
+    Settings.MakeTheModuleLoaderSHUTUP = not RunService:IsStudio()
+end
 
 local function printMaybe(...)
     if Settings.MakeTheModuleLoaderSHUTUP then return end

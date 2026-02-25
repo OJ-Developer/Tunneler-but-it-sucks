@@ -1,1 +1,1 @@
-- Add minimum portal velocity thing so people don’t have seizures 
+- fix minimum portal velocity thing so people don’t have seizures 
