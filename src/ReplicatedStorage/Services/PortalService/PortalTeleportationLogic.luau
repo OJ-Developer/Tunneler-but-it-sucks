@@ -138,17 +138,16 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
                 local projectedVel = (Utils.projectThroughPortal(vel + pos, entranceCframe, exitCframe) - projectedPos) * 0.8
                 if isPlayer then
                     rootPart.CFrame = CFrame.new(projectedPos - Vector3.new(0, headHeight, 0))
-                    rootPart.AssemblyLinearVelocity = projectedVel
-                else
-                    object.Position = projectedPos
-                    
+
                     -- add minimum velocity when going through a portal
                     local length = projectedVel.magnitude
                     if length < MainConfig.MinimumPlayerPortalVelocity and length ~= 0 then
-                        print(`Speed is {length} which is less than {MainConfig.MinimumPlayerPortalVelocity}. Increasing speed.`)
                         projectedVel = Utils.Unit(projectedVel) * MainConfig.MinimumPlayerPortalVelocity
                     end
 
+                    rootPart.AssemblyLinearVelocity = projectedVel
+                else
+                    object.Position = projectedPos
                     object.AssemblyLinearVelocity = projectedVel
                 end
                 
