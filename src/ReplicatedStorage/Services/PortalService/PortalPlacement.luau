@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local MainConfig = require(ReplicatedStorage.Configs.MainConfig)
 local Utils = require(ReplicatedStorage.Modules.Utils)
 local World = require(ReplicatedStorage.Modules.World)
 local Axis = require(ReplicatedStorage.Services.Axis)
@@ -14,9 +15,6 @@ local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local rootPart = char:WaitForChild("HumanoidRootPart")
 local mouse = player:GetMouse()
-
-local GUN_SPIN_AMOUNT = math.rad(120)
-local GUN_SPIN_TIME = 0.3
 
 local portalGunOffset
 
@@ -91,12 +89,9 @@ local function portalBumpStep(portalCollisionDetector: Model, params: OverlapPar
     local allSuccess = true
     for _, hitbox in portalCollisionDetector:GetChildren() do
         local partsInPart = workspace:GetPartsInPart(hitbox, params)
-
-        Utils.PrintTable(partsInPart)
-
+		
         local partInPortalBumper = false
         for _, part in partsInPart do
-            --print(part:HasTag("PortalBumper"))
             if part:HasTag("PortalBumper") then
                 partInPortalBumper = true
                 break
@@ -104,8 +99,14 @@ local function portalBumpStep(portalCollisionDetector: Model, params: OverlapPar
         end
 
         if #partsInPart > 0 and not partInPortalBumper then
+			if MainConfig.portalPlacementDebug then
+				hitbox.Color = Color3.new(0,1,0)
+			end
             table.insert(positions, hitbox.Position)
         else
+			if MainConfig.portalPlacementDebug then
+				hitbox.Color = Color3.new(1,0,0)
+			end
             allSuccess = false
         end
     end
@@ -113,25 +114,33 @@ local function portalBumpStep(portalCollisionDetector: Model, params: OverlapPar
     return allSuccess, #positions == 0, Utils.Unit(Utils.AverageVectors(positions) - portalCollisionDetector.WorldPivot.Position) * 0.5
 end
 
-local MAX_STEPS = 10
-
-local function portalBump(onPart: Part, pos: Vector3 | CFrame, normal)
+local function portalBump(portal, onPart: Part, pos: Vector3 | CFrame, normal)
     local targetPos = typeof(pos) == "Vector3" and CFrame.new(pos, pos + normal) or pos
 
     local portalCollisionDetector = ReplicatedStorage.Assets.PortalCollisionDetector:Clone()
+	if MainConfig.portalPlacementDebug then
+		for _, v in portalCollisionDetector:GetChildren() do
+			v.Transparency = 0.5
+		end
+	end
     portalCollisionDetector.Parent = workspace
     portalCollisionDetector:PivotTo(targetPos)
     
     -- setup params
     local params = OverlapParams.new()
     params.FilterType = Enum.RaycastFilterType.Include
-    params.FilterDescendantsInstances = {onPart, Utils.GetTaggedDescendants("PortalBumper", workspace)}
+	local bumpers = {}
+	for _, bumper in Utils.GetTaggedDescendants("PortalBumper", workspace) do
+		if bumper == portal.PortalBumper then continue end
+		table.insert(bumpers, bumper)
+	end
+	params.FilterDescendantsInstances = {onPart, bumpers}
     for _, child in onPart:GetChildren() do
         if child:IsA("ObjectValue") and child.Name == "LinkedPart" and child.Value and child.Value:IsA("BasePart") then
             params:AddToFilter(child.Value)
         end
     end
-
+	
     -- the thing
     local steps = 0
     while true do
@@ -144,10 +153,14 @@ local function portalBump(onPart: Part, pos: Vector3 | CFrame, normal)
             portalCollisionDetector:Destroy()
             return true, p
         end
-        if steps > MAX_STEPS or allFail or addLocation.Magnitude == 0 then
+        if steps > MainConfig.PortalBumpMaxSteps or allFail or addLocation.Magnitude == 0 then
             portalCollisionDetector:Destroy()
             return false, targetPos.Position
         end
+
+		if MainConfig.portalPlacementDebug then
+			task.wait(0.2)
+		end
 
         portalCollisionDetector:PivotTo(portalCollisionDetector.WorldPivot + addLocation)
     end
@@ -157,14 +170,14 @@ end
 -- PORTAL PLACEMENT
 
 local function firePortal(portal, redPortal: boolean)
-	local tween = TweenService:Create(portalGunOffset, TweenInfo.new(GUN_SPIN_TIME, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Value = portalGunOffset.Value * CFrame.Angles(0, 0, redPortal and -GUN_SPIN_AMOUNT or GUN_SPIN_AMOUNT)})
+	local tween = TweenService:Create(portalGunOffset, TweenInfo.new(MainConfig.PortalgunSpinTime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Value = portalGunOffset.Value * CFrame.Angles(0, 0, redPortal and -MainConfig.PortalgunSpinAmount or MainConfig.PortalgunSpinAmount)})
 	tween:Play()
 	
 	local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, World.raycastParams(World.ParamPreset.PortalCollision))
 	if raycast then
 		if PortalService.CanPlacePortalOnPart(raycast.Instance) then
 
-            local success, newLocation = portalBump(raycast.Instance, raycast.Position, raycast.Normal)
+            local success, newLocation = portalBump(portal, raycast.Instance, raycast.Position, raycast.Normal)
             
             if success then
                 PortalService.PlacePortal(portal, redPortal, raycast.Instance, false, newLocation, raycast.Normal)

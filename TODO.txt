@@ -1,1 +1,0 @@
-- fix being able to place portals inside each other
