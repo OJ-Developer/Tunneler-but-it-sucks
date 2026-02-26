@@ -197,6 +197,14 @@ function Utils.Sum<a>(t: {a}): a
 	return result
 end
 
+function Utils.PrintTable(t: {})
+	local out = ""
+	for i, v in t do
+		out ..= `[{i}] = {v}, `
+	end
+	print(out:sub(1, #out-2))
+end
+
 
 
 -- MISC UTILS

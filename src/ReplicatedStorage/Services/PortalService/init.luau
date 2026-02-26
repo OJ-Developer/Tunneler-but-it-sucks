@@ -165,7 +165,7 @@ end
 -- PORTAL PLACEMENT STUFF
 
 function PortalService.CanPlacePortalOnPart(part: Part)
-    return PortalPlacement.CanPlacePortalOnPart(part)
+    return shared.PlayerState.GunIgnoreMaterials or part:GetAttribute("CanHavePortals") and not shared.PlayerState.HoldingObject
 end
 
 function PortalService.PlacePortal(portal: Portal, redPortal: boolean, onPart: Part?, placedByPortalPlacer: boolean, pos: Vector3 | CFrame, normal)

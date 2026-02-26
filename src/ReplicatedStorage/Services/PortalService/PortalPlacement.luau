@@ -27,10 +27,6 @@ function PortalPlacement.Init(portalService)
     portalGunOffset = script.Parent.PortalGunOffset
 end
 
-function PortalPlacement.CanPlacePortalOnPart(part: Part)
-    return shared.PlayerState.GunIgnoreMaterials or part:GetAttribute("CanHavePortals") and not shared.PlayerState.HoldingObject
-end
-
 local function getPartsPortalIsOn(portal)
 	return workspace:GetPartsInPart(portal.BehindPortalHitbox, World.overlapParams(World.ParamPreset.Building))
 end
@@ -96,9 +92,11 @@ local function portalBumpStep(portalCollisionDetector: Model, params: OverlapPar
     for _, hitbox in portalCollisionDetector:GetChildren() do
         local partsInPart = workspace:GetPartsInPart(hitbox, params)
 
+        Utils.PrintTable(partsInPart)
+
         local partInPortalBumper = false
         for _, part in partsInPart do
-            print(part:HasTag("PortalBumper"))
+            --print(part:HasTag("PortalBumper"))
             if part:HasTag("PortalBumper") then
                 partInPortalBumper = true
                 break
@@ -121,18 +119,13 @@ local function portalBump(onPart: Part, pos: Vector3 | CFrame, normal)
     local targetPos = typeof(pos) == "Vector3" and CFrame.new(pos, pos + normal) or pos
 
     local portalCollisionDetector = ReplicatedStorage.Assets.PortalCollisionDetector:Clone()
-    for _, v in portalCollisionDetector:GetChildren() do
-        v.BrickColor = BrickColor.new("Really red")
-        v.Transparency = 0.5
-    end
     portalCollisionDetector.Parent = workspace
     portalCollisionDetector:PivotTo(targetPos)
     
     -- setup params
     local params = OverlapParams.new()
     params.FilterType = Enum.RaycastFilterType.Include
-    params.FilterDescendantsInstances = {onPart, Utils.GetTaggedDescendants("PortalBumper", workspace.Map)}
-    print(Utils.GetTaggedDescendants("PortalBumper", workspace))
+    params.FilterDescendantsInstances = {onPart, Utils.GetTaggedDescendants("PortalBumper", workspace)}
     for _, child in onPart:GetChildren() do
         if child:IsA("ObjectValue") and child.Name == "LinkedPart" and child.Value and child.Value:IsA("BasePart") then
             params:AddToFilter(child.Value)
@@ -159,6 +152,9 @@ local function portalBump(onPart: Part, pos: Vector3 | CFrame, normal)
         portalCollisionDetector:PivotTo(portalCollisionDetector.WorldPivot + addLocation)
     end
 end
+
+
+-- PORTAL PLACEMENT
 
 local function firePortal(portal, redPortal: boolean)
 	local tween = TweenService:Create(portalGunOffset, TweenInfo.new(GUN_SPIN_TIME, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Value = portalGunOffset.Value * CFrame.Angles(0, 0, redPortal and -GUN_SPIN_AMOUNT or GUN_SPIN_AMOUNT)})
