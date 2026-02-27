@@ -60,7 +60,7 @@ function InteractionService.Start()
         RunService.PreRender:Connect(function(dtime)
             if shared.PlayerState.HoldingObject then
                 if shared.PlayerState.HoldingObject:IsA("BasePart") then
-                    local _, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, World.raycastParams(World.ParamPreset.ObjectCollideable), true)
+                    local _, raycast = PortalService.RaycastThroughPortal(mouse.UnitRay.Origin, mouse.UnitRay.Direction * Settings.ObjectHoldDist, World.raycastParams(World.ParamPreset.ObjectCollideable))
                     raycast.Position -= camera.CFrame.LookVector * Utils.average(shared.PlayerState.HoldingObject.Size) / 2
                 
                     rotationOffset -= shared.PlayerState.HasGun and math.pi*0.5*dtime or rotationOffset
