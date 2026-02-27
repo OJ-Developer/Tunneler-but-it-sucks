@@ -283,7 +283,7 @@ function PortalService.RaycastThroughPortal(origin: Vector3, direction: Vector3,
 		if resultNotOnPortal and not paramsInclude then
 			local portalRaycast = workspace:Raycast(origin, raycast.Position - origin, World.raycastParams(World.ParamPreset.Portals))
 			resultNotOnPortal = portalRaycast == nil
-			if raycast then
+			if portalRaycast then
 				entryPortal = portalRaycast.Instance
 			end
 		end
