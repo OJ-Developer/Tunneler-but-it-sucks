@@ -1,5 +1,6 @@
 # Project place file
 /Tunneler but it sucks.rbxlx
+tbis.rbxl
 
 # Roblox Studio lock files
 /*.rbxlx.lock
@@ -9,4 +10,3 @@ sourcemap.json
 Packages/
 wally.lock
 .vscode/
-tbis.rbxl

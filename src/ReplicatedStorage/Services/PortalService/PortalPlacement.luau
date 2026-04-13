@@ -69,7 +69,7 @@ function PortalPlacement.PlacePortal(portal, redPortal: boolean, onPart: Part?, 
 	if typeof(pos) == "Vector3" then
 		portal:PivotTo(CFrame.new(pos, pos + normal))
 		if normal == Vector3.new(0,1,0) or normal == Vector3.new(0,-1,0) then
-			portal:PivotTo(CFrame.new(portal.PrimaryPart.Position) * CFrame.fromEulerAnglesYXZ(math.pi*0.5*normal.Y,math.rad(rootPart.Orientation.Y),math.pi))
+			portal:PivotTo(CFrame.new(pos) * CFrame.fromEulerAnglesYXZ(math.pi*0.5*normal.Y,math.rad(rootPart.Orientation.Y),math.pi))
 		end
 	else
 		portal:PivotTo(pos)
@@ -126,20 +126,38 @@ local function portalBump(portal, onPart: Part, pos: Vector3 | CFrame, normal)
     portalCollisionDetector.Parent = workspace
     portalCollisionDetector:PivotTo(targetPos)
     
-    -- setup params
+    -- PARAMS
+	-- get all the joined parts
+	local joinedParts = {onPart}
+	for _, joinedPart in onPart:GetChildren() do
+		if not joinedPart:IsA("ObjectValue") then continue end
+		if joinedPart.Name ~= "JoinedPart" then continue end
+		if not joinedPart.Value then continue end
+		if not joinedPart.Value:IsA("BasePart") then continue end
+		table.insert(joinedParts, joinedPart.Value)
+	end
+	-- get the portal bumpers
+	local bumpers = {}
+	for _, part in joinedParts do
+		for _, bumper in part:GetChildren() do
+			if not bumper:IsA("ObjectValue") then continue end
+			if bumper.Name ~= "PortalBumper" then continue end
+			if not bumper.Value then continue end
+			if not bumper.Value:IsA("BasePart") then continue end
+			table.insert(bumpers, bumper.Value)
+		end
+	end
+	-- the actual params
     local params = OverlapParams.new()
     params.FilterType = Enum.RaycastFilterType.Include
-	local bumpers = {}
-	for _, bumper in Utils.GetTaggedDescendants("PortalBumper", workspace) do
-		if bumper == portal.PortalBumper then continue end
-		table.insert(bumpers, bumper)
+	params:AddToFilter(joinedParts)
+	params:AddToFilter(bumpers)
+	params:AddToFilter(workspace:QueryDescendants(".UniversalPortalBumper"))
+	if portal.Name == "BluePortal" then
+		params:AddToFilter(workspace.RedPortal.PortalBumper)
+	else
+		params:AddToFilter(workspace.BluePortal.PortalBumper)
 	end
-	params.FilterDescendantsInstances = {onPart, bumpers}
-    for _, child in onPart:GetChildren() do
-        if child:IsA("ObjectValue") and child.Name == "LinkedPart" and child.Value and child.Value:IsA("BasePart") then
-            params:AddToFilter(child.Value)
-        end
-    end
 	
     -- the thing
     local steps = 0
@@ -176,8 +194,15 @@ local function firePortal(portal, redPortal: boolean)
 	local raycast = workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * 1000, World.raycastParams(World.ParamPreset.PortalCollision))
 	if raycast then
 		if PortalService.CanPlacePortalOnPart(raycast.Instance) then
-
-            local success, newLocation = portalBump(portal, raycast.Instance, raycast.Position, raycast.Normal)
+			local pos = raycast.Position
+			local look = raycast.Normal
+			local success, newLocation
+			if look == Vector3.new(0,1,0) or look == Vector3.new(0,-1,0) then
+				local cf = CFrame.new(pos) * CFrame.fromEulerAnglesYXZ(math.pi*0.5*look.Y,math.rad(rootPart.Orientation.Y),math.pi)
+				success, newLocation = portalBump(portal, raycast.Instance, cf)
+			else
+				success, newLocation = portalBump(portal, raycast.Instance, pos, look)
+			end
             
             if success then
                 PortalService.PlacePortal(portal, redPortal, raycast.Instance, false, newLocation, raycast.Normal)
