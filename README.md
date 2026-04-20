@@ -4,4 +4,4 @@ This is the rojo project for TUNNELER But It Sucks. I'm not bothered to explain 
 
 # I DO NOT KNOW HOW TO MANAGE A PUBLIC GITHUB REPOSITORY!!!
 
-Please do not try to make changes in this repository as I do not know how to, and do not care to manage a repository. If you actually know how to manage a github repository, please feel free to fork this and make some kind of tbis community edition.
+Please do not try to make changes in this repository as I do not know how to, and do not care to manage this repository. If you actually know how to manage a github repository, please feel free to fork this and make some kind of tbis community edition.
