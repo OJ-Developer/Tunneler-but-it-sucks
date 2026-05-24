@@ -80,10 +80,8 @@ function Camera.Disable()
 end
 
 function Camera.setPlayerLocalTransparency(transparency: number)
-	for _, instance in pairs(char:GetDescendants()) do
-		if instance:IsA("BasePart") or instance:IsA("Decal") then
-			instance.LocalTransparencyModifier = transparency
-		end
+	for _, instance in char:QueryDescendants("BasePart, Decal") do
+		instance.LocalTransparencyModifier = transparency
 	end
 end
 

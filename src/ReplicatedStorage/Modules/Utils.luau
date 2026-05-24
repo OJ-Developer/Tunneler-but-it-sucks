@@ -3,7 +3,7 @@ local Utils = {}
 
 -- INSTANCE UTILS
 
-function Utils.getInstancesWithProperty(haystack: {Instance}, instanceType: string, property: string, desiredPropertyValue: any)
+--[[function Utils.getInstancesWithProperty(haystack: {Instance}, instanceType: string, property: string, desiredPropertyValue: any)
 	local instances = {}
 	for _, part in pairs(haystack) do
 		if part:IsA(instanceType) and part[property] == desiredPropertyValue then
@@ -21,7 +21,7 @@ function Utils.getInstancesWithAttribute(haystack: {Instance}, attribute: string
 		end
 	end
 	return instances
-end
+end]]
 
 function Utils.getClosestPart(target: BasePart, haystack: {BasePart})
 	local closest = haystack[1]
@@ -33,7 +33,7 @@ function Utils.getClosestPart(target: BasePart, haystack: {BasePart})
 	return closest
 end
 
-function Utils.getInstancesOfType(haystack: {Instance}, desiredType: string)
+--[[function Utils.getInstancesOfType(haystack: {Instance}, desiredType: string)
 	local list = {}
 	for _, v in pairs(haystack) do
 		if v:IsA(desiredType) then
@@ -41,7 +41,7 @@ function Utils.getInstancesOfType(haystack: {Instance}, desiredType: string)
 		end
 	end
 	return list
-end
+end]]
 
 function Utils.getChildProperties(parentInstance: Instance, propertyName: string): {string}
 	local returnVal = {}

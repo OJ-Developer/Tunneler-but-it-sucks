@@ -46,8 +46,8 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
         
         
         -- is player in portal zone
-        playerInBluePortal = Utils.tableContains(inBluePortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
-        playerInRedPortal = Utils.tableContains(inRedPortal, Utils.getInstancesOfType(char:GetChildren(), "BasePart"))
+        playerInBluePortal = Utils.tableContains(inBluePortal, char:QueryDescendants(">BasePart"))
+        playerInRedPortal = Utils.tableContains(inRedPortal, char:QueryDescendants(">BasePart"))
         
 
         -- get objects in portal zone
@@ -79,10 +79,8 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
                 collisionGroup = "InBothPortals"
             end
 
-            for _, part in pairs(char:GetChildren()) do
-                if part:IsA("BasePart") then
-                    part.CollisionGroup = collisionGroup
-                end
+            for _, part in pairs(char:QueryDescendants("BasePart")) do
+                part.CollisionGroup = collisionGroup
             end
         end
         
@@ -159,10 +157,8 @@ return function(redPortal, bluePortal, char, dtime, headHeight)
                     local projectedCam = Utils.projectRotationThroughPortal(camera.CFrame.Rotation, entranceCframe, exitCframe).Rotation
                     CameraService.setCameraRotation(projectedCam)
                     
-                    for _, part in pairs(object.Parent:GetChildren()) do
-                        if part:IsA("BasePart") then
-                            part.CollisionGroup = newCollisionGroup
-                        end
+                    for _, part in pairs(object.Parent:QueryDescendants("BasePart")) do
+                        part.CollisionGroup = newCollisionGroup
                     end
                 end
             end

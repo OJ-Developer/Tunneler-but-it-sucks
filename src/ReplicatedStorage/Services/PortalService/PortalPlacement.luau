@@ -57,10 +57,8 @@ function PortalPlacement.PlacePortal(portal, redPortal: boolean, onPart: Part?, 
 	portal.Fizzleable.Value = not placedByPortalPlacer
 	
 	if (not workspace.BluePortal.OnPart.Value) or (not workspace.RedPortal.OnPart.Value) then
-		for _, part in char:GetChildren() do
-			if part:IsA("BasePart") then
-				part.CollisionGroup = "Default"
-			end
+		for _, part in char:QueryDescendants("BasePart") do
+			part.CollisionGroup = "Default"
 		end
 	end
 	
@@ -129,9 +127,7 @@ local function portalBump(portal, onPart: Part, pos: Vector3 | CFrame, normal)
     -- PARAMS
 	-- get all the joined parts
 	local joinedParts = {onPart}
-	for _, joinedPart in onPart:GetChildren() do
-		if not joinedPart:IsA("ObjectValue") then continue end
-		if joinedPart.Name ~= "JoinedPart" then continue end
+	for _, joinedPart in onPart:QueryDescendants(">ObjectValue#JoinedPart") do
 		if not joinedPart.Value then continue end
 		if not joinedPart.Value:IsA("BasePart") then continue end
 		table.insert(joinedParts, joinedPart.Value)
@@ -139,12 +135,8 @@ local function portalBump(portal, onPart: Part, pos: Vector3 | CFrame, normal)
 	-- get the portal bumpers
 	local bumpers = {}
 	for _, part in joinedParts do
-		for _, bumper in part:GetChildren() do
-			if not bumper:IsA("ObjectValue") then continue end
-			if bumper.Name ~= "PortalBumper" then continue end
-			if not bumper.Value then continue end
-			if not bumper.Value:IsA("BasePart") then continue end
-			table.insert(bumpers, bumper.Value)
+		for _, bumper in part:QueryDescendants(">BasePart#PortalBumper") do
+			table.insert(bumpers, bumper)
 		end
 	end
 	-- the actual params

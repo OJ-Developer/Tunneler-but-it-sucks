@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Utils = require(ReplicatedStorage.Modules.Utils)
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
 local ScriptSignal = require(ReplicatedStorage.Packages.GoodSignal)
 
@@ -29,17 +28,12 @@ function button.new(buttonUI)
 	
 	local showData
 	
-	for _, value in buttonUI:GetChildren() do
-		if value:IsA("StringValue") then
-			if value.Name == "ShowData" then
-				showData = value.Value
-			end
-		end
+	for _, value in buttonUI:QueryDescendants(">StringValue#ShowData") do
+		showData = value.Value
 	end
 	
-	local children = buttonUI:GetChildren()
-	local show: {ObjectValue} = Utils.getInstancesWithProperty(children, "ObjectValue", "Name", "Show")
-	local hide: {ObjectValue} = Utils.getInstancesWithProperty(children, "ObjectValue", "Name", "Hide")
+	local show: {ObjectValue} = buttonUI:QueryDescendants(">ObjectValue#Show")
+	local hide: {ObjectValue} = buttonUI:QueryDescendants(">ObjectValue#Hide")
 	
 	
 	if hover then

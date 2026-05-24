@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local LinkedData = require(ReplicatedStorage.Services.LinkedData)
-local Utils = require(script.Parent.Utils)
 
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
@@ -10,11 +9,11 @@ local char = player.Character or player.CharacterAdded:Wait()
 local module = {}
 
 function module.getMapCollideableParts()
-	return Utils.getInstancesWithProperty(workspace.Map:GetDescendants(), "BasePart", "CanCollide", true)
+	return workspace.Map:QueryDescendants("[CanCollide = true]")
 end
 
 function module.getPortalableParts()
-	return Utils.getInstancesWithAttribute(workspace.Map.Building:GetDescendants(), "CanHavePortals", true)
+	return workspace.Map.Building:QueryDescendants("[$CanHavePortals = true]")
 end
 
 function module.getPortalRaycastExcludeParts()
@@ -49,7 +48,7 @@ module.ParamPreset = {
 
 	FloorButtonActivators = {
 		FilterDescendantsInstances = function()
-			return {Utils.getInstancesWithProperty(workspace.Map.Objects:GetChildren(), "BasePart", "Name", "Cube"), game.Players.LocalPlayer.Character}
+			return {workspace.Map.Objects:QueryDescendants(">BasePart#Cube"), game.Players.LocalPlayer.Character}
 		end,
 		FilterType = Enum.RaycastFilterType.Include
 	},

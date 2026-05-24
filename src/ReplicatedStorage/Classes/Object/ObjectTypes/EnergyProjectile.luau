@@ -26,12 +26,7 @@ function energyProjectile.new(projectile, startDir, sender)
 		self.renderStepConnection = runService.RenderStepped:Connect(function(dtime)
 			local oParams = OverlapParams.new()
 			oParams.FilterType = Enum.RaycastFilterType.Include
-			local elements = workspace.Map.Elements:GetChildren()
-			local filteredElements = {}
-			for _, element in elements do
-				if element:GetAttribute("ElementType") == "ProjectileSender" or element:GetAttribute("ElementType") == "TouchTrigger" then continue end
-				table.insert(filteredElements, element)
-			end
+			local filteredElements = workspace.Map.Elements:QueryDescendants(">:not([$ElementType = ProjectileSender],[$ElementType = TouchTrigger])")
 			oParams.FilterDescendantsInstances = {
 				filteredElements,
 				workspace.Map.Building:GetDescendants(),
@@ -52,7 +47,7 @@ function energyProjectile.new(projectile, startDir, sender)
 				elseif part:GetAttribute("Bounce") and part.Parent == workspace.Map.Building then
 					local rParams = RaycastParams.new()
 					rParams.FilterType = Enum.RaycastFilterType.Include
-					rParams.FilterDescendantsInstances = Utils.getInstancesWithAttribute(workspace.Map.Building:GetDescendants(), "Bounce", true)
+					rParams.FilterDescendantsInstances = workspace.Map.Building:QueryDescendants("[$Bounce = true]")
 					local raycast = workspace:Raycast(projectile.Position, projectile.AssemblyLinearVelocity, rParams)
 					if raycast then
 						projectile.AssemblyLinearVelocity = Utils.mirrorVector(projectile.AssemblyLinearVelocity, raycast.Normal)

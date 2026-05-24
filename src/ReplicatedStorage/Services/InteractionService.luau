@@ -25,12 +25,10 @@ function InteractionService.Init()
     noCollisionsFolder.Name = "NoObjectCollision"
     noCollisionsFolder.Parent = char
 
-    for _, part in char:GetChildren() do
-        if part:IsA("BasePart") and part.CanCollide then
-            local constraint = Instance.new("NoCollisionConstraint")
-            constraint.Part0 = part
-            constraint.Parent = noCollisionsFolder
-        end
+    for _, part in char:QueryDescendants("BasePart[CanCollide = true]") do
+        local constraint = Instance.new("NoCollisionConstraint")
+        constraint.Part0 = part
+        constraint.Parent = noCollisionsFolder
     end
 end
 
