@@ -25,7 +25,7 @@ return {
             SoundId = "rbxassetid://78561653916914"
         },
         GunFire = {
-            SoundId = "rbxassetid://1905367471",
+            SoundId = "rbxassetid://1905367471", -- this is a public sound so it does not have to be updated
             VolumeMultiplier = 0.1
         }
     }
