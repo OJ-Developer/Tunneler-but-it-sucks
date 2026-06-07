@@ -1,3 +1,5 @@
+LOADING_SOUND_EFFECT = "rbxassetid://78312487114248"
+
 -- LOADING SCREEN
 
 local ContentProvider = game:GetService("ContentProvider")
@@ -23,7 +25,7 @@ loadingScreen.Parent = playerGui
 
 -- load loading sound
 local sound = Instance.new("Sound")
-sound.SoundId = "rbxassetid://78312487114248"
+sound.SoundId = LOADING_SOUND_EFFECT
 sound.Volume = 2
 sound.Parent = script
 
