@@ -55,6 +55,8 @@ ExampleVoiceline = {
  The way the voicelines are defined are very similar to the sound effects and music with the exeption of the new "Subtitle" property. The Subtitle proptery is the subtitle that is shown if the player has the "Subtitles" setting enabled. 
  The voicelines for Axis also have their own property, that being the "Emotion" property. This defines which emotion axis will have when he plays that voiceline. Axis's emotions include Game, Happy, Nervous, Neutral, Sad, Shocked, VeryHappy and Wink.
 
+Finally, you have to set the sound for the loading screen. Because the game requires there to be a valid sound here to be able to load, I have made it so it uses a random public sound effect by default. To make it use the correct sound, find `Loader.client.luau` at `src\ReplicatedFirst\Loader.client.luau`. On the first line of this script is the definition of a variable called "LOADING_SOUND_EFFECT". Please change the value of it to the sound if of the loading sound effect.
+
 That should be everything you need to know to get sounds working in TBIS!
 
 ## I DO NOT KNOW HOW TO MANAGE A PUBLIC GITHUB REPOSITORY!!!
