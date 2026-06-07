@@ -1,28 +1,28 @@
 return {
     Music = {
         ["0"] = {
-            NormalId = "rbxassetid://90465990150232"
+            NormalId = "rbxassetid://123938165905007"
         },
         ["ImpassChapter3Remix"] = {
             DisplayName = "Impass (Chapter 3 Remix)",
-            NormalId = "rbxassetid://123889965018687"
+            NormalId = "rbxassetid://123938165905007"
         },
         ["SmallLengthExperiment"] = {
             DisplayName = "Small-Length Experiment",
-            NormalId = "rbxassetid://103364891349469"
+            NormalId = "rbxassetid://123938165905007"
         },
         ["TunnelerButItSucks"] = {
             DisplayName = "TUNNELER But it sucks",
-            NormalId = "rbxassetid://98124873505226"
+            NormalId = "rbxassetid://123938165905007"
         },
         ["hurricane_ambience"] = {
-            NormalId = "rbxassetid://85150335135549"
+            NormalId = "rbxassetid://123938165905007"
         },
     },
 
     SoundEffects = {
         PlaceHolder = {
-            SoundId = "rbxassetid://78561653916914"
+            SoundId = "rbxassetid://123938165905007"
         },
         GunFire = {
             SoundId = "rbxassetid://1905367471", -- this is a public sound so it does not have to be updated
