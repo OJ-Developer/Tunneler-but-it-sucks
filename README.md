@@ -1,14 +1,16 @@
-
-# TUNNELER BUT IT SUCKS
+# VERY IMPORTANT INFOMATION PLEASE READ
 This is the rojo project for TUNNELER But It Sucks. I'm not bothered to explain how to use rojo, but there is plenty of resources that already exist that you can find. If you don't care about rojo, please just download the `tbis.rbxl` file. 
 
 ## VERY IMPORTANT NOTE
-The main branch is the 0.4.1a version of the game. PLEASE SWITCH TO THE 0.5a BRANCH TO GET THE LATEST VERSION AND THE .rbxl FILE.
+The main branch is the 0.4.1a version of the game. **PLEASE SWITCH TO THE 0.5a BRANCH TO GET THE LATEST VERSION AND THE .rbxl FILE.**
 Also if you want me to help with stuff such as music, voicelines, sound effects or just explaining how some of the more confusing parts of the code works, please feel free to contact me on discord!
 
 ## ANOTHER VERY IMPORTANT NOTE
 There are still very important things that should be done before any new content for TBIS is made, the most important stuff is listed in the `TODO.txt` file, the rest of the stuff can be found at the end of the changelog: https://docs.google.com/document/d/1lgMVHR7dQ1ZbiF0X6ucRr0AacR_I5HbsLfnOpb04MJk/edit?tab=t.0#heading=h.gmujuee88kl
 If you aren't bothered to do this or don't know how to code, I'd suggest seeing if anyone else has done this and use what they've done to build off of. If you HAVE done this, please share it with others (and me so i can maybe link it here). On a similar note, I would rather have all TBIS mods to also be open source, but I won't really care too much if their not.
+
+## LEVEL EDITOR
+Find the level editor for tbis [here](https://github.com/OJ-Developer/tbis-level-editor)
 
 ## SOUNDS, MUSIC AND VOICELINES
 Because of the update that makes sounds not public, you will have to manually re-upload all the sounds yourself. All the sounds used in TBIS can be found in this google drive: https://drive.google.com/drive/folders/1-s73htZ0Uc0fDmyXsymwzA-uZRw2qeFc?usp=sharing
